@@ -2,18 +2,15 @@
 
 namespace GlpiPlugin\Centreon;
 
-require 'vendor/autoload.php';
-require 'environnement.php';
-
 use Glpi\Application\ErrorHandler;
 use GuzzleHttp\Client;
 
 class ApiClient
 {
-    private $auth_token = '';
+    public $auth_token = null;
 
     //Connection to CENTREON API
-    public function ConnectionRequest()
+    /*public function connectionRequest()
     {
         $api_client = new Client(['base_uri' =>  CENTREON_URL]);
 
@@ -34,6 +31,7 @@ class ApiClient
         } catch (\Exception $e) {
             ErrorHandler::getInstance()->handleException($e, true);
             return false;
+            echo "Wrong request";
         }
 
         $response_code      = $response->getStatusCode();
@@ -42,12 +40,50 @@ class ApiClient
         $this->auth_token   = $response_data["security"]["token"];
 
         return $response_data;
+        echo $this->auth_token;
+        echo "</br>";
+        echo "Connexion OK";
+    }*/
+
+    public function connexionRequest(array $params = [])
+    {
+        $params = [
+            'headers' => [
+                'Content-Type' => "application/json",
+            ],
+            'json' => [
+                'security'  => [
+                    'credentials' => [
+                        'login' => API_USER,
+                        'password' => API_PASSWORD,
+                    ]
+                ]
+            ]
+        ];
+
+        try {
+            $json = $this->clientRequest('login', $params, 'POST');
+        } catch (\Exception $e) {
+            ErrorHandler::getInstance()->handleException($e, true);
+            return false;
+            echo "Wrong request";
+        }
+            $json_body          = $json->getBody();
+            $data               = json_decode($json_body, true);
+            $this->auth_token   = $data["security"]["token"];
+
+            return $data;
+            echo "Connexion ok";
+            echo $this->auth_token;
     }
 
-    protected function clientRequest($method, $endpoint = '', $params = [])
+    public function clientRequest(string $endpoint = '', array $params = [], string $method = 'GET')
     {
         $api_client        = new Client(['base_uri' =>  CENTREON_URL]);
-        $params['headers'] = ['Content-Type' => "application/json", 'X-AUTH-TOKEN' => $this->auth_token];
+
+        if ($this->auth_token != null) {
+            $params['headers'] = ['Content-Type' => "application/json", 'X-AUTH-TOKEN' => $this->auth_token];
+        }
 
         try {
             $response   = $api_client->request($method, $endpoint, $params);
@@ -61,18 +97,22 @@ class ApiClient
         return $data;
     }
 
-    protected function getHostsList($method = 'GET', $endpoint = 'monitoring/hosts', $params = [])
+    public function getHostsList(array $params = []): array
     {
-        $response   = $this->clientRequest($method, $endpoint, $params);
-        return $response;
+        $data = $this->clientRequest('monitoring/hosts', $params);
+        return $data;
     }
 
-    protected function getServicesList($method = 'GET', $endpoint = 'monitoring/services', $params = []) 
+    public function getServicesList(array $params = []): array
     {
-        $response   = $this->clientRequest($method, $endpoint, $params);
-        return $response;
+        $data = $this->clientRequest('monitoring/services', $params);
+        return $data;
     }
 
+    public function testEcho()
+    {
+        echo "It works";
+    }
     /*protected function getServicesListForOneHost($method = 'GET', $endpoint = 'monitoring/services/'.$host_id.'services', $params = [])
     {
         $response   = $this->clientRequest($method, $endpoint, $params);

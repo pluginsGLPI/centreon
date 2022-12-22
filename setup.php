@@ -36,6 +36,8 @@ define("PLUGIN_CENTREON_MIN_GLPI_VERSION", "10.0.0");
 // Maximum GLPI version, exclusive
 define("PLUGIN_CENTREON_MAX_GLPI_VERSION", "10.0.99");
 
+define('PLUGIN_CENTREON_ROOT', Plugin::getPhpDir('centreon'));
+
 /**
  * Init hooks of the plugin.
  * REQUIRED
@@ -47,6 +49,16 @@ function plugin_init_centreon()
     global $PLUGIN_HOOKS;
 
     $PLUGIN_HOOKS['csrf_compliant']['centreon'] = true;
+
+    $plugin = new Plugin;
+    if ($plugin->isActivated('centreon')) {
+
+        // add autoload for vendor
+        include_once(PLUGIN_CENTREON_ROOT . "/vendor/autoload.php");
+
+        // add environment variables
+        include_once(PLUGIN_CENTREON_ROOT . "/environnement.php");
+    }
 }
 
 
