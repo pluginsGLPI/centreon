@@ -62,7 +62,7 @@ function plugin_version_centreon()
         'name'           => 'centreon',
         'version'        => PLUGIN_CENTREON_VERSION,
         'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
-        'license'        => '',
+        'license'        => 'MIT',
         'homepage'       => '',
         'requirements'   => [
             'glpi' => [
