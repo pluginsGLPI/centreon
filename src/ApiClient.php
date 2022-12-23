@@ -2,55 +2,16 @@
 
 namespace GlpiPlugin\Centreon;
 
-use Glpi\Application\ErrorHandler;
 use GuzzleHttp\Client;
+use Toolbox;
 
 class ApiClient
 {
     public $auth_token = null;
 
-    //Connection to CENTREON API
-    /*public function connectionRequest()
-    {
-        $api_client = new Client(['base_uri' =>  CENTREON_URL]);
-
-        try {
-            $response    =  $api_client->request('POST', 'login', [
-                'headers' => [
-                    'Content-Type' => "application/json",
-                ],
-                'json' => [
-                    'security'  => [
-                        'credentials' => [
-                            'login' => API_USER,
-                            'password' => API_PASSWORD,
-                        ]
-                    ]
-                ]
-            ]);
-        } catch (\Exception $e) {
-            ErrorHandler::getInstance()->handleException($e, true);
-            return false;
-            echo "Wrong request";
-        }
-
-        $response_code      = $response->getStatusCode();
-        $response_body      = $response->getBody();
-        $response_data      = json_decode($response_body, true);
-        $this->auth_token   = $response_data["security"]["token"];
-
-        return $response_data;
-        echo $this->auth_token;
-        echo "</br>";
-        echo "Connexion OK";
-    }*/
-
-    public function connexionRequest(array $params = [])
+    public function connectionRequest(array $params = [])
     {
         $params = [
-            'headers' => [
-                'Content-Type' => "application/json",
-            ],
             'json' => [
                 'security'  => [
                     'credentials' => [
@@ -62,37 +23,32 @@ class ApiClient
         ];
 
         try {
-            $json = $this->clientRequest('login', $params, 'POST');
+            $data = $this->clientRequest('login', $params, 'POST');
         } catch (\Exception $e) {
-            ErrorHandler::getInstance()->handleException($e, true);
-            return false;
-            echo "Wrong request";
+            echo $e->getMessage();
         }
-            $json_body          = $json->getBody();
-            $data               = json_decode($json_body, true);
             $this->auth_token   = $data["security"]["token"];
 
             return $data;
-            echo "Connexion ok";
-            echo $this->auth_token;
     }
 
     public function clientRequest(string $endpoint = '', array $params = [], string $method = 'GET')
     {
-        $api_client        = new Client(['base_uri' =>  CENTREON_URL]);
+        $api_client        = new Client(['base_uri' =>  CENTREON_URL, 'verify' => false]);
+        $params['headers'] = ['Content-Type' => "application/json"];
 
         if ($this->auth_token != null) {
             $params['headers'] = ['Content-Type' => "application/json", 'X-AUTH-TOKEN' => $this->auth_token];
         }
 
         try {
-            $response   = $api_client->request($method, $endpoint, $params);
+            $data   = $api_client->request($method, $endpoint, $params);
         } catch (\Exception $e) {
-            ErrorHandler::getInstance()->handleException($e, true);
-            return false;
+            echo $e->getMessage();
         }
-
-        $data_body = $response->getBody();
+        $data_code = $data->getStatusCode();
+        Toolbox::logDebug($data_code);
+        $data_body = $data->getBody();
         $data      = json_decode($data_body, true);
         return $data;
     }
@@ -109,13 +65,10 @@ class ApiClient
         return $data;
     }
 
-    public function testEcho()
+    public function getServicesListForOneHost(int $host_id, array $params = []): array
     {
-        echo "It works";
+        $data   = $this->clientRequest('monitoring/hosts/' . $host_id . '/services', $params);
+        Toolbox::logDebug($host_id);
+        return $data;
     }
-    /*protected function getServicesListForOneHost($method = 'GET', $endpoint = 'monitoring/services/'.$host_id.'services', $params = [])
-    {
-        $response   = $this->clientRequest($method, $endpoint, $params);
-        return $response;
-    }*/
 }
