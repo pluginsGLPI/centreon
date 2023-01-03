@@ -36,6 +36,32 @@
  */
 function plugin_centreon_install()
 {
+    global $DB;
+   
+    $default_charset   = DBConnection::getDefaultCharset();
+    $default_collation = DBConnection::getDefaultCollation();
+
+    $migration = new \Migration(PLUGIN_CENTREON_VERSION);
+
+    $table = GlpiPlugin\Centreon\Host::getTable();
+    if (!$DB->tableExists($table)) {
+        
+        $query = "CREATE TABLE `$table` (
+                  `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                  `itemtype`      VARCHAR(100) NOT NULL,
+                  `items_id`      INT(10) UNSIGNED NOT NULL DEFAULT '0',
+                  `centreon_id`   INT(10) NOT NULL,
+                  `centreon_type` VARCHAR(100) DEFAULT 'host',
+                  PRIMARY KEY  (`id`),
+                  KEY `items_id` (`items_id`)
+                 ) ENGINE=InnoDB
+                 DEFAULT CHARSET={$default_charset}
+                 COLLATE={$default_collation}";
+        $DB->queryOrDie($query, $DB->error());
+    }
+    Toolbox::logDebug($table);
+    $migration->executeMigration();
+
     return true;
 }
 
@@ -46,5 +72,18 @@ function plugin_centreon_install()
  */
 function plugin_centreon_uninstall()
 {
+    global $DB;
+
+    $tables = [GlpiPlugin\Centreon\Host::getTable(),];
+
+    foreach ($tables as $table) {
+        if($DB->tableExists($table)) {
+            $DB->queryOrDie(
+                "DROP TABLE `$table`",
+                $DB->error()
+            );
+        }
+    }
+
     return true;
 }
