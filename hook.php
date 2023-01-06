@@ -29,6 +29,8 @@
  * --------------------------------------------------------------------------
  */
 
+use GlpiPlugin\Centreon\Host;
+
 /**
  * Plugin install process
  *
@@ -86,17 +88,24 @@ function plugin_centreon_uninstall()
     return true;
 }
 
-/*function plugin_centreon_getAddSearchOptionsNew($itemtype) {
+function plugin_centreon_getAddSearchOptionsNew($itemtype) {
     $sopt = [];
 
     if ($itemtype == 'Computer') {
         $sopt[] = [
             'id'        => 2023,
-            'name'      => __('Host status', 'centreon'),
-            'datatype'  => 'specific'
+            'table'     => GlpiPlugin\Centreon\Host::getTable(),
+            'field'     => 'id',
+            'name'      => __('Centreon Host Status', 'centreon'),
+            'additionalfields'  => ['centreon_id'],
+            'datatype'  => 'specific',
+            'nosearch'  => true,
+            'nosort'    => true,
+            'massiveaction' => false,
+            'joinparams' => [
+                'jointype' => 'itemtype_item'
+             ]
         ];
     }
     return $sopt;
 }
-
-function plugin_centreon_getSpecificValueToDisplay*/

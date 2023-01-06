@@ -105,6 +105,7 @@ class Host extends CommonDBTM
                 $i_host["services"] = $gethost["services"];
                 $i_host["nb_services"] = count($i_host["services"]);
                 $this->one_host = $i_host;
+                return $i_host;
                 //echo "<pre>";
                 //print_r($this->one_host);
                 //echo "</pre>";
@@ -157,5 +158,21 @@ class Host extends CommonDBTM
             'one_host'  =>  $self->one_host
         ]);
 
+    }
+
+    public static function getSpecificValueToDisplay($field, $values, array $options = []) {
+        switch($field) {
+            case 'id' :
+                if(intval($values["centreon_id"]) > 0) {
+                    $self = new self();
+
+                    $res = $self->oneHost($values["centreon_id"]);
+
+                    return $res["status"] ?? '';
+                }
+                break;
+        }
+
+        return parent::getSpecificValueToDisplay($field, $values, $options);
     }
 }
