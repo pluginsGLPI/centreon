@@ -60,6 +60,11 @@ class ApiClient
         return $data;
     }
 
+    public function getOneHost(int $host_id, array $params = []): array {
+        $data = $this->clientRequest('monitoring/hosts/' . $host_id, $params);
+        return $data;
+    }
+
     public function getServicesList(array $params = []): array
     {
         $data = $this->clientRequest('monitoring/services', $params);

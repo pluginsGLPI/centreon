@@ -77,13 +77,26 @@ function plugin_centreon_uninstall()
     $tables = [GlpiPlugin\Centreon\Host::getTable(),];
 
     foreach ($tables as $table) {
-        if($DB->tableExists($table)) {
-            $DB->queryOrDie(
-                "DROP TABLE `$table`",
-                $DB->error()
-            );
-        }
+            $migration = new Migration(PLUGIN_CENTREON_VERSION);
+            $migration->displayMessage("Uninstalling $table");
+            $migration->dropTable($table);
+            $DB->error();  
     }
 
     return true;
 }
+
+/*function plugin_centreon_getAddSearchOptionsNew($itemtype) {
+    $sopt = [];
+
+    if ($itemtype == 'Computer') {
+        $sopt[] = [
+            'id'        => 2023,
+            'name'      => __('Host status', 'centreon'),
+            'datatype'  => 'specific'
+        ];
+    }
+    return $sopt;
+}
+
+function plugin_centreon_getSpecificValueToDisplay*/

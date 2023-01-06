@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    
+</head>
+<body>
+    <div class="header">
+    <h2 class='title'>Host Information</h2>
+    <img class="img" src="https://cdn.icon-icons.com/icons2/2699/PNG/512/centreon_logo_icon_170408.png" alt="lien_centreon">
+    </div>
+
+    <div>
+    <h3 class='title'>General</h3>
+    </div>
+    <div class='content-g'>
+    <p class="content-p">Status : {{ one_host.status }}</p>
+    <p class="content-p">Address : {{ one_host.address }}</p>
+    <p class="content-p">Alias : {{ one_host.alias }}</p>
+    <p class="content-p">Timezone : {{ one_host.timezone }}</p>
+    <p class="content-p">Last check : {{ one_host.last_check }}</p>
+    <p class="content-p">Next check : {{ one_host.next_check }}</p>
+    <p class="content-p">Check period : {{ one_host.check_period }}</p>
+    </div>
+
+    <div class="title-s">
+    <h3 class='title'>Services</h3>
+    <p class="p-count">{{ one_host["nb_services"] }}</p>
+    </div>
+    <div class="content-s">
+    {% for service in one_host["services"] %}
+    <p class="content-ps">{{ service["display_name"] }}</p>
+    {% endfor %}
+    </div>
+    
+
+</body>
+</html>
