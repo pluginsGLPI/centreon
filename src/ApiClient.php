@@ -65,6 +65,11 @@ class ApiClient
         return $data;
     }
 
+    public function getOneHostResources(int $host_id, array $params = []): array {
+        $data = $this->clientRequest('monitoring/resources/hosts/' . $host_id, $params);
+        return $data;
+    }
+
     public function getServicesList(array $params = []): array
     {
         $data = $this->clientRequest('monitoring/services', $params);
@@ -73,6 +78,7 @@ class ApiClient
 
     public function getServicesListForOneHost(int $host_id, array $params = []): array
     {
+        $params['query'] = ['limit' => 30];
         $data   = $this->clientRequest('monitoring/hosts/' . $host_id . '/services', $params);
         Toolbox::logDebug($host_id);
         return $data;

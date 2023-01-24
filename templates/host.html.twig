@@ -4,34 +4,139 @@
     
 </head>
 <body>
-    <div class="header">
-    <h2 class='title'>Host Information</h2>
-    <img class="img" src="https://cdn.icon-icons.com/icons2/2699/PNG/512/centreon_logo_icon_170408.png" alt="lien_centreon">
+    <div class="d-flex flew-row align-items-center py-3 ps-2">
+    <h1 class="pe-3 m-0">Host Information</h1>
+    <img class="h-4 d-inline-block" src="https://cdn.icon-icons.com/icons2/2699/PNG/512/centreon_logo_icon_170408.png" alt="lien_centreon">
     </div>
 
-    <div>
-    <h3 class='title'>General</h3>
-    </div>
-    <div class='content-g'>
-    <p class="content-p">Status : {{ one_host.status }}</p>
-    <p class="content-p">Address : {{ one_host.address }}</p>
-    <p class="content-p">Alias : {{ one_host.alias }}</p>
-    <p class="content-p">Timezone : {{ one_host.timezone }}</p>
-    <p class="content-p">Last check : {{ one_host.last_check }}</p>
-    <p class="content-p">Next check : {{ one_host.next_check }}</p>
-    <p class="content-p">Check period : {{ one_host.check_period }}</p>
-    </div>
+    <h2 class="p-2 m-0">General</h2>
 
-    <div class="title-s">
-    <h3 class='title'>Services</h3>
-    <p class="p-count">{{ one_host["nb_services"] }}</p>
+<div class="datagrid container text-center my-2">
+    <div class="row">
+    <div class="col">
+        <div class="datagrid-item">
+            <div class="datagrid-title fw-bold">Status</div>
+                <div class="datagrid-content mt-2">
+                    {% if one_host.status == 'UP' %}
+                        <span class="status status-green">
+                        {{ one_host.status }}
+                        </span>
+                    {% elseif one_host.status == 'DOWN' %}
+                        <span class="status status-red">
+                        {{ one_host.status }}
+                        </span>
+                    {% else %}
+                        <span class="status status-orange">
+                        {{ one_host.status }}
+                        </span>
+                    {% endif %}
+                </div>
     </div>
-    <div class="content-s">
+    </div>
+    <div class="col">
+        <div class="datagrid-item">
+            <div class="datagrid-title fw-bold">Name</div>
+                <div class="datagrid-content mt-2">{{ one_host.name }}</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="datagrid-item">
+            <div class="datagrid-title fw-bold">Alias</div>
+                <div class="datagrid-content mt-2">{{ one_host.alias }}</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="datagrid-item">
+            <div class="datagrid-title fw-bold">FQDN</div>
+                <div class="datagrid-content mt-2">{{ one_host.fqdn }}</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="datagrid-item">
+            <div class="datagrid-title fw-bold">Last check</div>
+                <div class="datagrid-content mt-2">{{ one_host.last_check }}</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="datagrid-item">
+            <div class="datagrid-title fw-bold">Next check</div>
+                <div class="datagrid-content mt-2">{{ one_host.next_check }}</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="datagrid-item">
+            <div class="datagrid-title fw-bold">Check period</div>
+                <div class="datagrid-content mt-2">{{ one_host.check_period }}</div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+    <div class="d-flex flew-row align-items-center p-2 mt-3">
+    <h2 class="pe-3 m-0">Services</h2>
+    {% set count_ok = 0 %}
+    {% set count_w = 0 %}
+    {% set count_d = 0 %}
+    {% set count_un = 0 %}
     {% for service in one_host["services"] %}
-    <p class="content-ps">{{ service["display_name"] }}</p>
+        {% if service.status.name == "OK" %}
+            {% set count_ok = count_ok + 1 %}
+        {% elseif service.status.name == "WARNING" %}
+            {% set count_w = count_w + 1 %}
+        {% elseif service.status.name == "CRITICAL" %}
+            {% set count_d = count_d + 1 %}
+        {% else %}
+            {% set count_un = count_un + 1 %}
+        {% endif %}
+    {% endfor %}
+    <span class="badge bg-teal m-1">{{ count_ok }}</span>
+    <span class="badge bg-orange m-1">{{ count_w }}</span>
+    <span class="badge bg-red m-1">{{ count_d }}</span>
+    <span class="badge bg-grey m-1">{{ count_un }}</span>
+    </div>
+
+    <div class="row row-deck p-2 mb-2">
+    {% for service in one_host["services"] %}
+    <div class="col-md-4">
+    <div class="card mt-3" style="max-height: 200px;">
+        {% if service.status.name == "OK" %}
+            <div class="card-status-start bg-green"></div>
+            <div class="card-body">
+            <div class="d-flex align-items-center">
+            <span class="status status-green">{{ service.status.name }}</span>
+            <h3 class="card-title m-0 px-2 text-truncate">{{ service["display_name"] }}</h3>
+            </div>
+        {% elseif service.status.name == "WARNING" %}
+            <div class="card-status-start bg-orange"></div>
+            <div class="card-body">
+            <div class="d-flex align-items-center">
+            <span class="status status-orange">{{ service.status.name }}</span>
+            <h3 class="card-title m-0 px-2 text-truncate">{{ service["display_name"] }}</h3>
+            </div>
+        {% elseif service.status.name == "CRITICAL" %}
+            <div class="card-status-start bg-red"></div>
+            <div class="card-body">
+            <div class="d-flex align-items-center">
+            <span class="status status-red">{{ service.status.name }}</span>
+            <h3 class="card-title m-0 px-2 text-truncate">{{ service["display_name"] }}</h3>
+            </div>
+        {% else %}
+            <div class="card-status-start bg-secondary"></div>
+            <div class="card-body">
+            <div class="d-flex align-items-center">
+            <span class="status status-grey">{{ service.status.name }}</span>
+            <h3 class="card-title m-0 px-2 text-truncate">{{ service["display_name"] }}</h3>
+            </div>
+        {% endif %}
+        <div class="d-flex justify-content-between">
+        <p class="m-0 pt-3"> {{ service["output"] }} </p>
+        <p class="text-nowrap m-0 pt-3 ps-2"> {{ service["duration"] }} </p>
+        </div>
+      </div>
+    </div>
+  </div>
     {% endfor %}
     </div>
-    
-
-</body>
+    </body>
 </html>

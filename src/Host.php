@@ -91,24 +91,23 @@ class Host extends CommonDBTM
         $res = $api->connectionRequest();
         if($res["security"]["token"] != NULL) {
             $gethost = $api->getOneHost($id);
+            $gethost_r = $api->getOneHostResources($id);
+            $getservices = $api->getServicesListForOneHost($id);
             if($gethost != NULL) {
                 $i_host = [];
                 $i_host = [
-                    'status'            =>  $gethost["output"],
-                    'address'           =>  $gethost["address_ip"],
+                    'status'            =>  $gethost_r["status"]["name"],
+                    'name'              =>  $gethost_r["name"],
                     'alias'             =>  $gethost["alias"],
-                    'timezone'          =>  $gethost["timezone"],
+                    'fqdn'              =>  $gethost_r['fqdn'],
                     'last_check'        =>  $gethost["last_check"],
                     'next_check'        =>  $gethost["next_check"],
                     'check_period'      =>  $gethost["check_period"],
                 ];
-                $i_host["services"] = $gethost["services"];
+                $i_host["services"] = $getservices["result"];
                 $i_host["nb_services"] = count($i_host["services"]);
                 $this->one_host = $i_host;
                 return $i_host;
-                //echo "<pre>";
-                //print_r($this->one_host);
-                //echo "</pre>";
             } else {
                 echo "Failed to find host";
             }

@@ -59,9 +59,6 @@ function plugin_init_centreon()
         // add environment variables
         include_once(PLUGIN_CENTREON_ROOT . "/environnement.php");
 
-        if (strpos($_SERVER['REQUEST_URI'], "computer.form.php") != false) {
-        $PLUGIN_HOOKS['add_css']['centreon'] = 'css/style.css';
-        }
     }
 
     Plugin::registerClass(GlpiPlugin\Centreon\Host::class, [
