@@ -90,10 +90,12 @@
             {% set count_un = count_un + 1 %}
         {% endif %}
     {% endfor %}
-    <span class="badge bg-teal m-1">{{ count_ok }}</span>
-    <span class="badge bg-orange m-1">{{ count_w }}</span>
-    <span class="badge bg-red m-1">{{ count_d }}</span>
-    <span class="badge bg-grey m-1">{{ count_un }}</span>
+    <div class="d-flex align-items-center" >
+    <span class="badge bg-teal m-1" title="OK" data-bs-toggle="tooltip" data-bs-placement="top">{{ count_ok }}</span>
+    <span class="badge bg-orange m-1" title="WARNING" data-bs-toggle="tooltip" data-bs-placement="top">{{ count_w }}</span>
+    <span class="badge bg-red m-1" title="CRITICAL" data-bs-toggle="tooltip" data-bs-placement="top">{{ count_d }}</span>
+    <span class="badge bg-grey m-1" title="UNKNOWN" data-bs-toggle="tooltip" data-bs-placement="top">{{ count_un }}</span>
+    </div>
     </div>
 
     <div class="row row-deck p-2 mb-2">

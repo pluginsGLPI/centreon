@@ -16,7 +16,7 @@ class Host extends CommonDBTM
 
     static function getTypeName($nb = 0)
     {
-        return _n('Host', 'Hosts', $nb);
+        return _n('Centreon', 'Centreon', $nb);
     }
 
     public function getComputerList()
