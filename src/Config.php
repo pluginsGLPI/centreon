@@ -5,6 +5,7 @@ namespace GlpiPlugin\Centreon;
 use CommonGLPI;
 use Glpi\Application\View\TemplateRenderer;
 use Session;
+use GlpiPlugin\Centreon\ApiClient;
 
 class Config extends \Config
 {
@@ -57,5 +58,14 @@ class Config extends \Config
             'current_config' => $current_config,
             'can_edit'       => $canedit
         ]);
+
+            if (isset($current_config["centreon-username"])) {
+            $api = new ApiClient();
+            $diag = $api->diagnostic();
+            
+            TemplateRenderer::getInstance()->display('@centreon/diagnostic.html.twig', [
+                'diag' => $diag
+            ]);
+        }
     }
 }

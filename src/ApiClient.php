@@ -20,6 +20,8 @@ class ApiClient
 
     public function connectionRequest(array $params = [])
     {
+        self::centreonConfig();
+
         $params = [
             'json' => [
                 'security'  => [
@@ -34,12 +36,35 @@ class ApiClient
         try {
             $data = $this->clientRequest('login', $params, 'POST');
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            return $e->getMessage();
         }
         $this->auth_token   = $data["security"]["token"];
 
         return $data;
     }
+
+    public function diagnostic()
+    {
+        try {
+
+            $test = $this->connectionRequest();
+
+
+            if (isset($test["security"]["token"])) {
+                $result = [
+                    'result' => true,
+                    'message' => "You are connected to Centreon API !"
+                ];
+            }
+        } catch (\Exception $e) {
+            $result = [
+                'result'   => false,
+                'message'  => $e->getMessage()
+            ];
+        }
+        return $result;
+    }
+
 
     public function clientRequest(string $endpoint = '', array $params = [], string $method = 'GET')
     {
@@ -53,10 +78,9 @@ class ApiClient
         try {
             $data   = $api_client->request($method, $endpoint, $params);
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            $err_msg = $e->getMessage();
+            return $err_msg;
         }
-        $data_code = $data->getStatusCode();
-        Toolbox::logDebug($data_code);
         $data_body = $data->getBody();
         $data      = json_decode($data_body, true);
         return $data;
