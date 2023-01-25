@@ -1,28 +1,16 @@
-<!DOCTYPE HTML>
-<html lang="en">
+{% extends "generic_show_form.html.twig" %}
+{% import 'components/form/fields_macros.html.twig' as fields %}
 
-<body>
-    <div class="d-flex flew-row align-items-center py-3 ps-2">
-    <h1 class="pe-3 m-0">Centreon settings</h1>
-    <img class="h-4 d-inline-block" src="https://cdn.icon-icons.com/icons2/2699/PNG/512/centreon_logo_icon_170408.png" alt="lien_centreon">
-    </div>
-
-{% if can_edit %}
-    <div class="container my-3">
-    <form name="form_fields" action="{{ Config }}" method="POST">
-    <input type="hidden" name="config_context" value="plugin:centreon">
-    <input type="hidden" name="config_class" value="GlpiPlugin\\Centreon\\Config">
-    <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
-    <div class="mb-3">
-    <label class="form-label">Centreon username</label>
-    <input type="text" class="form-control" name="centreon-username" placeholder="your username">
-    </div>
-    <div class="mb-3">
-    <label class="form-label">Centreon password</label>
-    <input type="text" class="form-control" name="centreon-password" placeholder="your password">
-    </div>
-    <button class="btn btn-primary" type="submit" name="submit" value="1">Submit</button>
-    </div>
-{% endif %}
-</body>
-</html>
+{% block form_fields %}
+    {% if can_edit %}
+        <input type="hidden" name="config_context" value="plugin:centreon">
+        <div class="mb-3">
+        <label class="form-label">Centreon username</label>
+        <input type="text" class="form-control" name="centreon-username" placeholder="your username" value="{{ current_config['centreon-username'] }}">
+        </div>
+        <div class="mb-3">
+        <label class="form-label">Centreon password</label>
+        <input type="text" class="form-control" name="centreon-password" placeholder="your password" value="{{ current_config['centreon-password'] }}">
+        </div>
+    {% endif %}
+{% endblock %}

@@ -53,6 +53,7 @@ class Config extends \Config
         $canedit        = Session::haveRight(self::$rightname, UPDATE);
 
         TemplateRenderer::getInstance()->display('@centreon/config.html.twig', [
+            'item'           => $config,
             'current_config' => $current_config,
             'can_edit'       => $canedit
         ]);
