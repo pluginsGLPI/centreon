@@ -86,6 +86,9 @@ function plugin_centreon_uninstall()
     }
 
     return true;
+
+    $config = new \Config();
+    $config->deleteByCriteria(['context' => 'plugin:centreon']);    
 }
 
 function plugin_centreon_getAddSearchOptionsNew($itemtype) {

@@ -34,11 +34,7 @@ class Host extends CommonDBTM
         } else {
             echo "No List";
         }
-        //echo "<pre>";
-        //print_r($array_computer);
-        //echo "</pre>";
         $this->glpi_items = $array_computer;
-        //return $array_computer;
     }
 
     public function hostList()
@@ -56,11 +52,7 @@ class Host extends CommonDBTM
                         'centreon_name' =>  $item_centreon["name"],
                     ];
                 }
-                //echo "<pre>";
-                //print_r($list);
-                //echo "</pre>";
                 $this->centreon_items = $items_centreon;
-                //return $list;
             } else {
                 echo "No list";
             }
@@ -86,14 +78,15 @@ class Host extends CommonDBTM
         }
     }
 
-    public function oneHost($id) {
+    public function oneHost($id)
+    {
         $api = new ApiClient();
         $res = $api->connectionRequest();
-        if($res["security"]["token"] != NULL) {
+        if ($res["security"]["token"] != NULL) {
             $gethost = $api->getOneHost($id);
             $gethost_r = $api->getOneHostResources($id);
             $getservices = $api->getServicesListForOneHost($id);
-            if($gethost != NULL) {
+            if ($gethost != NULL) {
                 $i_host = [];
                 $i_host = [
                     'status'            =>  $gethost_r["status"]["name"],
@@ -112,7 +105,7 @@ class Host extends CommonDBTM
                 echo "Failed to find host";
             }
         } else {
-                echo "Failed wrong token";
+            echo "Failed wrong token";
         }
     }
 
@@ -146,23 +139,23 @@ class Host extends CommonDBTM
         $self->getFromDBByCrit([
             'itemtype' => $item->getType(),
             'items_id' => $item->getID(),
-         ]);
-        
-        
+        ]);
+
+
         $host_id = $self->fields['centreon_id'];
         $self->oneHost($host_id);
-        
-        
+
+
         TemplateRenderer::getInstance()->display('@centreon/host.html.twig', [
             'one_host'  =>  $self->one_host
         ]);
-
     }
 
-    public static function getSpecificValueToDisplay($field, $values, array $options = []) {
-        switch($field) {
-            case 'id' :
-                if(intval($values["centreon_id"]) > 0) {
+    public static function getSpecificValueToDisplay($field, $values, array $options = [])
+    {
+        switch ($field) {
+            case 'id':
+                if (intval($values["centreon_id"]) > 0) {
                     $self = new self();
 
                     $res = $self->oneHost($values["centreon_id"]);

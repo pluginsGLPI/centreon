@@ -4,10 +4,19 @@ namespace GlpiPlugin\Centreon;
 
 use GuzzleHttp\Client;
 use Toolbox;
+use GlpiPlugin\Centreon\Config;
+use Session;
 
 class ApiClient
 {
     public $auth_token = null;
+    public $api_config = [];
+
+    public function centreonConfig()
+    {
+        $api_i = new Config();
+        $this->api_config = $api_i->getConfig();
+    }
 
     public function connectionRequest(array $params = [])
     {
@@ -15,8 +24,8 @@ class ApiClient
             'json' => [
                 'security'  => [
                     'credentials' => [
-                        'login' => API_USER,
-                        'password' => API_PASSWORD,
+                        'login' => $this->api_config["centreon-username"],
+                        'password' => $this->api_config["centreon-password"],
                     ]
                 ]
             ]
@@ -27,14 +36,14 @@ class ApiClient
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
-            $this->auth_token   = $data["security"]["token"];
+        $this->auth_token   = $data["security"]["token"];
 
-            return $data;
+        return $data;
     }
 
     public function clientRequest(string $endpoint = '', array $params = [], string $method = 'GET')
     {
-        $api_client        = new Client(['base_uri' =>  CENTREON_URL, 'verify' => false]);
+        $api_client        = new Client(['base_uri' =>  $this->api_config["centreon-url"], 'verify' => false]);
         $params['headers'] = ['Content-Type' => "application/json"];
 
         if ($this->auth_token != null) {
@@ -60,12 +69,14 @@ class ApiClient
         return $data;
     }
 
-    public function getOneHost(int $host_id, array $params = []): array {
+    public function getOneHost(int $host_id, array $params = []): array
+    {
         $data = $this->clientRequest('monitoring/hosts/' . $host_id, $params);
         return $data;
     }
 
-    public function getOneHostResources(int $host_id, array $params = []): array {
+    public function getOneHostResources(int $host_id, array $params = []): array
+    {
         $data = $this->clientRequest('monitoring/resources/hosts/' . $host_id, $params);
         return $data;
     }

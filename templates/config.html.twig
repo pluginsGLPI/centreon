@@ -5,12 +5,16 @@
     {% if can_edit %}
         <input type="hidden" name="config_context" value="plugin:centreon">
         <div class="mb-3">
-        <label class="form-label">Centreon username</label>
+        <label class="form-label">{{ __("Centreon URL") }}</label>
+        <input type="text" class="form-control" name="centreon-url" placeholder="centreon url" value="{{ current_config['centreon-url'] }}">
+        </div>
+        <div class="mb-3">
+        <label class="form-label">{{ __("Centreon username") }}</label>
         <input type="text" class="form-control" name="centreon-username" placeholder="your username" value="{{ current_config['centreon-username'] }}">
         </div>
         <div class="mb-3">
-        <label class="form-label">Centreon password</label>
-        <input type="text" class="form-control" name="centreon-password" placeholder="your password" value="{{ current_config['centreon-password'] }}">
+        <label class="form-label">{{ __("Centreon password") }}</label>
+        <input type="password" class="form-control" name="centreon-password" placeholder="your password" value="{{ current_config['centreon-password'] }}">
         </div>
     {% endif %}
 {% endblock %}

@@ -56,9 +56,6 @@ function plugin_init_centreon()
         // add autoload for vendor
         include_once(PLUGIN_CENTREON_ROOT . "/vendor/autoload.php");
 
-        // add environment variables
-        include_once(PLUGIN_CENTREON_ROOT . "/environnement.php");
-
     }
 
     Plugin::registerClass(GlpiPlugin\Centreon\Host::class, [

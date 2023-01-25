@@ -6,7 +6,7 @@ use CommonGLPI;
 use Glpi\Application\View\TemplateRenderer;
 use Session;
 
-class Config extends \Config 
+class Config extends \Config
 {
     static function getTypeName($nb = 0)
     {
@@ -41,7 +41,7 @@ class Config extends \Config
         return true;
     }
 
-    static function showForConfig(\Config $config, $withtemplate = 0) 
+    static function showForConfig(\Config $config, $withtemplate = 0)
     {
         global $CFG_GLPI;
 
