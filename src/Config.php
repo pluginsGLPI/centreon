@@ -19,7 +19,7 @@ class Config extends \Config
     }
 
 
-    static function getTypeNameForItem(CommonGLPI $item, $withtemplate = 0)
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
         switch ($item->getType()) {
             case \Config::class:
