@@ -10,7 +10,7 @@ class Config extends \Config
 {
     static function getTypeName($nb = 0)
     {
-        return __('Centreon configuration', 'Centreon');
+        return __('Centreon settings', 'Centreon');
     }
 
     static function getConfig()
