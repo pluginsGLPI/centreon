@@ -62,7 +62,11 @@ function plugin_init_centreon()
     }
 
     Plugin::registerClass(GlpiPlugin\Centreon\Host::class, [
-        'addtabon'  => 'Computer'
+        'addtabon'  => ['Computer']
+    ]);
+
+    Plugin::registerClass(GlpiPlugin\Centreon\Config::class, [
+        'addtabon' => ['Config']
     ]);
 }
 
