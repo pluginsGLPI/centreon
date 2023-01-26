@@ -128,22 +128,18 @@ class Host extends CommonDBTM
                     ])
                 ]
             ];
-            echo "<pre>";
-            echo $computer_name;
-            print_r($params);
             $match = $api->getHostsList($params);
-            print_r($match);
-            echo "</pre>";
         }
 
-        if ($match["result"]["0"]["name"] == $computer_name) {
-            $this->add([
+        if (isset($match["result"]["0"]["name"]) && $match["result"]["0"]["name"] == $computer_name) {
+            $centreon_id = $match["result"]["0"]["id"];
+            $new_id = $this->add([
                 'itemtype'      => "Computer",
                 'items_id'      =>  $id,
-                'centreon_id'   =>  $match["result"]["0"]["id"],
+                'centreon_id'   =>  $centreon_id,
                 'centreon_type' =>  "host"
             ]);
-            echo "item ajouté";
+            $this->getFromDB($new_id);
             return true;
         } else {
             return false;
@@ -152,13 +148,11 @@ class Host extends CommonDBTM
 
     public function searchForItem($id)
     {
-        $self = new self();
-        if($self->getFromDBByCrit(['items_id' => $id]))
+        if($this->getFromDBByCrit(['items_id' => $id]))
         {
-            echo "item is in host db";
             return true;
         } else {
-            echo "item is not in host db";
+            return false;
         }
     }
 
