@@ -62,7 +62,7 @@ class Config extends \Config
             if (isset($current_config["centreon-username"])) {
             $api = new ApiClient();
             $diag = $api->diagnostic();
-            
+
             TemplateRenderer::getInstance()->display('@centreon/diagnostic.html.twig', [
                 'diag' => $diag
             ]);

@@ -93,7 +93,7 @@ class ApiClient
 
     public function getHostsList(array $params = []): array
     {
-        $params['query'] = ['limit' => 100];
+        $params['query'] = ['limit' => 1];
         $data = $this->clientRequest('monitoring/hosts', $params);
         return $data;
     }

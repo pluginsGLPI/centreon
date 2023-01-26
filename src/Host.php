@@ -4,6 +4,7 @@ namespace GlpiPlugin\Centreon;
 
 use CommonDBTM;
 use CommonGLPI;
+use Computer;
 use Glpi\Application\View\TemplateRenderer;
 use GuzzleHttp\Client;
 use GlpiPlugin\Centreon\ApiClient;
@@ -108,6 +109,24 @@ class Host extends CommonDBTM
             echo "Failed wrong token";
         }
     }
+
+    public function searchItemMatch(int $id) {
+        $item = new Computer();
+        $computer = $item->getFromDB($id);
+        $computer_name = $item->fields['name'];
+        echo $computer_name;
+
+        $api = new ApiClient();
+        $res = $api->connectionRequest();
+        if (isset($res["security"]["token"])) {
+            $params['query'] = ['search' => ['host.name' => $computer_name]];
+            echo $computer_name;
+            print_r($params);
+            $match = $api->getHostsList($params);
+            print_r($match);
+        }
+    }
+
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
