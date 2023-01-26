@@ -22,7 +22,7 @@ class ApiClient
     {
         self::centreonConfig();
 
-        $params = [
+        $defaults = [
             'json' => [
                 'security'  => [
                     'credentials' => [
@@ -32,10 +32,14 @@ class ApiClient
                 ]
             ]
         ];
+        $params = array_replace_recursive($defaults, $params);
 
         try {
             $data = $this->clientRequest('login', $params, 'POST');
         } catch (\Exception $e) {
+            if (isset($params['throw'])) {
+                throw $e;
+            }
             return $e->getMessage();
         }
         $this->auth_token   = $data["security"]["token"];
@@ -46,9 +50,7 @@ class ApiClient
     public function diagnostic()
     {
         try {
-
-            $test = $this->connectionRequest();
-
+            $test = $this->connectionRequest(['throw' => true]);
 
             if (isset($test["security"]["token"])) {
                 $result = [
@@ -78,6 +80,9 @@ class ApiClient
         try {
             $data   = $api_client->request($method, $endpoint, $params);
         } catch (\Exception $e) {
+            if (isset($params['throw'])) {
+                throw $e;
+            }
             $err_msg = $e->getMessage();
             return $err_msg;
         }
