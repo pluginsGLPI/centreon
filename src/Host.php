@@ -110,11 +110,11 @@ class Host extends CommonDBTM
         }
     }
 
-    public function searchItemMatch(int $id) {
+    public function searchItemMatch(int $id)
+    {
         $item = new Computer();
         $computer = $item->getFromDB($id);
         $computer_name = $item->fields['name'];
-        echo $computer_name;
 
         $api = new ApiClient();
         $res = $api->connectionRequest();
@@ -134,6 +134,31 @@ class Host extends CommonDBTM
             $match = $api->getHostsList($params);
             print_r($match);
             echo "</pre>";
+        }
+
+        if ($match["result"]["0"]["name"] == $computer_name) {
+            $this->add([
+                'itemtype'      => "Computer",
+                'items_id'      =>  $id,
+                'centreon_id'   =>  $match["result"]["0"]["id"],
+                'centreon_type' =>  "host"
+            ]);
+            echo "item ajouté";
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function searchForItem($id)
+    {
+        $self = new self();
+        if($self->getFromDBByCrit(['items_id' => $id]))
+        {
+            echo "item is in host db";
+            return true;
+        } else {
+            echo "item is not in host db";
         }
     }
 
@@ -164,20 +189,21 @@ class Host extends CommonDBTM
     static function showForItem(CommonDBTM $item, $withtemplate = 0)
     {
         $self = new self();
+        $item_id = $item->getID();
+        if ($self->searchForItem($item_id) == true || $self->searchItemMatch($item_id) == true) {
+            $host_id = $self->fields['centreon_id'];
+            $self->oneHost($host_id);
+            TemplateRenderer::getInstance()->display('@centreon/host.html.twig', [
+            'one_host'  =>  $self->one_host
+            ]);
+        } else {
+            TemplateRenderer::getInstance()->display('@centreon/nohost.html.twig');
+        }
 
-        $self->getFromDBByCrit([
+        /*$self->getFromDBByCrit([
             'itemtype' => $item->getType(),
             'items_id' => $item->getID(),
-        ]);
-
-
-        $host_id = $self->fields['centreon_id'];
-        $self->oneHost($host_id);
-
-
-        TemplateRenderer::getInstance()->display('@centreon/host.html.twig', [
-            'one_host'  =>  $self->one_host
-        ]);
+        ]);*/
     }
 
     public static function getSpecificValueToDisplay($field, $values, array $options = [])
