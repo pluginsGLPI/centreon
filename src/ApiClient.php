@@ -91,9 +91,14 @@ class ApiClient
         return $data;
     }
 
-    public function getHostsList(array $params = []): array
+    public function getHostsList(array $params = [])
     {
-        $params['query'] = ['limit' => 1];
+        $defaults = [
+            'query' => [
+                'limit' => 1,
+            ]
+        ];
+        $params = array_replace_recursive($defaults, $params);
         $data = $this->clientRequest('monitoring/hosts', $params);
         return $data;
     }

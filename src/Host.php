@@ -119,11 +119,21 @@ class Host extends CommonDBTM
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
-            $params['query'] = ['search' => ['host.name' => [ '$eq' => $computer_name]]];
+            $params = [
+                'query' => [
+                    'search' => json_encode([
+                        'host.name' => [
+                            '$eq' => $computer_name
+                        ]
+                    ])
+                ]
+            ];
+            echo "<pre>";
             echo $computer_name;
             print_r($params);
             $match = $api->getHostsList($params);
             print_r($match);
+            echo "</pre>";
         }
     }
 
