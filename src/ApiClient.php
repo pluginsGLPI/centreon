@@ -115,6 +115,12 @@ class ApiClient
         return $data;
     }
 
+    public function getOneHostTimeline(int $host_id, array $params = []): array
+    {
+        $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/timeline', $params);
+        return $data;
+    }
+
     public function getServicesList(array $params = []): array
     {
         $data = $this->clientRequest('monitoring/services', $params);

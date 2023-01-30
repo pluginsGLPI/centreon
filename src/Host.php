@@ -84,9 +84,10 @@ class Host extends CommonDBTM
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if ($res["security"]["token"] != NULL) {
-            $gethost = $api->getOneHost($id);
-            $gethost_r = $api->getOneHostResources($id);
-            $getservices = $api->getServicesListForOneHost($id);
+            $gethost        = $api->getOneHost($id);
+            $gethost_r      = $api->getOneHostResources($id);
+            $getservices    = $api->getServicesListForOneHost($id);
+            $gettimeline    = $api->getOneHostTimeline($id);
             if ($gethost != NULL) {
                 $i_host = [];
                 $i_host = [
@@ -98,8 +99,9 @@ class Host extends CommonDBTM
                     'next_check'        =>  $gethost["next_check"],
                     'check_period'      =>  $gethost["check_period"],
                 ];
-                $i_host["services"] = $getservices["result"];
-                $i_host["nb_services"] = count($i_host["services"]);
+                $i_host["services"]     = $getservices["result"];
+                $i_host["nb_services"]  = count($i_host["services"]);
+                $i_host["timeline"]     = $gettimeline["result"];
                 $this->one_host = $i_host;
                 return $i_host;
             } else {
@@ -148,14 +150,12 @@ class Host extends CommonDBTM
 
     public function searchForItem($id)
     {
-        if($this->getFromDBByCrit(['items_id' => $id]))
-        {
+        if ($this->getFromDBByCrit(['items_id' => $id])) {
             return true;
         } else {
             return false;
         }
     }
-
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
@@ -188,16 +188,11 @@ class Host extends CommonDBTM
             $host_id = $self->fields['centreon_id'];
             $self->oneHost($host_id);
             TemplateRenderer::getInstance()->display('@centreon/host.html.twig', [
-            'one_host'  =>  $self->one_host
+                'one_host'  =>  $self->one_host
             ]);
         } else {
             TemplateRenderer::getInstance()->display('@centreon/nohost.html.twig');
         }
-
-        /*$self->getFromDBByCrit([
-            'itemtype' => $item->getType(),
-            'items_id' => $item->getID(),
-        ]);*/
     }
 
     public static function getSpecificValueToDisplay($field, $values, array $options = [])
