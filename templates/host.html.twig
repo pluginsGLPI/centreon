@@ -15,7 +15,7 @@
     <div class="row">
     <div class="col">
         <div class="datagrid-item">
-            <div class="datagrid-title fw-bold">Status</div>
+            <div class="datagrid-title fw-bold">{{ __("Status") }}</div>
                 <div class="datagrid-content mt-2">
                     {% if one_host.status == 'UP' %}
                         <span class="status status-green">
@@ -35,37 +35,37 @@
     </div>
     <div class="col">
         <div class="datagrid-item">
-            <div class="datagrid-title fw-bold">Name</div>
+            <div class="datagrid-title fw-bold">{{ __("Name") }}</div>
                 <div class="datagrid-content mt-2">{{ one_host.name }}</div>
         </div>
     </div>
     <div class="col">
         <div class="datagrid-item">
-            <div class="datagrid-title fw-bold">Alias</div>
+            <div class="datagrid-title fw-bold">{{ __("Alias") }}</div>
                 <div class="datagrid-content mt-2">{{ one_host.alias }}</div>
         </div>
     </div>
     <div class="col">
         <div class="datagrid-item">
-            <div class="datagrid-title fw-bold">FQDN</div>
+            <div class="datagrid-title fw-bold">{{ __("FQDN") }}</div>
                 <div class="datagrid-content mt-2">{{ one_host.fqdn }}</div>
         </div>
     </div>
     <div class="col">
         <div class="datagrid-item">
-            <div class="datagrid-title fw-bold">Last check</div>
+            <div class="datagrid-title fw-bold">{{ __("Last check") }}</div>
                 <div class="datagrid-content mt-2">{{ one_host.last_check }}</div>
         </div>
     </div>
     <div class="col">
         <div class="datagrid-item">
-            <div class="datagrid-title fw-bold">Next check</div>
+            <div class="datagrid-title fw-bold">{{ __("Next check") }}</div>
                 <div class="datagrid-content mt-2">{{ one_host.next_check }}</div>
         </div>
     </div>
     <div class="col">
         <div class="datagrid-item">
-            <div class="datagrid-title fw-bold">Check period</div>
+            <div class="datagrid-title fw-bold">{{ __("Check period") }}</div>
                 <div class="datagrid-content mt-2">{{ one_host.check_period }}</div>
         </div>
     </div>
@@ -76,19 +76,20 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
       <li class="nav-item">
-        <a href="#tabs-services-ex1" class="nav-link active" data-bs-toggle="tab">Services</a>
+        <a href="#tabs-services-ex1" class="nav-link active" data-bs-toggle="tab">{{ __("Services") }}</a>
       </li>
       <li class="nav-item">
-        <a href="#tabs-historique-ex1" class="nav-link" data-bs-toggle="tab">Historique</a>
+        <a href="#tabs-historique-ex1" class="nav-link" data-bs-toggle="tab">{{ __("Timeline") }}</a>
       </li>
     </ul>
   </div>
 </div>
+
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active show" id="tabs-services-ex1">
         <div class="d-flex flew-row align-items-center p-2 mt-3">
-                <h2 class="pe-3 m-0">Services</h2>
+                <h2 class="pe-3 m-0">{{ __("Services") }}</h2>
                 {% set count_ok = 0 %}
                 {% set count_w = 0 %}
                 {% set count_d = 0 %}
@@ -155,32 +156,137 @@
              {% endfor %}
 </div>
     </div>
+
         <div class="tab-pane" id="tabs-historique-ex1">
-            <h2 class="pe-3 m-0">Historique</h2>
-                {% for tl in one_host["timeline"] %}
-                    <div class="card my-2">
-                        <div class="card-body d-flex align-items-center justify-content-start">
-                            <div style="width:25px;">
-                            <i class="ti ti-calendar-time" style="font-size:25px"></i>
-                            </div>
-                                <div>
-                                <code>{{ tl.date|date("l,F d,Y G:i:s") }}</code>
-                                <code>{{ tl.content }}</code>
-                                {% if tl.status.name == "UP" %}
-                                <span class="status status-green">{{ tl.status.name }}</span>
-                                {% elseif tl.status.name == "DOWN" %}
-                                <span class="status status-red">{{ tl.status.name }}</span>
-                                {% elseif tl.status.name == "WARNING" %}
-                                <span class="status status-orange">{{ tl.status.name }}</span>
-                                {% else %}
-                                <span class="status status-grey">{{ tl.status.name }}</span>
-                                {% endif %}
-                                <code> tries : {{ tl.tries }}</code>
-                                </div>
-                    </div>  
+            <h2 class="pe-3 my-2">{{ __("Timeline") }}</h2>
+
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                    <li class="nav-item">
+                        <a href="#tabs-today-ex1" class="nav-link active" data-bs-toggle="tab">{{ __("Today") }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tabs-day-ex1" class="nav-link" data-bs-toggle="tab">{{ __("1 Day") }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tabs-week-ex1" class="nav-link" data-bs-toggle="tab">{{ __("1 Week") }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tabs-month-ex1" class="nav-link" data-bs-toggle="tab">{{ __("1 Month") }}</a>
+                    </li>
+                    </ul>
                 </div>
-                {% endfor %}
-        </div>
+
+                <div class="card-body">
+                    <div class="tab-content">
+                    {% set date_t = now|date("l,F d,Y") %}
+                    <div class="tab-pane active show" id="tabs-today-ex1">
+                        <h4>{{ __("Today") }}</h4>
+                            <p>{{ date_t }}</p>
+                            {% for tl in one_host["timeline"] %}
+                                {% if tl.date|date("l,F d,Y") == date_t %}
+                                    <div class="card d-flex my-2">
+                                    <div class="card-body my-2">
+                                        <span style="font-size:20px;" class="position-absolute top-50 start-0 translate-middle"><i class="ti ti-calendar-time"></i></span>
+                                        {% if tl.status.name == "UP" %}
+                                            <span class="status status-green">{{ tl.status.name }}</span>
+                                        {% elseif tl.status.name == "DOWN" %}
+                                            <span class="status status-red">{{ tl.status.name }}</span>
+                                        {% elseif tl.status.name == "WARNING" %}
+                                            <span class="status status-orange">{{ tl.status.name }}</span>
+                                        {% else %}
+                                            <span class="status status-grey">{{ tl.status.name }}</span>
+                                        {% endif %}
+                                        <code>{{ tl.content }}</code>
+                                        <code> tries : {{ tl.tries }}</code>
+                                        <code class="float-end">{{ tl.date|date("l,F d,Y G:i:s") }}</code>
+                                    </div>
+                                    </div> 
+                                {% endif %}
+                            {% endfor %}
+                    </div>
+                    <div class="tab-pane" id="tabs-day-ex1">
+                        <h4>{{ __("1 day ago") }}</h4>
+                        {% set date_d = date_t|date_modify("-1 day")|date("l,F d,Y") %}
+                            <p>{{ date_d }}</p>
+                                {% for tl in one_host["timeline"] %}
+                                    {% if tl.date|date("l,F d,Y") == date_d %}
+                                        <div class="card d-flex my-2">
+                                        <div class="card-body my-2">
+                                            <span style="font-size:20px;" class="position-absolute top-50 start-0 translate-middle"><i class="ti ti-calendar-time"></i></span>
+                                            {% if tl.status.name == "UP" %}
+                                                <span class="status status-green">{{ tl.status.name }}</span>
+                                            {% elseif tl.status.name == "DOWN" %}
+                                                <span class="status status-red">{{ tl.status.name }}</span>
+                                            {% elseif tl.status.name == "WARNING" %}
+                                                <span class="status status-orange">{{ tl.status.name }}</span>
+                                            {% else %}
+                                                <span class="status status-grey">{{ tl.status.name }}</span>
+                                            {% endif %}
+                                            <code>{{ tl.content }}</code>
+                                            <code> tries : {{ tl.tries }}</code>
+                                            <code class="float-end">{{ tl.date|date("l,F d,Y G:i:s") }}</code>
+                                        </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                    </div>
+                    <div class="tab-pane" id="tabs-week-ex1">
+                        <h4>{{ __("1 week ago") }}</h4>
+                        {% set date_w = date_t|date_modify("-7 days")|date("l,F d,Y") %}
+                            <p>{{ date_w }}</p>
+                                {% for tl in one_host["timeline"] %}
+                                    {% if tl.date|date("l,F d,Y") >= date_w %}
+                                        <div class="card d-flex my-2">
+                                        <div class="card-body my-2">
+                                            <span style="font-size:20px;" class="position-absolute top-50 start-0 translate-middle"><i class="ti ti-calendar-time"></i></span>
+                                            {% if tl.status.name == "UP" %}
+                                                <span class="status status-green">{{ tl.status.name }}</span>
+                                            {% elseif tl.status.name == "DOWN" %}
+                                                <span class="status status-red">{{ tl.status.name }}</span>
+                                            {% elseif tl.status.name == "WARNING" %}
+                                                <span class="status status-orange">{{ tl.status.name }}</span>
+                                            {% else %}
+                                                <span class="status status-grey">{{ tl.status.name }}</span>
+                                            {% endif %}
+                                            <code>{{ tl.content }}</code>
+                                            <code> tries : {{ tl.tries }}</code>
+                                            <code class="float-end">{{ tl.date|date("l,F d,Y G:i:s") }}</code>
+                                        </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                    </div>
+                    <div class="tab-pane" id="tabs-month-ex1">
+                        <h4>{{ __("1 month ago") }}</h4>
+                        {% set date_m = date_t|date_modify("-1 month")|date("l,F d,Y") %}
+                            <p>{{ date_m }}</p>
+                                {% for tl in one_host["timeline"] %}
+                                    {% if tl.date|date("l,F d,Y") >= date_m %}
+                                        <div class="card d-flex my-2">
+                                        <div class="card-body my-2">
+                                            <span style="font-size:20px;" class="position-absolute top-50 start-0 translate-middle"><i class="ti ti-calendar-time"></i></span>
+                                            {% if tl.status.name == "UP" %}
+                                                <span class="status status-green">{{ tl.status.name }}</span>
+                                            {% elseif tl.status.name == "DOWN" %}
+                                                <span class="status status-red">{{ tl.status.name }}</span>
+                                            {% elseif tl.status.name == "WARNING" %}
+                                                <span class="status status-orange">{{ tl.status.name }}</span>
+                                            {% else %}
+                                                <span class="status status-grey">{{ tl.status.name }}</span>
+                                            {% endif %}
+                                            <code>{{ tl.content }}</code>
+                                            <code> tries : {{ tl.tries }}</code>
+                                            <code class="float-end">{{ tl.date|date("l,F d,Y G:i:s") }}</code>
+                                        </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                    </div>
+                    </div>
+                </div>
+                </div>
         </div>
     </body>
 </html>
