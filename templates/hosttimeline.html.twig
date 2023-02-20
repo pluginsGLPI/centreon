@@ -1,0 +1,42 @@
+<div class="d-flex">
+            <h2 class="pe-3 my-2">{{ __("Timeline") }}</h2>
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <button type="button" class="btn btn-outline-secondary" id="t-day">{{ __("1 Day") }}</button>
+                    <button type="button" class="btn btn-outline-secondary" id="t-week">{{ __("1 Week") }}</button>
+                    <button type="button" class="btn btn-outline-secondary" id="t-month">{{ __("1 Month") }}</button>
+                </div>
+</div>
+
+<p id="p-day" class="d-none"> Ce qu'il s'est passé hier </p>
+<p id="p-week" class="d-none"> Ce qu'il s'est passé depuis 1 semaine </p>
+<p id="p-month" class="d-none"> Ce qu'il s'est passé depuis 1 mois </p>
+<div id="p-test"></div>
+<div class='d-date'></div>
+
+
+<script>
+    $(document).ready(function(){
+        $('#t-day').click(function(){
+            $('#p-day').removeClass('d-none');
+            $('#p-week').addClass('d-none');
+            $('#p-month').addClass('d-none');
+            $.get(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=day&hostid=" + {{ hostid }}, function(data) {
+                    var res = data;
+                    console.log(res.id);
+                })
+            });
+            });
+        $('#t-week').click(function(){
+            $('#p-week').removeClass('d-none');
+            $('#p-day').addClass('d-none');
+            $('#p-month').addClass('d-none');
+            $('#p-test').load(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=week&hostid=" + {{ hostid }});
+        });
+        $('#t-month').click(function(){
+            $('#p-month').removeClass('d-none');
+            $('#p-day').addClass('d-none');
+            $('#p-week').addClass('d-none');
+            $('#p-test').load(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=month&hostid=" + {{ hostid }});
+
+        });
+</script>

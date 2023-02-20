@@ -112,6 +112,79 @@ class Host extends CommonDBTM
         }
     }
 
+    public function hostTimeline(int $id, string $period)
+    {
+            $api     = new ApiClient();
+            $session = $api->connectionRequest();
+            if (isset($session["security"]["token"])) {
+                $gettimeline   = $api->getOneHostTimeline($id);
+                $timeline_r      = $gettimeline["result"];
+
+                foreach($timeline_r as $event) {
+                    $timeline[] = [
+                        'id'        =>  $event['id'],
+                        'date'      =>  $this->transformDate($event['date']),
+                        'content'   =>  $event['content'],
+                        'status'    =>  $event['status']['name'],
+                        'tries'     =>  $event['tries']
+                    ];
+                }
+
+                $d_day        = date('Y-m-d');
+                $day_oneday   = date('Y-m-d', strtotime($d_day.'-1 day'));
+                $day_oneweek  = date('Y-m-d', strtotime($d_day.'-7 days'));
+                $day_onemonth = date('Y-m-d', strtotime($d_day.'-1 month'));
+
+                //print_r($timeline);
+
+                if($period == "day") {
+                    foreach($timeline as $event => $info) {
+                        $setdate = $this->transformDateForCompare($info['date']);
+                        //echo $event;
+                        if($setdate == $day_oneday) {
+                            $res = [$info];
+                            echo json_encode($res);
+                        }
+                        }
+                    }
+            }
+
+                if($period == "week") {
+                    foreach($timeline as $event => $info) {
+                        $setdate = $this->transformDateForCompare($info['date']);
+                        if($setdate >= $day_oneweek) {
+                            $res = [$event => $info];
+                            echo json_encode($res);
+                        }
+                    }
+                }
+
+                if($period == "month") {
+                    foreach($timeline as $event => $info) {
+                        $setdate = $this->transformDateForCompare($info['date']);
+                        if($setdate >= $day_onemonth) {
+                            $res = [$event => $info];
+                            echo json_encode($res);
+                        }
+                    }
+                }
+
+    }
+
+    public function transformDate($date) {
+        $timestamp = strtotime($date);
+        $newdate   = date('l,F d,Y G:i:s', $timestamp);
+        return $newdate;
+    }
+
+    public function transformDateForCompare($date) {
+        $timestamp = strtotime($date);
+        $newdate   = date('Y-m-d', $timestamp);
+        return $newdate;
+    }
+
+
+
     public function searchItemMatch(int $id)
     {
         $item = new Computer();
@@ -188,7 +261,8 @@ class Host extends CommonDBTM
             $host_id = $self->fields['centreon_id'];
             $self->oneHost($host_id);
             TemplateRenderer::getInstance()->display('@centreon/host.html.twig', [
-                'one_host'  =>  $self->one_host
+                'one_host'  =>  $self->one_host,
+                'hostid'   =>  $host_id
             ]);
         } else {
             TemplateRenderer::getInstance()->display('@centreon/nohost.html.twig');
