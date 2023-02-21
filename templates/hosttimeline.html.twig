@@ -7,11 +7,10 @@
                 </div>
 </div>
 
-<p id="p-day" class="d-none"> Ce qu'il s'est passé hier </p>
-<p id="p-week" class="d-none"> Ce qu'il s'est passé depuis 1 semaine </p>
-<p id="p-month" class="d-none"> Ce qu'il s'est passé depuis 1 mois </p>
+<p id="p-day" class="d-none my-2"> Ce qu'il s'est passé hier </p>
+<p id="p-week" class="d-none my-2"> Ce qu'il s'est passé depuis 1 semaine </p>
+<p id="p-month" class="d-none my-2"> Ce qu'il s'est passé depuis 1 mois </p>
 <div id="p-test"></div>
-<div class='d-date'></div>
 
 
 <script>
@@ -20,10 +19,7 @@
             $('#p-day').removeClass('d-none');
             $('#p-week').addClass('d-none');
             $('#p-month').addClass('d-none');
-            $.get(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=day&hostid=" + {{ hostid }}, function(data) {
-                    var res = data;
-                    console.log(res.id);
-                })
+            $('#p-test').load(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=day&hostid=" + {{ hostid }})
             });
             });
         $('#t-week').click(function(){

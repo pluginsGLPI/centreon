@@ -1,0 +1,32 @@
+{% if timeline is not null %}
+<div class="table-responsive">
+  <table
+		class="table table-vcenter">
+    <thead>
+      <tr>
+        <th>{{ __('ID') }}</th>
+        <th>{{ __('Date') }}</th>
+        <th>{{ __('Content') }}</th>
+        <th>{{ __('Status') }}</th>
+        <th>{{ __('Tries') }}</th>
+        <th class="w-1"></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for event in timeline %}
+      <tr>
+        <td >{{ event.id }}</td>
+        <td class="text-muted" >{{ event.date }}</td>
+        <td class="text-muted" >{{ event.content }}</td>
+        <td class="text-muted" >{{ event.status }}</td>
+        <td class="text-muted" >{{ event.tries }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-title">{{ noevent }}</h4>
+    </div>
+{% endif %}

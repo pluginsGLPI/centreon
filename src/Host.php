@@ -116,6 +116,8 @@ class Host extends CommonDBTM
     {
             $api     = new ApiClient();
             $session = $api->connectionRequest();
+            $notimeline = NULL;
+            $res = NULL;
             if (isset($session["security"]["token"])) {
                 $gettimeline   = $api->getOneHostTimeline($id);
                 $timeline_r      = $gettimeline["result"];
@@ -140,10 +142,8 @@ class Host extends CommonDBTM
                 if($period == "day") {
                     foreach($timeline as $event => $info) {
                         $setdate = $this->transformDateForCompare($info['date']);
-                        //echo $event;
                         if($setdate == $day_oneday) {
-                            $res = [$info];
-                            echo json_encode($res);
+                            $res = $timeline;
                         }
                         }
                     }
@@ -153,8 +153,7 @@ class Host extends CommonDBTM
                     foreach($timeline as $event => $info) {
                         $setdate = $this->transformDateForCompare($info['date']);
                         if($setdate >= $day_oneweek) {
-                            $res = [$event => $info];
-                            echo json_encode($res);
+                            $res = $timeline;
                         }
                     }
                 }
@@ -163,11 +162,17 @@ class Host extends CommonDBTM
                     foreach($timeline as $event => $info) {
                         $setdate = $this->transformDateForCompare($info['date']);
                         if($setdate >= $day_onemonth) {
-                            $res = [$event => $info];
-                            echo json_encode($res);
+                            $res = $timeline;
                         }
                     }
                 }
+                if(!isset($res)){
+                    $notimeline = "No event to show";
+                }
+                TemplateRenderer::getInstance()->display('@centreon/timeline.html.twig', [
+                    'timeline'  =>  $res,
+                    'noevent'   =>  $notimeline
+                ]);
 
     }
 
