@@ -6,32 +6,19 @@
                     <button type="button" class="btn btn-outline-secondary" id="t-month">{{ __("1 Month") }}</button>
                 </div>
 </div>
-
-<p id="p-day" class="d-none my-2"> Ce qu'il s'est passé hier </p>
-<p id="p-week" class="d-none my-2"> Ce qu'il s'est passé depuis 1 semaine </p>
-<p id="p-month" class="d-none my-2"> Ce qu'il s'est passé depuis 1 mois </p>
 <div id="p-test"></div>
 
 
 <script>
     $(document).ready(function(){
         $('#t-day').click(function(){
-            $('#p-day').removeClass('d-none');
-            $('#p-week').addClass('d-none');
-            $('#p-month').addClass('d-none');
             $('#p-test').load(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=day&hostid=" + {{ hostid }})
             });
             });
         $('#t-week').click(function(){
-            $('#p-week').removeClass('d-none');
-            $('#p-day').addClass('d-none');
-            $('#p-month').addClass('d-none');
             $('#p-test').load(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=week&hostid=" + {{ hostid }});
         });
         $('#t-month').click(function(){
-            $('#p-month').removeClass('d-none');
-            $('#p-day').addClass('d-none');
-            $('#p-week').addClass('d-none');
             $('#p-test').load(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=month&hostid=" + {{ hostid }});
 
         });

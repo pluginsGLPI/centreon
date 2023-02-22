@@ -59,7 +59,7 @@ class Config extends \Config
             'can_edit'       => $canedit
         ]);
 
-            if (isset($current_config["centreon-username"])) {
+        if (isset($current_config["centreon-username"])) {
             $api = new ApiClient();
             $diag = $api->diagnostic();
 

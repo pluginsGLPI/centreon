@@ -2,12 +2,14 @@
 
 namespace GlpiPlugin\Centreon;
 
+use Toolbox;
+use Computer;
 use CommonDBTM;
 use CommonGLPI;
-use Computer;
-use Glpi\Application\View\TemplateRenderer;
 use GuzzleHttp\Client;
+use Session;
 use GlpiPlugin\Centreon\ApiClient;
+use Glpi\Application\View\TemplateRenderer;
 
 class Host extends CommonDBTM
 {
@@ -33,7 +35,7 @@ class Host extends CommonDBTM
                 ];
             }
         } else {
-            echo "No List";
+            echo __("The list is empty", "centreon");
         }
         $this->glpi_items = $array_computer;
     }
@@ -46,7 +48,6 @@ class Host extends CommonDBTM
             echo "Connexion OK ";
             $list = $api->getHostsList();
             if ($list != NULL) {
-                echo "List OK ";
                 foreach ($list["result"] as $item_centreon) {
                     $items_centreon[]   =   [
                         'centreon_id'   =>  $item_centreon["id"],
@@ -73,7 +74,6 @@ class Host extends CommonDBTM
                         'itemtype'      => 'Computer',
                         'centreon_type' => 'Host'
                     ]);
-                    echo "item ajouté";
                 }
             }
         }
@@ -114,75 +114,62 @@ class Host extends CommonDBTM
 
     public function hostTimeline(int $id, string $period)
     {
-            $api     = new ApiClient();
-            $session = $api->connectionRequest();
-            $notimeline = NULL;
-            $res = NULL;
-            if (isset($session["security"]["token"])) {
-                $gettimeline   = $api->getOneHostTimeline($id);
-                $timeline_r      = $gettimeline["result"];
+        $api     = new ApiClient();
+        $session = $api->connectionRequest();
+        $notimeline = NULL;
+        $res = NULL;
+        $timeline = [];
+        if (isset($session["security"]["token"])) {
+            $gettimeline   = $api->getOneHostTimeline($id);
+            $timeline_r      = $gettimeline["result"];
 
-                foreach($timeline_r as $event) {
-                    $timeline[] = [
-                        'id'        =>  $event['id'],
-                        'date'      =>  $this->transformDate($event['date']),
-                        'content'   =>  $event['content'],
-                        'status'    =>  $event['status']['name'],
-                        'tries'     =>  $event['tries']
-                    ];
-                }
-
-                $d_day        = date('Y-m-d');
-                $day_oneday   = date('Y-m-d', strtotime($d_day.'-1 day'));
-                $day_oneweek  = date('Y-m-d', strtotime($d_day.'-7 days'));
-                $day_onemonth = date('Y-m-d', strtotime($d_day.'-1 month'));
-
-                //print_r($timeline);
-
-                if($period == "day") {
-                    foreach($timeline as $event => $info) {
-                        $setdate = $this->transformDateForCompare($info['date']);
-                        if($setdate == $day_oneday) {
-                            $res = $timeline;
-                        }
-                        }
-                    }
+            foreach ($timeline_r as $event) {
+                $timeline[] = [
+                    'id'        =>  $event['id'],
+                    'date'      =>  $this->transformDate($event['date']),
+                    'content'   =>  $event['content'],
+                    'status'    =>  $event['status']['name'],
+                    'tries'     =>  $event['tries']
+                ];
             }
+        }
 
-                if($period == "week") {
-                    foreach($timeline as $event => $info) {
-                        $setdate = $this->transformDateForCompare($info['date']);
-                        if($setdate >= $day_oneweek) {
-                            $res = $timeline;
-                        }
-                    }
-                }
+        $period_string = "";
+        switch ($period) {
+            case "day":
+                $period_string = "-1 day";
+                break;
+            case "week":
+                $period_string = "-7 days";
+                break;
+            case "month":
+                $period_string = "-1 month";
+                break;
+        }
+        $date_end = date('Y-m-d', strtotime(date('Y-m-d') . $period_string));
+        $filtered_timeline = [];
+        foreach ($timeline as $event => $info) {
+            $setdate = $this->transformDateForCompare($info['date']);
+            if ($setdate >= $date_end) {
+                $filtered_timeline[$event] = $info;
+            }
+        }
 
-                if($period == "month") {
-                    foreach($timeline as $event => $info) {
-                        $setdate = $this->transformDateForCompare($info['date']);
-                        if($setdate >= $day_onemonth) {
-                            $res = $timeline;
-                        }
-                    }
-                }
-                if(!isset($res)){
-                    $notimeline = "No event to show";
-                }
-                TemplateRenderer::getInstance()->display('@centreon/timeline.html.twig', [
-                    'timeline'  =>  $res,
-                    'noevent'   =>  $notimeline
-                ]);
-
+        TemplateRenderer::getInstance()->display('@centreon/timeline.html.twig', [
+            'timeline'  =>  $filtered_timeline,
+        ]);
     }
 
-    public function transformDate($date) {
+
+    public function transformDate($date)
+    {
         $timestamp = strtotime($date);
         $newdate   = date('l,F d,Y G:i:s', $timestamp);
         return $newdate;
     }
 
-    public function transformDateForCompare($date) {
+    public function transformDateForCompare($date)
+    {
         $timestamp = strtotime($date);
         $newdate   = date('Y-m-d', $timestamp);
         return $newdate;
@@ -280,14 +267,11 @@ class Host extends CommonDBTM
             case 'id':
                 if (intval($values["centreon_id"]) > 0) {
                     $self = new self();
-
                     $res = $self->oneHost($values["centreon_id"]);
-
                     return $res["status"] ?? '';
                 }
                 break;
         }
-
         return parent::getSpecificValueToDisplay($field, $values, $options);
     }
 }
