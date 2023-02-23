@@ -116,8 +116,6 @@ class Host extends CommonDBTM
     {
         $api     = new ApiClient();
         $session = $api->connectionRequest();
-        $notimeline = NULL;
-        $res = NULL;
         $timeline = [];
         if (isset($session["security"]["token"])) {
             $gettimeline   = $api->getOneHostTimeline($id);
@@ -175,7 +173,24 @@ class Host extends CommonDBTM
         return $newdate;
     }
 
+    public function sendCheck(int $id)
+    {
+        $api = new ApiClient();
+        $res = $api->connectionRequest();
+        if(isset($res["security"]["token"])) {
+            try 
+            {
+                $res = $api->sendCheckToAnHost($id);
+                $sentcheckok = __('Check sent', 'centreon');
+                return $sentcheckok;
 
+            } catch(\Exception $e)
+            {
+                $error_msg = $e->getMessage();
+                return $error_msg;
+            }
+        }
+    }
 
     public function searchItemMatch(int $id)
     {

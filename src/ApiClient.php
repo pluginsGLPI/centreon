@@ -134,4 +134,11 @@ class ApiClient
         Toolbox::logDebug($host_id);
         return $data;
     }
+
+    public function sendCheckToAnHost(int $host_id, array $params = [])
+    {
+        $params = ['json' => ['is_forced' => true]];
+        $data   = $this->clientRequest('monitoring/hosts/' . $host_id . '/check', $params, 'POST');
+        return $data;
+    }
 }
