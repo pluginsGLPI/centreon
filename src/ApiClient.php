@@ -10,6 +10,7 @@ use Session;
 class ApiClient
 {
     public $auth_token = null;
+    public $user_id = null;
     public $api_config = [];
 
     public function centreonConfig()
@@ -43,6 +44,7 @@ class ApiClient
             return $e->getMessage();
         }
         $this->auth_token   = $data["security"]["token"];
+        $this->user_id      = $data["contact"]["id"];
 
         return $data;
     }

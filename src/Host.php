@@ -45,7 +45,6 @@ class Host extends CommonDBTM
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if ($res["security"]["token"] != NULL) {
-            echo "Connexion OK ";
             $list = $api->getHostsList();
             if ($list != NULL) {
                 foreach ($list["result"] as $item_centreon) {
@@ -55,11 +54,7 @@ class Host extends CommonDBTM
                     ];
                 }
                 $this->centreon_items = $items_centreon;
-            } else {
-                echo "No list";
             }
-        } else {
-            echo "failed : no token";
         }
     }
 
@@ -104,11 +99,7 @@ class Host extends CommonDBTM
                 $i_host["timeline"]     = $gettimeline["result"];
                 $this->one_host = $i_host;
                 return $i_host;
-            } else {
-                echo "Failed to find host";
             }
-        } else {
-            echo "Failed wrong token";
         }
     }
 
@@ -177,15 +168,12 @@ class Host extends CommonDBTM
     {
         $api = new ApiClient();
         $res = $api->connectionRequest();
-        if(isset($res["security"]["token"])) {
-            try 
-            {
+        if (isset($res["security"]["token"])) {
+            try {
                 $res = $api->sendCheckToAnHost($id);
                 $sentcheckok = __('Check sent', 'centreon');
                 return $sentcheckok;
-
-            } catch(\Exception $e)
-            {
+            } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
                 return $error_msg;
             }

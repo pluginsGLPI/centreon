@@ -1,10 +1,72 @@
-
+{% import "components/form/fields_macros.html.twig" as fields %}
     <div class="d-flex flew-row align-items-center py-3 ps-2">
     <h1 class="pe-3 m-0">Host Information</h1>
     <img class="h-4 d-inline-block" src="https://cdn.icon-icons.com/icons2/2699/PNG/512/centreon_logo_icon_170408.png" alt="lien_centreon">
-    <button type="button" class="btn mx-3 toggle" id="check" >Check</button>
+    <button type="button" class="btn ms-4 me-1 toggle" id="check" >Check</button>
     <div class="spinner-border text-purple mx-4 d-none toggle" role="status" id="spinner"></div>
+    <button type="button" class="btn" id="downtime">Downtime</button>
     </div>
+
+<div class="modal" tabindex="-1" id="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{__('Set downtime')}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body d-flex justify-content-start align-items-center">
+                <div class="me-3">
+                <label class="form-check">
+                    <input type="checkbox" class="form-check-input" id="fixed" checked/>
+                    <span class="form-check-label">{{__('fixed')}}</span>
+                </label>
+                </div>
+            <div class="row rev">
+                {{ fields.datetimeField('datetime', '', 'From')}}
+                {{ fields.datetimeField('datetime', '', 'To')}}
+            </div>
+            <div class="row rev ms-3 d-none">
+                <fieldset class="form-fieldset mx-auto">
+                    <div class="mb-3">
+                        <label class="form-label">{{ __('Duration')}}</label>
+                        <input type="text" class="form-control" autocomplete="off" name="duration" placeholder="3600"/>
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-select">
+                            <option value="1" selected>{{ __('seconds')}}</option>
+                            <option value="2">{{ __('minutes')}}</option>
+                            <option value="3">{{ __('hours')}}</option>
+                        </select>
+                    </div>
+                </fieldset>
+            </div>
+      </div>
+    <div class="modal-body">
+        <div class="row">
+            <label class="form-label">{{__('Comment')}}</label>
+            <textarea class="form-control" rows="3"></textarea>
+        </div>
+            <div class="my-3">
+            <label class="form-check">
+            <input type="checkbox" class="form-check-input" checked/>
+            <span class="form-check-label text-nowrap">{{__('Set downtime on services attached to host')}}</span>
+            </label>
+            </div>
+
+    </div>
+      <div class="modal-footer">
+        <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+          Cancel
+        </a>
+        <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal">
+          <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+          Set downtime
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 
     <h2 class="p-2 m-0">General</h2>
 
@@ -162,12 +224,16 @@
     $(document).ready(function(){
         $('#check').click(function(){
             $('.toggle').toggleClass('d-none');
-            console.log("j'ai cliqué");
             $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/sendCheck.php?hostid=" + {{ hostid }}, function(response){
                 $('#check').addClass('btn-lime');
                 $('.toggle').toggleClass('d-none');
-                console.log(response);
             })
+        })
+        $('#downtime').click(function(){
+                $('#dialog').modal('show');
+        });
+        $('#fixed').click(function(){
+                $('.rev').toggleClass('d-none');
         })
     })
 </script>
