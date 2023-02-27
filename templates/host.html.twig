@@ -17,19 +17,20 @@
       <div class="modal-body d-flex justify-content-start align-items-center">
                 <div class="me-3">
                 <label class="form-check">
-                    <input type="checkbox" class="form-check-input" id="fixed" checked/>
+                    {{ fields.hiddenField('author_id', '') }}
+                    <input type="checkbox" class="form-check-input" id="is_fixed" name="is_fixed" value=true checked/>
                     <span class="form-check-label">{{__('fixed')}}</span>
                 </label>
                 </div>
             <div class="row rev">
-                {{ fields.datetimeField('datetime', '', 'From')}}
-                {{ fields.datetimeField('datetime', '', 'To')}}
+                {{ fields.datetimeField('start_time', '', 'From')}}
+                {{ fields.datetimeField('end_time', '', 'To')}}
             </div>
             <div class="row rev ms-3 d-none">
                 <fieldset class="form-fieldset mx-auto">
                     <div class="mb-3">
                         <label class="form-label">{{ __('Duration')}}</label>
-                        <input type="text" class="form-control" autocomplete="off" name="duration" placeholder="3600"/>
+                        <input type="text" class="form-control" autocomplete="off" name="duration" id="duration" placeholder="3600"/>
                     </div>
                     <div class="mb-3">
                         <select class="form-select">
@@ -44,11 +45,11 @@
     <div class="modal-body">
         <div class="row">
             <label class="form-label">{{__('Comment')}}</label>
-            <textarea class="form-control" rows="3"></textarea>
+            <textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
         </div>
             <div class="my-3">
             <label class="form-check">
-            <input type="checkbox" class="form-check-input" checked/>
+            <input type="checkbox" class="form-check-input" id="with_services" name="with_services" value=true checked/>
             <span class="form-check-label text-nowrap">{{__('Set downtime on services attached to host')}}</span>
             </label>
             </div>
@@ -58,7 +59,7 @@
         <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
           Cancel
         </a>
-        <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal">
+        <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal" id="send">
           <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
           <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
           Set downtime
@@ -232,8 +233,34 @@
         $('#downtime').click(function(){
                 $('#dialog').modal('show');
         });
-        $('#fixed').click(function(){
+        $('#is_fixed').click(function(){
                 $('.rev').toggleClass('d-none');
-        })
-    })
+                if($(this).is(':checked')) {
+                    $(this).val(true);
+                    var value = $(this).val();
+                    console.log(value);
+                }
+        });
+        $('#with_services').click(function(){
+                if($(this).is(':checked')) {
+                    $(this).val(true);
+                    var value = $(this).val();
+                    console.log(value);
+                }
+        });
+        $('#send').click(function(){
+            $('input[name=author_id]').val( {{ uid }} );
+            var textarea = $.trim($('#comment').val());
+            if(textarea != "") {
+                $('#comment').val(textarea);
+            }
+            var params = $('input[name=start_time], input[name=end_time], input[name=is_fixed], input[name=duration], input[name=author_id], #comment, input[name=with_services]').serialize();
+            console.log(params);
+            $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/setDowntime.php", { hostid: {{ hostid }}, params: params}, function(data) {
+                console.log('downtime envoyé');
+                console.log(data);
+                
+            })
+            });
+    });
 </script>

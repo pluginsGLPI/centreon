@@ -16,6 +16,7 @@ class Host extends CommonDBTM
     public $glpi_items   = [];
     public $centreon_items  = [];
     public $one_host = [];
+    public $uid = '';
 
     static function getTypeName($nb = 0)
     {
@@ -79,6 +80,7 @@ class Host extends CommonDBTM
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if ($res["security"]["token"] != NULL) {
+            $this->uid      = $res['contact']['id'];
             $gethost        = $api->getOneHost($id);
             $gethost_r      = $api->getOneHostResources($id);
             $getservices    = $api->getServicesListForOneHost($id);
@@ -179,7 +181,38 @@ class Host extends CommonDBTM
             }
         }
     }
+    public function setDowntime(int $id, array $params)
+    {
+        $new_params = ['json'   => [
+                'start_time'    => $params['start_time'],
+                'end_time'      => $params['end_time'],
+                'is_fixed'      => $params['is_fixed'],
+                'duration'      => $this->diffDateInSeconds($params['end_time'], $params['start_time']),
+                'author_id'     => $params['author_id'],
+                'comment'       => $params['comment'],
+                'with_services' => $params['with_services']
+        ]];
+        $api = new ApiClient();
+        $res = $api->connectionRequest();
+        if (isset($res["security"]["token"])) {
+            try {
+                $res = $api->setDowntimeOnAHost($id, $new_params);
+                return $res;
+            } catch(\Exception $e) {
+                $error_msg = $e->getMessage();
+                return $error_msg;
+            }
+        }
+    }
 
+    public function diffDateInSeconds($date1, $date2) {
+        $ts1 = strtotime($date1);
+        $ts2 = strtotime($date2);
+        $diff = abs($ts2 - $ts1);
+        $tmp = $diff % 60;
+        return $tmp;
+        
+    }
     public function searchItemMatch(int $id)
     {
         $item = new Computer();
@@ -256,8 +289,9 @@ class Host extends CommonDBTM
             $host_id = $self->fields['centreon_id'];
             $self->oneHost($host_id);
             TemplateRenderer::getInstance()->display('@centreon/host.html.twig', [
-                'one_host'  =>  $self->one_host,
-                'hostid'   =>  $host_id
+                'one_host' =>  $self->one_host,
+                'hostid'   =>  $host_id,
+                'uid'      =>  $self->uid,
             ]);
         } else {
             TemplateRenderer::getInstance()->display('@centreon/nohost.html.twig');
