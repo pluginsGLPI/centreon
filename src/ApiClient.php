@@ -139,8 +139,8 @@ class ApiClient
 
     public function sendCheckToAnHost(int $host_id, array $params = [])
     {
-        $params = ['json' => ['is_forced' => true]];
-        $data   = $this->clientRequest('monitoring/hosts/' . $host_id . '/check', $params, 'POST');
+        $params['json']['is_forced'] = true;
+        $data   = $this->clientRequest('monitoring/hosts/' . $host_id . '/check', $params['json'], 'POST');
         return $data;
     }
 

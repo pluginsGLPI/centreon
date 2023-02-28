@@ -1,25 +1,32 @@
 {% import "components/form/fields_macros.html.twig" as fields %}
-    <div class="d-flex flew-row align-items-center py-3 ps-2">
+<div class="d-flex flew-row align-items-center py-3 ps-2">
     <h1 class="pe-3 m-0">Host Information</h1>
-    <img class="h-4 d-inline-block" src="https://cdn.icon-icons.com/icons2/2699/PNG/512/centreon_logo_icon_170408.png" alt="lien_centreon">
-    <button type="button" class="btn ms-4 me-1 toggle" id="check" >Check</button>
-    <div class="spinner-border text-purple mx-4 d-none toggle" role="status" id="spinner"></div>
-    <button type="button" class="btn" id="downtime">Downtime</button>
-    </div>
+        <img class="h-4 d-inline-block" src="https://cdn.icon-icons.com/icons2/2699/PNG/512/centreon_logo_icon_170408.png" alt="lien_centreon">
+            <button type="button" class="btn ms-4 me-1 toggle" id="check" >
+                <i class="ti ti-refresh"></i>
+                <span>{{ __('Check', 'centreon') }}</span>
+            </button>
+                    <div class="spinner-border text-purple mx-4 d-none toggle" role="status" id="spinner"></div>
+                        <button type="button" class="btn" id="downtime">
+                            <i class="ti ti-clock-pause"></i>
+                            <span>{{ __('Downtime', 'centreon') }}</span>
+                        </button>
+                    </div>
 
 <div class="modal" tabindex="-1" id="dialog">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{__('Set downtime')}}</h5>
+        <h5 class="modal-title">{{__('Set downtime', 'centreon')}}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body d-flex justify-content-start align-items-center">
                 <div class="me-3">
                 <label class="form-check">
                     {{ fields.hiddenField('author_id', '') }}
-                    <input type="checkbox" class="form-check-input" id="is_fixed" name="is_fixed" value=true checked/>
-                    <span class="form-check-label">{{__('fixed')}}</span>
+                    <input type="hidden" name="is_fixed" value="false">
+                    <input type="checkbox" class="form-check-input" id="is_fixed" name="is_fixed" value="true" checked/>
+                    <span class="form-check-label">{{__('fixed', 'centreon')}}</span>
                 </label>
                 </div>
             <div class="row rev">
@@ -29,14 +36,14 @@
             <div class="row rev ms-3 d-none">
                 <fieldset class="form-fieldset mx-auto">
                     <div class="mb-3">
-                        <label class="form-label">{{ __('Duration')}}</label>
+                        <label class="form-label">{{ __('Duration', 'centreon')}}</label>
                         <input type="text" class="form-control" autocomplete="off" name="duration" id="duration" placeholder="3600"/>
                     </div>
                     <div class="mb-3">
                         <select class="form-select">
-                            <option value="1" selected>{{ __('seconds')}}</option>
-                            <option value="2">{{ __('minutes')}}</option>
-                            <option value="3">{{ __('hours')}}</option>
+                            <option value="1" selected>{{ __('seconds', 'centreon')}}</option>
+                            <option value="2">{{ __('minutes', 'centreon')}}</option>
+                            <option value="3">{{ __('hours', 'centreon')}}</option>
                         </select>
                     </div>
                 </fieldset>
@@ -254,12 +261,21 @@
             if(textarea != "") {
                 $('#comment').val(textarea);
             }
-            var params = $('input[name=start_time], input[name=end_time], input[name=is_fixed], input[name=duration], input[name=author_id], #comment, input[name=with_services]').serialize();
+            var params = $('input[name=start_time], input[name=end_time], input[name=is_fixed], input[name=duration], input[name=author_id], #comment, input[name=with_services]').serializeArray();
+            var flatparams = {};
+            $.each(params, function() {
+                flatparams[this.name] = this.value;
+            });
             console.log(params);
-            $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/setDowntime.php", { hostid: {{ hostid }}, params: params}, function(data) {
+            $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/setDowntime.php",
+            {
+                "hostid": {{ hostid }},
+                "params": flatparams
+            },
+            function(data) {
                 console.log('downtime envoyé');
                 console.log(data);
-                
+
             })
             });
     });

@@ -183,20 +183,14 @@ class Host extends CommonDBTM
     }
     public function setDowntime(int $id, array $params)
     {
-        $new_params = ['json'   => [
-                'start_time'    => $params['start_time'],
-                'end_time'      => $params['end_time'],
-                'is_fixed'      => $params['is_fixed'],
-                'duration'      => $this->diffDateInSeconds($params['end_time'], $params['start_time']),
-                'author_id'     => $params['author_id'],
-                'comment'       => $params['comment'],
-                'with_services' => $params['with_services']
-        ]];
+        if($params['is_fixed'] == "true") {
+            $params['duration'] = $this->diffDateInSeconds($params['end_time'], $params['start_time']);
+        }
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
             try {
-                $res = $api->setDowntimeOnAHost($id, $new_params);
+                $res = $api->setDowntimeOnAHost($id, ['json' => $params]);
                 return $res;
             } catch(\Exception $e) {
                 $error_msg = $e->getMessage();
