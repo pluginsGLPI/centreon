@@ -6,6 +6,8 @@ use Toolbox;
 use Computer;
 use CommonDBTM;
 use CommonGLPI;
+use DateTimeImmutable;
+use DateTimeInterface;
 use GuzzleHttp\Client;
 use Session;
 use GlpiPlugin\Centreon\ApiClient;
@@ -113,8 +115,11 @@ class Host extends CommonDBTM
         if (isset($session["security"]["token"])) {
             $gettimeline   = $api->getOneHostTimeline($id);
             $timeline_r      = $gettimeline["result"];
-
             foreach ($timeline_r as $event) {
+                if(strpos($event['content'], "Downtime") !== false) {
+                    $event['status']['name'] = __('unset', 'centreon');
+                    $event['tries']          = __('unset', 'centreon');
+                }
                 $timeline[] = [
                     'id'        =>  $event['id'],
                     'date'      =>  $this->transformDate($event['date']),
@@ -123,35 +128,32 @@ class Host extends CommonDBTM
                     'tries'     =>  $event['tries']
                 ];
             }
-        }
-
-        $period_string = "";
-        switch ($period) {
-            case "day":
-                $period_string = "-1 day";
-                break;
-            case "week":
-                $period_string = "-7 days";
-                break;
-            case "month":
-                $period_string = "-1 month";
-                break;
-        }
-        $date_end = date('Y-m-d', strtotime(date('Y-m-d') . $period_string));
-        $filtered_timeline = [];
-        foreach ($timeline as $event => $info) {
-            $setdate = $this->transformDateForCompare($info['date']);
-            if ($setdate >= $date_end) {
-                $filtered_timeline[$event] = $info;
+            
+            $period_string = "";
+            switch ($period) {
+                case "day":
+                    $period_string = "-1 day";
+                    break;
+                case "week":
+                    $period_string = "-7 days";
+                    break;
+                case "month":
+                    $period_string = "-1 month";
+                    break;
             }
+            $date_end = date('Y-m-d', strtotime(date('Y-m-d') . $period_string));
+            $filtered_timeline = [];
+            foreach ($timeline as $event => $info) {
+                $setdate = $this->transformDateForCompare($info['date']);
+                if ($setdate >= $date_end) {
+                    $filtered_timeline[$event] = $info;
+                }
+            }
+            TemplateRenderer::getInstance()->display('@centreon/timeline.html.twig', [
+                'timeline'  =>  $filtered_timeline,
+            ]);
         }
-
-        TemplateRenderer::getInstance()->display('@centreon/timeline.html.twig', [
-            'timeline'  =>  $filtered_timeline,
-        ]);
     }
-
-
     public function transformDate($date)
     {
         $timestamp = strtotime($date);
@@ -183,29 +185,41 @@ class Host extends CommonDBTM
     }
     public function setDowntime(int $id, array $params)
     {
-        if($params['is_fixed'] == "true") {
+        if ($params['is_fixed'] == "true") {
+            $params['author_id'] = filter_var($params['author_id'], FILTER_VALIDATE_INT);
+            $params['is_fixed'] = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
+            $params['with_services'] = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
+            $params['start_time'] = $this->convertDateToIso8601($params['start_time']);
+            $params['end_time'] = $this->convertDateToIso8601($params['end_time']);
             $params['duration'] = $this->diffDateInSeconds($params['end_time'], $params['start_time']);
         }
+        Toolbox::logDebug($params);
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
             try {
                 $res = $api->setDowntimeOnAHost($id, ['json' => $params]);
                 return $res;
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
                 return $error_msg;
             }
         }
     }
 
-    public function diffDateInSeconds($date1, $date2) {
+    public function convertDateToIso8601($date)
+    {
+        $new_date = new \DateTime($date);
+        $iso_date = $new_date->format(DATE_ATOM);
+        return $iso_date;
+    }
+
+    public function diffDateInSeconds($date1, $date2)
+    {
         $ts1 = strtotime($date1);
         $ts2 = strtotime($date2);
         $diff = abs($ts2 - $ts1);
-        $tmp = $diff % 60;
-        return $tmp;
-        
+        return $diff;
     }
     public function searchItemMatch(int $id)
     {

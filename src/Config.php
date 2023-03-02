@@ -6,6 +6,7 @@ use CommonGLPI;
 use Glpi\Application\View\TemplateRenderer;
 use Session;
 use GlpiPlugin\Centreon\ApiClient;
+use Toolbox;
 
 class Config extends \Config
 {
@@ -59,13 +60,23 @@ class Config extends \Config
             'can_edit'       => $canedit
         ]);
 
-        if (isset($current_config["centreon-username"])) {
-            $api = new ApiClient();
+        $conf_ok = true;
+
+        foreach($current_config as $v) {
+            if(strlen($v) == 0){
+                $conf_ok = false;
+            }
+        }
+        Toolbox::logDebug($conf_ok);
+        if($conf_ok == true) {
+            $api  = new ApiClient();
             $diag = $api->diagnostic();
 
             TemplateRenderer::getInstance()->display('@centreon/diagnostic.html.twig', [
                 'diag' => $diag
             ]);
+        } else {
+            TemplateRenderer::getInstance()->display('@centreon/checkField.html.twig',);
         }
     }
 }

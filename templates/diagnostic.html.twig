@@ -1,13 +1,16 @@
 {% if diag["result"] == true %}
-<span class="status status-green">
-  <span class="status-dot"></span>
-  CONNECTION OK
-</span>
-<p> {{ diag["message"] }} </p>
-{% elseif diag["result"] == false %}
-<span class="status status-red">
-  <span class="status-dot"></span>
-  NOT CONNECTED
-</span>
-<code> {{ diag["message"] }} </code>
-{% endif %}
+  <span class="status status-green">
+    <span class="status-dot"></span>
+    CONNECTION OK
+  </span>
+  <p> {{ diag["message"] }} </p>
+  {% elseif diag["result"] == false %}
+  <span class="status status-red">
+    <span class="status-dot"></span>
+    NOT CONNECTED
+  </span>
+  <code> {{ diag["message"] }} </code>
+  {% endif %}
+
+
+

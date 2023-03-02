@@ -12,7 +12,7 @@
                             <span>{{ __('Downtime', 'centreon') }}</span>
                         </button>
                     </div>
-
+<form id="setdowntime">
 <div class="modal" tabindex="-1" id="dialog">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -66,7 +66,7 @@
         <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
           Cancel
         </a>
-        <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal" id="send">
+        <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal" id="submit">
           <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
           <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
           Set downtime
@@ -75,7 +75,7 @@
     </div>
   </div>
 </div>
-
+</form>
     <h2 class="p-2 m-0">General</h2>
 
 <div class="datagrid container text-center my-2">
@@ -233,6 +233,7 @@
         $('#check').click(function(){
             $('.toggle').toggleClass('d-none');
             $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/sendCheck.php?hostid=" + {{ hostid }}, function(response){
+                reloadTab('');
                 $('#check').addClass('btn-lime');
                 $('.toggle').toggleClass('d-none');
             })
@@ -255,28 +256,34 @@
                     console.log(value);
                 }
         });
-        $('#send').click(function(){
+        $('#submit').click(function(){
             $('input[name=author_id]').val( {{ uid }} );
             var textarea = $.trim($('#comment').val());
             if(textarea != "") {
                 $('#comment').val(textarea);
             }
-            var params = $('input[name=start_time], input[name=end_time], input[name=is_fixed], input[name=duration], input[name=author_id], #comment, input[name=with_services]').serializeArray();
+            var params = $('#setdowntime').serializeArray();
             var flatparams = {};
             $.each(params, function() {
                 flatparams[this.name] = this.value;
             });
             console.log(params);
-            $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/setDowntime.php",
-            {
-                "hostid": {{ hostid }},
-                "params": flatparams
-            },
-            function(data) {
-                console.log('downtime envoyé');
-                console.log(data);
-
-            })
+            $.ajax({
+                "type": 'POST',
+                "url" : CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/setDowntime.php",
+                "data": {
+                    "hostid": {{ hostid }},
+                    "params": flatparams
+                },
+                "success": function(data) {
+                    reloadTab('');
+                    console.log('downtime envoyé');
+                    console.log(data);
+                }
             });
+        });
+        $(document).on('submit','#setdowntime',function(event){
+            event.preventDefault();
+        });
     });
 </script>

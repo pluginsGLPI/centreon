@@ -147,6 +147,7 @@ class ApiClient
     public function setDowntimeOnAHost(int $host_id, array $params = [])
     {
         $data  = $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params, 'POST');
+        Toolbox::logDebug($data);
         return $data;
     }
 }
