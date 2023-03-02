@@ -50,6 +50,8 @@ function plugin_init_centreon()
 
     $PLUGIN_HOOKS['csrf_compliant']['centreon'] = true;
 
+    $PLUGIN_HOOKS['config_page']['centreon'] = "../../front/config.form.php";
+
     $plugin = new Plugin;
     if ($plugin->isActivated('centreon')) {
 
