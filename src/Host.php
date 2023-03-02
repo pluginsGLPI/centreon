@@ -9,16 +9,16 @@ use CommonGLPI;
 use DateTimeImmutable;
 use DateTimeInterface;
 use GuzzleHttp\Client;
-use Session;
 use GlpiPlugin\Centreon\ApiClient;
 use Glpi\Application\View\TemplateRenderer;
 
 class Host extends CommonDBTM
 {
-    public $glpi_items   = [];
+    public $glpi_items      = [];
     public $centreon_items  = [];
-    public $one_host = [];
-    public $uid = '';
+    public $one_host        = [];
+    public $uid             = '';
+    public $in_downtime     = '';
 
     static function getTypeName($nb = 0)
     {
@@ -97,11 +97,15 @@ class Host extends CommonDBTM
                     'last_check'        =>  $gethost["last_check"],
                     'next_check'        =>  $gethost["next_check"],
                     'check_period'      =>  $gethost["check_period"],
+                    'in_downtime'       =>  $gethost_r['in_downtime']
                 ];
                 $i_host["services"]     = $getservices["result"];
                 $i_host["nb_services"]  = count($i_host["services"]);
                 $i_host["timeline"]     = $gettimeline["result"];
                 $this->one_host = $i_host;
+                if($i_host['in_downtime'] == true) {
+                    $this->in_downtime == true;
+                }
                 return $i_host;
             }
         }
@@ -115,8 +119,9 @@ class Host extends CommonDBTM
         if (isset($session["security"]["token"])) {
             $gettimeline   = $api->getOneHostTimeline($id);
             $timeline_r      = $gettimeline["result"];
+            Toolbox::logDebug($timeline_r);
             foreach ($timeline_r as $event) {
-                if(strpos($event['content'], "Downtime") !== false) {
+                if ($event['type'] == "downtime") {
                     $event['status']['name'] = __('unset', 'centreon');
                     $event['tries']          = __('unset', 'centreon');
                 }
@@ -128,7 +133,7 @@ class Host extends CommonDBTM
                     'tries'     =>  $event['tries']
                 ];
             }
-            
+
             $period_string = "";
             switch ($period) {
                 case "day":
@@ -174,7 +179,7 @@ class Host extends CommonDBTM
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
             try {
-                $res = $api->sendCheckToAnHost($id);
+                $res         = $api->sendCheckToAnHost($id);
                 $sentcheckok = __('Check sent', 'centreon');
                 return $sentcheckok;
             } catch (\Exception $e) {
@@ -186,14 +191,13 @@ class Host extends CommonDBTM
     public function setDowntime(int $id, array $params)
     {
         if ($params['is_fixed'] == "true") {
-            $params['author_id'] = filter_var($params['author_id'], FILTER_VALIDATE_INT);
-            $params['is_fixed'] = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
-            $params['with_services'] = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
-            $params['start_time'] = $this->convertDateToIso8601($params['start_time']);
-            $params['end_time'] = $this->convertDateToIso8601($params['end_time']);
-            $params['duration'] = $this->diffDateInSeconds($params['end_time'], $params['start_time']);
+            $params['author_id']        = filter_var($params['author_id'], FILTER_VALIDATE_INT);
+            $params['is_fixed']         = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
+            $params['with_services']    = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
+            $params['start_time']       = $this->convertDateToIso8601($params['start_time']);
+            $params['end_time']         = $this->convertDateToIso8601($params['end_time']);
+            $params['duration']         = $this->diffDateInSeconds($params['end_time'], $params['start_time']);
         }
-        Toolbox::logDebug($params);
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
@@ -216,16 +220,16 @@ class Host extends CommonDBTM
 
     public function diffDateInSeconds($date1, $date2)
     {
-        $ts1 = strtotime($date1);
-        $ts2 = strtotime($date2);
-        $diff = abs($ts2 - $ts1);
+        $ts1    = strtotime($date1);
+        $ts2    = strtotime($date2);
+        $diff   = abs($ts2 - $ts1);
         return $diff;
     }
     public function searchItemMatch(int $id)
     {
-        $item = new Computer();
-        $computer = $item->getFromDB($id);
-        $computer_name = $item->fields['name'];
+        $item           = new Computer();
+        $computer       = $item->getFromDB($id);
+        $computer_name  = $item->fields['name'];
 
         $api = new ApiClient();
         $res = $api->connectionRequest();
@@ -291,8 +295,8 @@ class Host extends CommonDBTM
 
     static function showForItem(CommonDBTM $item, $withtemplate = 0)
     {
-        $self = new self();
-        $item_id = $item->getID();
+        $self       = new self();
+        $item_id    = $item->getID();
         if ($self->searchForItem($item_id) == true || $self->searchItemMatch($item_id) == true) {
             $host_id = $self->fields['centreon_id'];
             $self->oneHost($host_id);
@@ -311,8 +315,8 @@ class Host extends CommonDBTM
         switch ($field) {
             case 'id':
                 if (intval($values["centreon_id"]) > 0) {
-                    $self = new self();
-                    $res = $self->oneHost($values["centreon_id"]);
+                    $self   = new self();
+                    $res    = $self->oneHost($values["centreon_id"]);
                     return $res["status"] ?? '';
                 }
                 break;

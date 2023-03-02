@@ -5,17 +5,16 @@ namespace GlpiPlugin\Centreon;
 use GuzzleHttp\Client;
 use Toolbox;
 use GlpiPlugin\Centreon\Config;
-use Session;
 
 class ApiClient
 {
-    public $auth_token = null;
-    public $user_id = null;
-    public $api_config = [];
+    public $auth_token  = null;
+    public $user_id     = null;
+    public $api_config  = [];
 
     public function centreonConfig()
     {
-        $api_i = new Config();
+        $api_i            = new Config();
         $this->api_config = $api_i->getConfig();
     }
 
@@ -27,8 +26,8 @@ class ApiClient
             'json' => [
                 'security'  => [
                     'credentials' => [
-                        'login' => $this->api_config["centreon-username"],
-                        'password' => $this->api_config["centreon-password"],
+                        'login'     => $this->api_config["centreon-username"],
+                        'password'  => $this->api_config["centreon-password"],
                     ]
                 ]
             ]
@@ -56,8 +55,8 @@ class ApiClient
 
             if (isset($test["security"]["token"])) {
                 $result = [
-                    'result' => true,
-                    'message' => "You are connected to Centreon API !"
+                    'result'    => true,
+                    'message'   => "You are connected to Centreon API !"
                 ];
             }
         } catch (\Exception $e) {
@@ -101,7 +100,7 @@ class ApiClient
             ]
         ];
         $params = array_replace_recursive($defaults, $params);
-        $data = $this->clientRequest('monitoring/hosts', $params);
+        $data   = $this->clientRequest('monitoring/hosts', $params);
         return $data;
     }
 
@@ -132,7 +131,7 @@ class ApiClient
     public function getServicesListForOneHost(int $host_id, array $params = []): array
     {
         $params['query'] = ['limit' => 30];
-        $data   = $this->clientRequest('monitoring/hosts/' . $host_id . '/services', $params);
+        $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/services', $params);
         Toolbox::logDebug($host_id);
         return $data;
     }
@@ -140,7 +139,7 @@ class ApiClient
     public function sendCheckToAnHost(int $host_id, array $params = [])
     {
         $params['json']['is_forced'] = true;
-        $data   = $this->clientRequest('monitoring/hosts/' . $host_id . '/check', $params['json'], 'POST');
+        $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/check', $params['json'], 'POST');
         return $data;
     }
 

@@ -76,9 +76,20 @@
   </div>
 </div>
 </form>
-    <h2 class="p-2 m-0">General</h2>
+    <div class="d-flex flex-column">
+        <h2 class="p-2 m-0">General</h2>
+            {% if one_host.in_downtime == true %}
+                <div class="alert alert-warning" role="alert">
+                <h4 class="alert-title">{{ __('Host in downtime', 'centreon')}}</h4>
+                </div>
+            {% endif %}
+    </div>
 
+{% if one_host.in_downtime == false %}
 <div class="datagrid container text-center my-2">
+{% elseif one_host.in_downtime == true %}
+<div class="datagrid container text-center my-2 bg-blue-lt rounded-3">
+{% endif %}
     <div class="row">
     <div class="col">
         <div class="datagrid-item">
