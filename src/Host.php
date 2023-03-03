@@ -18,7 +18,6 @@ class Host extends CommonDBTM
     public $centreon_items  = [];
     public $one_host        = [];
     public $uid             = '';
-    public $in_downtime     = '';
 
     static function getTypeName($nb = 0)
     {
@@ -34,7 +33,7 @@ class Host extends CommonDBTM
             foreach ($computer_list as $computeritem) {
                 $array_computer[] = [
                     'cpt_id'    =>   $computeritem["id"],
-                    'cpt_name'  =>  $computeritem["name"],
+                    'cpt_name'  =>   $computeritem["name"],
                 ];
             }
         } else {
@@ -99,13 +98,12 @@ class Host extends CommonDBTM
                     'check_period'      =>  $gethost["check_period"],
                     'in_downtime'       =>  $gethost_r['in_downtime']
                 ];
+                if($gethost_r['in_downtime'] == true) {
+                    $i_host['downtimes'] = $gethost_r['downtimes'];
+                }
                 $i_host["services"]     = $getservices["result"];
                 $i_host["nb_services"]  = count($i_host["services"]);
-                $i_host["timeline"]     = $gettimeline["result"];
                 $this->one_host = $i_host;
-                if($i_host['in_downtime'] == true) {
-                    $this->in_downtime == true;
-                }
                 return $i_host;
             }
         }
@@ -119,7 +117,6 @@ class Host extends CommonDBTM
         if (isset($session["security"]["token"])) {
             $gettimeline   = $api->getOneHostTimeline($id);
             $timeline_r      = $gettimeline["result"];
-            Toolbox::logDebug($timeline_r);
             foreach ($timeline_r as $event) {
                 if ($event['type'] == "downtime") {
                     $event['status']['name'] = __('unset', 'centreon');
@@ -225,6 +222,23 @@ class Host extends CommonDBTM
         $diff   = abs($ts2 - $ts1);
         return $diff;
     }
+
+    public function cancelActualDownTime(int $downtime_id)
+    {
+        $api = new ApiClient();
+        $res = $api->connectionRequest();
+        Toolbox::logDebug($downtime_id);
+        if (isset($res['security']['token'])) {
+            try {
+                $result = $api->cancelDowntime($downtime_id);
+                return $result;
+            } catch(\Exception $e) {
+                $error_msg = $e->getMessage();
+                return $error_msg;
+            }
+        }
+    }
+
     public function searchItemMatch(int $id)
     {
         $item           = new Computer();
@@ -301,9 +315,9 @@ class Host extends CommonDBTM
             $host_id = $self->fields['centreon_id'];
             $self->oneHost($host_id);
             TemplateRenderer::getInstance()->display('@centreon/host.html.twig', [
-                'one_host' =>  $self->one_host,
-                'hostid'   =>  $host_id,
-                'uid'      =>  $self->uid,
+                'one_host'      =>  $self->one_host,
+                'hostid'        =>  $host_id,
+                'uid'           =>  $self->uid
             ]);
         } else {
             TemplateRenderer::getInstance()->display('@centreon/nohost.html.twig');

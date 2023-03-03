@@ -132,7 +132,6 @@ class ApiClient
     {
         $params['query'] = ['limit' => 30];
         $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/services', $params);
-        Toolbox::logDebug($host_id);
         return $data;
     }
 
@@ -146,6 +145,13 @@ class ApiClient
     public function setDowntimeOnAHost(int $host_id, array $params = [])
     {
         $data  = $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params, 'POST');
+        Toolbox::logDebug($data);
+        return $data;
+    }
+
+    public function cancelDowntime(int $downtime_id, array $params = [])
+    {
+        $data = $this->clientRequest('monitoring/downtimes/' . $downtime_id, $params, 'DELETE');
         Toolbox::logDebug($data);
         return $data;
     }
