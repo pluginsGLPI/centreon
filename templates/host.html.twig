@@ -277,7 +277,6 @@
                 if($(this).is(':checked')) {
                     $(this).val(true);
                     var value = $(this).val();
-                    console.log(value);
                 }
         });
         $('#submit').click(function(){
@@ -309,6 +308,28 @@
         $('#ack').click(function() {
             $('#ack_modal').modal('show');
         });
+        $('#ack_ok').click(function() {
+            var params = $('#ack_form').serializeArray();
+            var flatparams = {};
+            $.each(params, function() {
+                flatparams[this.name] = this.value;
+            });
+            console.log(params);
+            $.ajax({
+                "type": 'POST',
+                "url" : CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/ack.php",
+                "data": {
+                    "hostid": {{ hostid }},
+                    "params": flatparams
+                },
+                "success": function(data) {
+                    reloadTab('');
+                    console.log('acknowledge ok');
+                    console.log(data);
+                }
+            });
+        })
+
         if({{ indowntime }} == true) {
             $('#cancel_d').click(function(){
                 console.log({{ one_host.in_downtime }});

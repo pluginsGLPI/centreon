@@ -242,7 +242,7 @@ class Host extends CommonDBTM
         $res = $api->connectionRequest();
         if (isset($res['security']['token'])) {
             try {
-                $result = $api->acknowledgement($host_id, $request);
+                $result[] = $api->acknowledgement($host_id, $request);
                 return $result;
             } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
