@@ -6,9 +6,6 @@ use Toolbox;
 use Computer;
 use CommonDBTM;
 use CommonGLPI;
-use DateTimeImmutable;
-use DateTimeInterface;
-use GuzzleHttp\Client;
 use GlpiPlugin\Centreon\ApiClient;
 use Glpi\Application\View\TemplateRenderer;
 
@@ -18,8 +15,9 @@ class Host extends CommonDBTM
     public $centreon_items  = [];
     public $one_host        = [];
     public $uid             = '';
+    public $username        = '';
 
-    static function getTypeName($nb = 0)
+    public static function getTypeName($nb = 0)
     {
         return _n('Centreon', 'Centreon', $nb);
     }
@@ -29,7 +27,7 @@ class Host extends CommonDBTM
         $computer       =   new \Computer();
         $computer_list  =   $computer->find(['is_deleted' =>  0]);
 
-        if ($computer_list != NULL) {
+        if ($computer_list != null) {
             foreach ($computer_list as $computeritem) {
                 $array_computer[] = [
                     'cpt_id'    =>   $computeritem["id"],
@@ -46,9 +44,9 @@ class Host extends CommonDBTM
     {
         $api = new ApiClient();
         $res = $api->connectionRequest();
-        if ($res["security"]["token"] != NULL) {
+        if ($res["security"]["token"] != null) {
             $list = $api->getHostsList();
-            if ($list != NULL) {
+            if ($list != null) {
                 foreach ($list["result"] as $item_centreon) {
                     $items_centreon[]   =   [
                         'centreon_id'   =>  $item_centreon["id"],
@@ -80,13 +78,13 @@ class Host extends CommonDBTM
     {
         $api = new ApiClient();
         $res = $api->connectionRequest();
-        if ($res["security"]["token"] != NULL) {
+        if ($res["security"]["token"] != null) {
+            $this->username = $res['contact']['alias'];
             $this->uid      = $res['contact']['id'];
             $gethost        = $api->getOneHost($id);
             $gethost_r      = $api->getOneHostResources($id);
             $getservices    = $api->getServicesListForOneHost($id);
-            $gettimeline    = $api->getOneHostTimeline($id);
-            if ($gethost != NULL) {
+            if ($gethost != null) {
                 $i_host = [];
                 $i_host = [
                     'status'            =>  $gethost_r["status"]["name"],
@@ -98,7 +96,7 @@ class Host extends CommonDBTM
                     'check_period'      =>  $gethost["check_period"],
                     'in_downtime'       =>  $gethost_r['in_downtime']
                 ];
-                if($gethost_r['in_downtime'] == true) {
+                if ($gethost_r['in_downtime'] == true) {
                     $i_host['downtimes'] = $gethost_r['downtimes'];
                 }
                 $i_host["services"]     = $getservices["result"];
@@ -227,12 +225,26 @@ class Host extends CommonDBTM
     {
         $api = new ApiClient();
         $res = $api->connectionRequest();
-        Toolbox::logDebug($downtime_id);
         if (isset($res['security']['token'])) {
             try {
                 $result = $api->cancelDowntime($downtime_id);
                 return $result;
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
+                $error_msg = $e->getMessage();
+                return $error_msg;
+            }
+        }
+    }
+
+    public function acknowledgement(int $host_id, array $request = [])
+    {
+        $api = new ApiClient();
+        $res = $api->connectionRequest();
+        if (isset($res['security']['token'])) {
+            try {
+                $result = $api->acknowledgement($host_id, $request);
+                return $result;
+            } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
                 return $error_msg;
             }
@@ -299,7 +311,7 @@ class Host extends CommonDBTM
         return '';
     }
 
-    static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
     {
         if ($item instanceof CommonDBTM) {
             return self::showForItem($item, $withtemplate);
@@ -307,7 +319,7 @@ class Host extends CommonDBTM
         return true;
     }
 
-    static function showForItem(CommonDBTM $item, $withtemplate = 0)
+    public static function showForItem(CommonDBTM $item, $withtemplate = 0)
     {
         $self       = new self();
         $item_id    = $item->getID();
@@ -317,7 +329,8 @@ class Host extends CommonDBTM
             TemplateRenderer::getInstance()->display('@centreon/host.html.twig', [
                 'one_host'      =>  $self->one_host,
                 'hostid'        =>  $host_id,
-                'uid'           =>  $self->uid
+                'uid'           =>  $self->uid,
+                'username'      =>  $self->username
             ]);
         } else {
             TemplateRenderer::getInstance()->display('@centreon/nohost.html.twig');

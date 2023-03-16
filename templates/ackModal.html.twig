@@ -1,0 +1,68 @@
+<form id="ack_form">
+<div class="modal" tabindex="-1" id="ack_modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ __('Acknowledgmement', 'centreon') }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+    <div class="modal-body">
+        <div class="row">
+            <label class="form-label">{{ __('Comment', 'centreon') }}</label>
+            <textarea class="form-control" rows="3" id="comment" name="comment">{{ __('Acknowledged by ', 'centreon') }}{{ username }}</textarea>
+        </div>
+            <div class="my-2">
+                <label class="form-check">
+                    <input type="hidden" name="notify" value="true">
+                    <input type="checkbox" class="form-check-input" id="is_notify_contacts" name="notify" value="false" />
+                        <span class="form-check-label text-nowrap">
+                            {{ __('Notify', 'centreon') }}
+                        </span>
+                        <span class="fs-6 fst-italic">
+                        {{ __('If checked, a notification is sent to the contacts linked to the object to warn that the incident on the resource has been acknowledged', 'centreon') }}
+                        </span>
+                </label>
+            </div>
+            <div class="my-2">
+                <label class="form-check">
+                    <input type="hidden" name="sticky" value="false">
+                    <input type="checkbox" class="form-check-input" id="is_sticky" name="sticky" value="true" checked />
+                        <span class="form-check-label text-nowrap">
+                            {{ __('Sticky', 'centreon') }}
+                        </span>
+                </label>
+            </div>
+            <div class="my-2">
+                <label class="form-check">
+                    <input type="hidden" name="persistent" value="false">
+                    <input type="checkbox" class="form-check-input" id="is_persistent_comment" name="persistent" value="true" checked />
+                        <span class="form-check-label text-nowrap">
+                            {{ __('Persistent', 'centreon') }}
+                        </span>
+                </label>
+            </div>
+            <div class="my-2">
+                <label class="form-check">
+                    <input type="hidden" name="with_services" value="false">
+                    <input type="checkbox" class="form-check-input" id="with_services" name="with_services" value="true" checked />
+                        <span class="form-check-label text-nowrap">
+                            {{ __('Acknowledge services attached to host', 'centreon') }}
+                        </span>
+                </label>
+            </div>
+
+
+    </div>
+      <div class="modal-footer">
+        <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+          Cancel
+        </a>
+        <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal" id="submit">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+          Set downtime
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</form>

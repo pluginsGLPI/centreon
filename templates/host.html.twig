@@ -6,18 +6,18 @@
                 <i class="ti ti-refresh"></i>
                 <span>{{ __('Check', 'centreon') }}</span>
             </button>
-                    <div class="spinner-border text-purple mx-4 d-none toggle" role="status" id="spinner"></div>
-                        <button type="button" class="btn" id="downtime">
-                            <i class="ti ti-clock-pause"></i>
-                            <span>{{ __('Downtime', 'centreon') }}</span>
-                        </button>
-                    </div>
+                <div class="spinner-border text-purple mx-4 d-none toggle" role="status" id="spinner"></div>
+            <button type="button" class="btn" id="downtime">
+                <i class="ti ti-clock-pause"></i>
+                <span>{{ __('Downtime', 'centreon') }}</span>
+            </button>
+</div>
 <form id="setdowntime">
 <div class="modal" tabindex="-1" id="dialog">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{__('Set downtime', 'centreon')}}</h5>
+        <h5 class="modal-title">{{ __('Set downtime', 'centreon') }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body d-flex justify-content-start align-items-center">
@@ -26,24 +26,24 @@
                     {{ fields.hiddenField('author_id', '') }}
                     <input type="hidden" name="is_fixed" value="false">
                     <input type="checkbox" class="form-check-input" id="is_fixed" name="is_fixed" value="true" checked/>
-                    <span class="form-check-label">{{__('fixed', 'centreon')}}</span>
+                    <span class="form-check-label">{{ __('fixed', 'centreon') }}</span>
                 </label>
                 </div>
             <div class="row rev">
-                {{ fields.datetimeField('start_time', '', 'From')}}
-                {{ fields.datetimeField('end_time', '', 'To')}}
+                {{ fields.datetimeField('start_time', '', 'From') }}
+                {{ fields.datetimeField('end_time', '', 'To') }}
             </div>
             <div class="row rev ms-3 d-none">
                 <fieldset class="form-fieldset mx-auto">
                     <div class="mb-3">
-                        <label class="form-label">{{ __('Duration', 'centreon')}}</label>
+                        <label class="form-label">{{ __('Duration', 'centreon') }}</label>
                         <input type="text" class="form-control" autocomplete="off" name="duration" id="duration" placeholder="3600"/>
                     </div>
                     <div class="mb-3">
                         <select class="form-select">
-                            <option value="1" selected>{{ __('seconds', 'centreon')}}</option>
-                            <option value="2">{{ __('minutes', 'centreon')}}</option>
-                            <option value="3">{{ __('hours', 'centreon')}}</option>
+                            <option value="1" selected>{{ __('seconds', 'centreon') }}</option>
+                            <option value="2">{{ __('minutes', 'centreon') }}</option>
+                            <option value="3">{{ __('hours', 'centreon') }}</option>
                         </select>
                     </div>
                 </fieldset>
@@ -51,13 +51,13 @@
       </div>
     <div class="modal-body">
         <div class="row">
-            <label class="form-label">{{__('Comment')}}</label>
+            <label class="form-label">{{ __('Comment', 'centreon') }}</label>
             <textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
         </div>
             <div class="my-3">
             <label class="form-check">
             <input type="checkbox" class="form-check-input" id="with_services" name="with_services" value=true checked/>
-            <span class="form-check-label text-nowrap">{{__('Set downtime on services attached to host')}}</span>
+            <span class="form-check-label text-nowrap">{{ __('Set downtime on services attached to host') }}</span>
             </label>
             </div>
 
@@ -67,7 +67,6 @@
           Cancel
         </a>
         <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal" id="submit">
-          <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
           <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
           Set downtime
         </a>
@@ -82,17 +81,19 @@
                 {% set indowntime = "true" %}
                 {% set lastdowntimeid = one_host.downtimes.0.id %}
                 <div class="alert alert-warning" role="alert">
-                    <h4 class="alert-title mb-1">{{ __('Host in downtime', 'centreon')}}</h4>
+                    <h4 class="alert-title mb-1">{{ __('Host in downtime', 'centreon') }}</h4>
                         <div class="d-flex flex-row fst-italic my-2">
-                            <div class="me-2">{{ __('From : ', 'centreon')}}{{ one_host.downtimes.0.start_time }}</div>
-                            <div>{{ __('To : ', 'centreon')}}{{ one_host.downtimes.0.end_time }}</div>
+                            <div class="me-2">{{ __('From : ', 'centreon') }}{{ one_host.downtimes.0.start_time }}</div>
+                            <div>{{ __('To : ', 'centreon') }}{{ one_host.downtimes.0.end_time }}</div>
                         </div>
-                            <div>{{ __('Author name : ', 'centreon')}}{{ one_host.downtimes.0.author_name }}</div>
-                            <div>{{ __('Comment : ', 'centreon')}}{{ one_host.downtimes.0.comment }}</div>
-                            <a href="#" class="btn mt-2" id="cancel_d">{{ __('Cancel', 'centreon')}}</a>
+                            <div>{{ __('Author name : ', 'centreon') }}{{ one_host.downtimes.0.author_name }}</div>
+                            <div>{{ __('Comment : ', 'centreon') }}{{ one_host.downtimes.0.comment }}</div>
+                            <a href="#" class="btn mt-2" id="cancel_d">{{ __('Cancel', 'centreon') }}</a>
                 </div>
             {% endif %}
     </div>
+
+    {% include '@centreon/ackModal.html.twig' %}
 
 {% if one_host.in_downtime == false %}
 {% set indowntime = "false" %}
@@ -110,9 +111,10 @@
                         {{ one_host.status }}
                         </span>
                     {% elseif one_host.status == 'DOWN' %}
-                        <span class="status status-red">
-                        {{ one_host.status }}
-                        </span>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                         <button type="button" class="btn btn-primary disabled">{{ __('DOWN', 'centreon') }}</button>
+                         <button type="button" class="btn btn-primary" id="ack">{{ __('ACK', 'centreon') }}</button>
+                        </div>
                     {% else %}
                         <span class="status status-orange">
                         {{ one_host.status }}
@@ -252,6 +254,7 @@
 <script>
     $(document).ready(function(){
         $('#check').click(function(){
+            console.log('toto');
             $('.toggle').toggleClass('d-none');
             $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/sendCheck.php?hostid=" + {{ hostid }}, function(response){
                 reloadTab('');
@@ -302,6 +305,9 @@
                     console.log(data);
                 }
             });
+        });
+        $('#ack').click(function() {
+            $('#ack_modal').modal('show');
         });
         if({{ indowntime }} == true) {
             $('#cancel_d').click(function(){

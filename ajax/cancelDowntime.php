@@ -2,12 +2,11 @@
 
 use GlpiPlugin\Centreon\Host;
 
-include ('../../../inc/includes.php');
+include('../../../inc/includes.php');
 
 header("Content-Type: text/html; charset=UTF-8");
 
-if(isset($_POST['downtimeid'])){
-    Toolbox::logDebug($_POST);
+if (isset($_POST['downtimeid'])) {
     $host   = new Host();
     $res_d  = $host->cancelActualDownTime($_POST['downtimeid']);
 }

@@ -10,12 +10,12 @@ use Toolbox;
 
 class Config extends \Config
 {
-    static function getTypeName($nb = 0)
+    public static function getTypeName($nb = 0)
     {
         return __('Centreon settings', 'Centreon');
     }
 
-    static function getConfig()
+    public static function getConfig()
     {
         return \Config::getConfigurationValues('plugin:centreon');
     }
@@ -30,7 +30,7 @@ class Config extends \Config
         return '';
     }
 
-    static function displayTabContentForItem(
+    public static function displayTabContentForItem(
         CommonGLPI $item,
         $tabnum = 1,
         $withtemplate = 0
@@ -43,7 +43,7 @@ class Config extends \Config
         return true;
     }
 
-    static function showForConfig(\Config $config, $withtemplate = 0)
+    public static function showForConfig(\Config $config, $withtemplate = 0)
     {
         global $CFG_GLPI;
 
@@ -62,13 +62,13 @@ class Config extends \Config
 
         $conf_ok = true;
 
-        foreach($current_config as $v) {
-            if(strlen($v) == 0){
+        foreach ($current_config as $v) {
+            if (strlen($v) == 0) {
                 $conf_ok = false;
             }
         }
         Toolbox::logDebug($conf_ok);
-        if($conf_ok == true) {
+        if ($conf_ok == true) {
             $api  = new ApiClient();
             $diag = $api->diagnostic();
 
@@ -76,7 +76,7 @@ class Config extends \Config
                 'diag' => $diag
             ]);
         } else {
-            TemplateRenderer::getInstance()->display('@centreon/checkField.html.twig',);
+            TemplateRenderer::getInstance()->display('@centreon/checkField.html.twig');
         }
     }
 }

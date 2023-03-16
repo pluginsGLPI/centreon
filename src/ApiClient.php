@@ -152,7 +152,12 @@ class ApiClient
     public function cancelDowntime(int $downtime_id, array $params = [])
     {
         $data = $this->clientRequest('monitoring/downtimes/' . $downtime_id, $params, 'DELETE');
-        Toolbox::logDebug($data);
+        return $data;
+    }
+
+    public function acknowledgement(int $host_id, array $request = []): array
+    {
+        $data = $this->clientRequest('monitoring/hosts/' . $host_id . 'acknowledgements', $request, 'POST');
         return $data;
     }
 }
