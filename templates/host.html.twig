@@ -40,7 +40,7 @@
                         <input type="text" class="form-control" autocomplete="off" name="duration" id="duration" placeholder="3600"/>
                     </div>
                     <div class="mb-3">
-                        <select class="form-select">
+                        <select class="form-select" id="time_select" name="time_select">
                             <option value="1" selected>{{ __('seconds', 'centreon') }}</option>
                             <option value="2">{{ __('minutes', 'centreon') }}</option>
                             <option value="3">{{ __('hours', 'centreon') }}</option>
@@ -56,8 +56,9 @@
         </div>
             <div class="my-3">
             <label class="form-check">
+            <input type="hidden" name="with_services" value="false">
             <input type="checkbox" class="form-check-input" id="with_services" name="with_services" value=true checked/>
-            <span class="form-check-label text-nowrap">{{ __('Set downtime on services attached to host') }}</span>
+            <span class="form-check-label text-nowrap">{{ __('Set downtime on services attached to host', 'centreon') }}</span>
             </label>
             </div>
 
@@ -267,17 +268,6 @@
         });
         $('#is_fixed').click(function(){
                 $('.rev').toggleClass('d-none');
-                if($(this).is(':checked')) {
-                    $(this).val(true);
-                    var value = $(this).val();
-                    console.log(value);
-                }
-        });
-        $('#with_services').click(function(){
-                if($(this).is(':checked')) {
-                    $(this).val(true);
-                    var value = $(this).val();
-                }
         });
         $('#submit').click(function(){
             $('input[name=author_id]').val( {{ uid }} );
@@ -285,6 +275,7 @@
             if(textarea != "") {
                 $('#comment').val(textarea);
             }
+
             var params = $('#setdowntime').serializeArray();
             var flatparams = {};
             $.each(params, function() {

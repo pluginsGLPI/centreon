@@ -6,6 +6,7 @@ use Toolbox;
 use Computer;
 use CommonDBTM;
 use CommonGLPI;
+use DateTime;
 use GlpiPlugin\Centreon\ApiClient;
 use Glpi\Application\View\TemplateRenderer;
 
@@ -185,14 +186,24 @@ class Host extends CommonDBTM
     }
     public function setDowntime(int $id, array $params)
     {
-        if ($params['is_fixed'] == "true") {
-            $params['author_id']        = filter_var($params['author_id'], FILTER_VALIDATE_INT);
-            $params['is_fixed']         = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
-            $params['with_services']    = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
+
+        $params['author_id']        = filter_var($params['author_id'], FILTER_VALIDATE_INT);
+        $params['is_fixed']         = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
+        $params['with_services']    = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
+        if ($params['is_fixed'] == true) {
             $params['start_time']       = $this->convertDateToIso8601($params['start_time']);
             $params['end_time']         = $this->convertDateToIso8601($params['end_time']);
             $params['duration']         = $this->diffDateInSeconds($params['end_time'], $params['start_time']);
         }
+        if ($params['is_fixed'] == false) {
+            $option                     = $params['time_select'];
+            $params['duration']         = $this->convertToSeconds($option, $params['duration']);
+            $params['duration']         = filter_var($params['duration'], FILTER_VALIDATE_INT);
+            $params['start_time']       = $this->convertDateToIso8601(date("Y-m-d H:i:s"));
+            $end_date                   = date("Y-m-d H:i:s", strtotime($params['start_time'] . '+ ' . $params['duration'] .  ' seconds'));
+            $params['end_time']         = $this->convertDateToIso8601($end_date);
+        }
+        unset($params['time_select']);
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
@@ -219,6 +230,18 @@ class Host extends CommonDBTM
         $ts2    = strtotime($date2);
         $diff   = abs($ts2 - $ts1);
         return $diff;
+    }
+
+    public function convertToSeconds($option, $duration)
+    {
+        if ($option == 2) {
+            $new_duration = $duration * 60;
+        } elseif ($option == 3) {
+            $new_duration = $duration * 60 * 60;
+        } else {
+            $new_duration = $duration;
+        }
+        return $new_duration;
     }
 
     public function cancelActualDownTime(int $downtime_id)
