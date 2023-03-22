@@ -29,12 +29,13 @@
                     <span class="form-check-label">{{ __('fixed', 'centreon') }}</span>
                 </label>
                 </div>
-            <div class="row rev">
+            <div class="flex-column">
+            <div class="row">
                 {{ fields.datetimeField('start_time', '', 'From') }}
                 {{ fields.datetimeField('end_time', '', 'To') }}
             </div>
-            <div class="row rev ms-3 d-none">
-                <fieldset class="form-fieldset mx-auto">
+            <div class="mt-2" id="duration_select">
+                <fieldset class="form-fieldset mx-auto w-50">
                     <div class="mb-3">
                         <label class="form-label">{{ __('Duration', 'centreon') }}</label>
                         <input type="text" class="form-control" autocomplete="off" name="duration" id="duration" placeholder="3600"/>
@@ -48,11 +49,12 @@
                     </div>
                 </fieldset>
             </div>
+            </div>
       </div>
     <div class="modal-body">
         <div class="row">
             <label class="form-label">{{ __('Comment', 'centreon') }}</label>
-            <textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
+            <textarea class="form-control" rows="3" id="comment" name="comment">{{ __('Downtime set by ', 'centreon') }}{{ username }}</textarea>
         </div>
             <div class="my-3">
             <label class="form-check">
@@ -264,10 +266,11 @@
             })
         });
         $('#downtime').click(function(){
+                $('#duration_select').hide();
                 $('#dialog').modal('show');
         });
         $('#is_fixed').click(function(){
-                $('.rev').toggleClass('d-none');
+                $('#duration_select').toggle();
         });
         $('#submit').click(function(){
             $('input[name=author_id]').val( {{ uid }} );

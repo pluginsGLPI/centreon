@@ -3,7 +3,6 @@
 namespace GlpiPlugin\Centreon;
 
 use GuzzleHttp\Client;
-use Toolbox;
 use GlpiPlugin\Centreon\Config;
 
 class ApiClient
@@ -144,9 +143,13 @@ class ApiClient
 
     public function setDowntimeOnAHost(int $host_id, array $params = [])
     {
-        Toolbox::logDebug($host_id);
-        Toolbox::logDebug($params);
-        $data  = $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params, 'POST');
+        $data  = $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params, 'POST');;
+        return $data;
+    }
+
+    public function listDowntimes(int $host_id, array $params = [])
+    {
+        $data  = $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params);
         return $data;
     }
 
