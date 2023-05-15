@@ -46,3 +46,6 @@ jobs:
       - name: "PHP_CodeSniffer"
         run: |
           vendor/bin/phpcs -q --report=checkstyle | cs2pr
+      - name: "Check for missing/outdated headers"
+        run: |
+          vendor/bin/licence-headers-check --ansi --no-interaction
