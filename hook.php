@@ -39,7 +39,7 @@ use GlpiPlugin\Centreon\Host;
 function plugin_centreon_install()
 {
     global $DB;
-   
+
     $default_charset   = DBConnection::getDefaultCharset();
     $default_collation = DBConnection::getDefaultCollation();
 
@@ -47,7 +47,6 @@ function plugin_centreon_install()
 
     $table = GlpiPlugin\Centreon\Host::getTable();
     if (!$DB->tableExists($table)) {
-        
         $query = "CREATE TABLE `$table` (
                   `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
                   `itemtype`      VARCHAR(100) NOT NULL,
@@ -82,16 +81,17 @@ function plugin_centreon_uninstall()
             $migration = new Migration(PLUGIN_CENTREON_VERSION);
             $migration->displayMessage("Uninstalling $table");
             $migration->dropTable($table);
-            $DB->error();  
+            $DB->error();
     }
 
     return true;
 
     $config = new \Config();
-    $config->deleteByCriteria(['context' => 'plugin:centreon']);    
+    $config->deleteByCriteria(['context' => 'plugin:centreon']);
 }
 
-function plugin_centreon_getAddSearchOptionsNew($itemtype) {
+function plugin_centreon_getAddSearchOptionsNew($itemtype)
+{
     $sopt = [];
 
     if ($itemtype == 'Computer') {
@@ -107,7 +107,7 @@ function plugin_centreon_getAddSearchOptionsNew($itemtype) {
             'massiveaction' => false,
             'joinparams' => [
                 'jointype' => 'itemtype_item'
-             ]
+            ]
         ];
     }
     return $sopt;

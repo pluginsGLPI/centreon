@@ -52,12 +52,10 @@ function plugin_init_centreon()
 
     $PLUGIN_HOOKS['config_page']['centreon'] = "../../front/config.form.php";
 
-    $plugin = new Plugin;
+    $plugin = new Plugin();
     if ($plugin->isActivated('centreon')) {
-
         // add autoload for vendor
         include_once(PLUGIN_CENTREON_ROOT . "/vendor/autoload.php");
-
     }
 
     Plugin::registerClass(GlpiPlugin\Centreon\Host::class, [
