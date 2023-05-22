@@ -28,11 +28,13 @@
  * -------------------------------------------------------------------------
  */
 
-namespace GlpiPlugin\Centreon\tests;
+global $CFG_GLPI, $PLUGIN_HOOKS;
 
-use PHPUnit\Framework\TestCase;
-use GlpiPlugin\Centreon\ApiClient;
+define('GLPI_ROOT', __DIR__ . '/../../../');
+define('GLPI_LOG_DIR', __DIR__ . '/files/_logs');
 
-class ApiClientTest extends TestCase
-{
-}
+define('TU_USER', 'glpi');
+define('TU_PASS', 'glpi');
+define('GLPI_LOG_LVL', 'DEBUG');
+
+require GLPI_ROOT . '/inc/includes.php';

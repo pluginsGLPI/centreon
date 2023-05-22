@@ -69,6 +69,7 @@ class ApiClient
             }
             return $e->getMessage();
         }
+        var_dump($data);
         $this->auth_token   = $data["security"]["token"];
         $this->user_id      = $data["contact"]["id"];
 

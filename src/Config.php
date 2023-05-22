@@ -35,8 +35,9 @@ use Glpi\Application\View\TemplateRenderer;
 use Session;
 use GlpiPlugin\Centreon\ApiClient;
 use Toolbox;
+use Config as Glpi_Config;
 
-class Config extends \Config
+class Config extends Glpi_Config
 {
     public static function getTypeName($nb = 0)
     {
