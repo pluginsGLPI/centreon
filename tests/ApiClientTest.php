@@ -34,103 +34,48 @@ use PHPUnit\Framework\TestCase;
 use GlpiPlugin\Centreon\ApiClient;
 use GuzzleHttp\Client;
 
-use function PHPUnit\Framework\equalTo;
-
 class ApiClientTest extends TestCase
 {
-    public function testConnectionRequest()
-    {
-        $apiClientMock = $this->getMockBuilder(ApiClient::class)->getMock();
-        $apiClientMock
-            ->expects($this->once())
-            ->method('clientRequest')
-            ->will($this->returnValue(true));
-
-        $apiClientMock
-            ->expects($this->once())
-            ->method('connectionRequest')
-            ->with([
-                $this->equalTo('login'),
-                $this->equalTo([
-                    'json' => [
-                        'security' => [
-                            'credentials' => [
-                                'login' => 'mock_username',
-                                'password' => 'mock_password',
-                            ]
-                        ]
-                    ]
-                ]),
-                $this->equalTo('POST')
-            ])
-            ->willReturn([
-                'security' => [
-                    'token' => 'mock_token'
-                ],
-                'contact' => [
-                    'id' => 123
-                ]
-            ]);
-
-        $apiClient = new ApiClient($apiClientMock);
-
-        $result = $apiClient->connectionRequest();
-
-        $this->assertEquals([
-            'security' => [
-                'token' => 'mock_token'
+    public $uri = 'path/to/centreon/api/';
+    public $expectedParams = ['json' => [
+        'security' => [
+            'credentials' => [
+                'login' => 'mock_username',
+                'password' => 'mock_password',
             ],
-            'contact' => [
-                'id' => 123
-            ]
-        ], $result);
+        ],
+    ],
+    ];
+    public $returndata = [
+        'security' => [
+            'token' => 'auth-token',
+        ],
+        'contact' => [
+            'id' => 123,
+        ],
+    ];
 
-        // $guzzleMock    = $this->getMockBuilder(Client::class)
-        //                     ->setConstructorArgs(array('base_uri' =>  "path/to/api", 'verify' => false))
-        //                     ->getMock();
+    public function testClientRequest()
+    {
+            $apiClientMock = $this->getMockBuilder(ApiClient::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+            $apiClientMock
+                ->expects($this->once())
+                ->method('clientRequest')
+                ->with(
+                    $this->equalTo('login'),
+                    $this->callback(function ($params) {
+                        $this->expectedParams;
+                        $this->assertEquals($this->expectedParams, $params);
+                        return true;
+                    }),
+                    $this->equalTo('POST')
+                )
+                ->willReturn($this->returndata);
 
+                $result = $apiClientMock->clientRequest('login', $this->expectedParams, 'POST');
 
-        // $apiClientMock
-        //     ->expects($this->once())
-        //     ->method('connectionRequest')
-        //     ->with(
-        //         $this->equalTo('login'),
-        //         $this->equalTo([
-        //             'json' => [
-        //                 'security' => [
-        //                     'credentials' => [
-        //                         'login' => 'mock_username',
-        //                         'password' => 'mock_password',
-        //                     ]
-        //                 ]
-        //             ]
-        //         ]),
-        //         $this->equalTo('POST')
-        //     )
-        //     ->willReturn([
-        //         'security' => [
-        //             'token' => 'mock_token'
-        //         ],
-        //         'contact' => [
-        //             'id' => 123
-        //         ]
-        //     ]);
-
-        // $guzzleMock    = $this->getMockBuilder(Client::class)
-        //                     ->setConstructorArgs(array('base_uri' =>  "path/to/api", 'verify' => false))
-        //                     ->getMock();
-
-        // $api = new ApiClient($apiClientMock);
-
-        // $result = $api->clientRequest();
-
-        // $this->assertEquals([
-        //     'security' => [
-        //         'token' => 'mock_token'
-        //     ],
-        //     'contact' => [
-        //         'id' => 123
-        //     ]
-        // ], $result);
+                $this->assertEquals($this->returndata, $result);
     }
 }
