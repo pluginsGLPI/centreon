@@ -1,0 +1,2 @@
+#!/bin/sh
+docker exec --user www-data glpi /bin/bash -c "/var/www/glpi/plugins/centreon/vendor/bin/phpunit --debug --do-not-cache-result --bootstrap /var/www/glpi/plugins/centreon/tests/bootstrap.php /var/www/glpi/plugins/centreon/tests "

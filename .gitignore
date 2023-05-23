@@ -5,3 +5,4 @@ vendor/
 composer.lock
 *.min.*
 test.php
+tests/files
