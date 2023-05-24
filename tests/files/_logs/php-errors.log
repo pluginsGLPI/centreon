@@ -152,3 +152,17 @@
   ...gins/centreon/vendor/phpunit/phpunit/phpunit:98 PHPUnit\TextUI\Command::main()
   ...ml/glpi/plugins/centreon/vendor/bin/phpunit:123 include()
   
+[2023-05-24 08:49:55] glpiphplog.WARNING:   *** PHP Warning (2): Undefined array key 0 in /var/www/html/glpi/plugins/centreon/src/Host.php at line 57
+  Backtrace :
+  ...tml/glpi/plugins/centreon/tests/HostTest.php:13 GlpiPlugin\Centreon\Host->getComputerList()
+  ...phpunit/phpunit/src/Framework/TestCase.php:1608 GlpiPlugin\Centreon\tests\HostTest->testGetComputerList()
+  ...phpunit/phpunit/src/Framework/TestCase.php:1214 PHPUnit\Framework\TestCase->runTest()
+  ...hpunit/phpunit/src/Framework/TestResult.php:728 PHPUnit\Framework\TestCase->runBare()
+  .../phpunit/phpunit/src/Framework/TestCase.php:964 PHPUnit\Framework\TestResult->run()
+  ...phpunit/phpunit/src/Framework/TestSuite.php:684 PHPUnit\Framework\TestCase->run()
+  ...r/phpunit/phpunit/src/TextUI/TestRunner.php:653 PHPUnit\Framework\TestSuite->run()
+  ...ndor/phpunit/phpunit/src/TextUI/Command.php:144 PHPUnit\TextUI\TestRunner->run()
+  ...endor/phpunit/phpunit/src/TextUI/Command.php:97 PHPUnit\TextUI\Command->run()
+  ...gins/centreon/vendor/phpunit/phpunit/phpunit:98 PHPUnit\TextUI\Command::main()
+  ...ml/glpi/plugins/centreon/vendor/bin/phpunit:123 include()
+  

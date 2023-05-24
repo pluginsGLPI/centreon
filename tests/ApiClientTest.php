@@ -32,11 +32,9 @@ namespace GlpiPlugin\Centreon\tests;
 
 use PHPUnit\Framework\TestCase;
 use GlpiPlugin\Centreon\ApiClient;
-use GuzzleHttp\Client;
 
 class ApiClientTest extends TestCase
 {
-    public $uri = 'path/to/centreon/api/';
     public $expectedParams = ['json' => [
         'security' => [
             'credentials' => [

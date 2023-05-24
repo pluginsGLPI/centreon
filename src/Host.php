@@ -33,7 +33,6 @@ namespace GlpiPlugin\Centreon;
 use Computer;
 use CommonDBTM;
 use CommonGLPI;
-use DateTime;
 use GlpiPlugin\Centreon\ApiClient;
 use Glpi\Application\View\TemplateRenderer;
 
@@ -66,6 +65,7 @@ class Host extends CommonDBTM
             echo __("The list is empty", "centreon");
         }
         $this->glpi_items = $array_computer;
+        return $array_computer;
     }
 
     public function hostList()
