@@ -166,3 +166,29 @@
   ...gins/centreon/vendor/phpunit/phpunit/phpunit:98 PHPUnit\TextUI\Command::main()
   ...ml/glpi/plugins/centreon/vendor/bin/phpunit:123 include()
   
+[2023-05-25 14:13:24] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $apimb in /var/www/html/glpi/plugins/centreon/tests/HostTest.php at line 96
+  Backtrace :
+  ...phpunit/phpunit/src/Framework/TestCase.php:1608 GlpiPlugin\Centreon\tests\HostTest->testOneHost()
+  ...phpunit/phpunit/src/Framework/TestCase.php:1214 PHPUnit\Framework\TestCase->runTest()
+  ...hpunit/phpunit/src/Framework/TestResult.php:728 PHPUnit\Framework\TestCase->runBare()
+  .../phpunit/phpunit/src/Framework/TestCase.php:964 PHPUnit\Framework\TestResult->run()
+  ...phpunit/phpunit/src/Framework/TestSuite.php:684 PHPUnit\Framework\TestCase->run()
+  ...r/phpunit/phpunit/src/TextUI/TestRunner.php:653 PHPUnit\Framework\TestSuite->run()
+  ...ndor/phpunit/phpunit/src/TextUI/Command.php:144 PHPUnit\TextUI\TestRunner->run()
+  ...endor/phpunit/phpunit/src/TextUI/Command.php:97 PHPUnit\TextUI\Command->run()
+  ...gins/centreon/vendor/phpunit/phpunit/phpunit:98 PHPUnit\TextUI\Command::main()
+  ...ml/glpi/plugins/centreon/vendor/bin/phpunit:123 include()
+  
+[2023-05-25 14:13:24] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $apimb in /var/www/html/glpi/plugins/centreon/tests/HostTest.php at line 99
+  Backtrace :
+  ...phpunit/phpunit/src/Framework/TestCase.php:1608 GlpiPlugin\Centreon\tests\HostTest->testOneHost()
+  ...phpunit/phpunit/src/Framework/TestCase.php:1214 PHPUnit\Framework\TestCase->runTest()
+  ...hpunit/phpunit/src/Framework/TestResult.php:728 PHPUnit\Framework\TestCase->runBare()
+  .../phpunit/phpunit/src/Framework/TestCase.php:964 PHPUnit\Framework\TestResult->run()
+  ...phpunit/phpunit/src/Framework/TestSuite.php:684 PHPUnit\Framework\TestCase->run()
+  ...r/phpunit/phpunit/src/TextUI/TestRunner.php:653 PHPUnit\Framework\TestSuite->run()
+  ...ndor/phpunit/phpunit/src/TextUI/Command.php:144 PHPUnit\TextUI\TestRunner->run()
+  ...endor/phpunit/phpunit/src/TextUI/Command.php:97 PHPUnit\TextUI\Command->run()
+  ...gins/centreon/vendor/phpunit/phpunit/phpunit:98 PHPUnit\TextUI\Command::main()
+  ...ml/glpi/plugins/centreon/vendor/bin/phpunit:123 include()
+  

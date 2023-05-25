@@ -30,6 +30,7 @@
 
 namespace GlpiPlugin\Centreon\tests;
 
+use GlpiPlugin\Centreon\ApiClient;
 use PHPUnit\Framework\TestCase;
 use GlpiPlugin\Centreon\Host;
 
@@ -46,10 +47,62 @@ class HostTest extends TestCase
     public function testOneHost()
     {
         $id = 88;
-        $host = new Host();
-        $newHost = $host->oneHost($id);
-        $this->assertIsArray($newHost);
-        $this->assertNotEmpty($newHost);
+
+        $api = $this->createStub(ApiClient::class);
+        $api
+            ->method('connectionRequest')
+            ->willReturn([
+                'security' => [
+                    'token => mocked token',
+                ],
+                'contact' => [
+                    'id' => 123,
+                    'alias' => 'mocked alias'
+                ]
+            ]);
+        $api
+            ->method('getOneHost')
+            ->with($id)
+            ->willReturn([
+                'alias'         => 'mocked alias',
+                'last check'    => 'mocked last check',
+                'next check'    => 'mocked next check',
+                'check_period'  => 'mocked check period'
+            ]);
+        $api
+            ->method('getOneHostResources')
+            ->with($id)
+            ->willReturn([
+                'status' => [
+                    'name'     => 'mocked status name',
+                ],
+                'name'   => 'mocked name',
+                'fqdn'   => 'mocked fqdn',
+                'in_downtime'   => true,
+                'dowtimes'      => []
+            ]);
+        $api
+            ->method('getServicesListForOneHost')
+            ->with($id)
+            ->willReturn([
+                'result' => []
+            ]);
+        $api
+            ->method('listDowntimes')
+            ->with($id)
+            ->willReturn([]);
+
+        // $host_mock = $this->getMockBuilder(Host::class)
+        //     ->setConstructorArgs([$api])
+        //     ->getMock();
+
+    var_dump($api->connectionRequest());
+
+    $new_host = new Host($api);
+
+    $result = $new_host->oneHost($id);
+
+    $this->assertIsArray($result);
     }
 
     public function testDiffDateInSeconds()

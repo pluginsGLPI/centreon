@@ -38,11 +38,19 @@ use Glpi\Application\View\TemplateRenderer;
 
 class Host extends CommonDBTM
 {
+    private $api_client;
     public $glpi_items      = [];
     public $centreon_items  = [];
     public $one_host        = [];
     public $uid             = '';
     public $username        = '';
+
+    public function __construct(ApiClient $api_client = null)
+    {
+        if ($api_client == null) {
+            $this->api_client = new ApiClient();
+        }
+    }
 
     public static function getTypeName($nb = 0)
     {
@@ -102,8 +110,12 @@ class Host extends CommonDBTM
         }
     }
 
-    public function oneHost($id)
+    public function oneHost($id, ApiClient $api_client = null)
     {
+        if ($api_client == null) {
+            $this->api_client = new ApiClient();
+        }
+
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if ($res["security"]["token"] != null) {
