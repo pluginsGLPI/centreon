@@ -65,8 +65,8 @@ class HostTest extends TestCase
             ->with($id)
             ->willReturn([
                 'alias'         => 'mocked alias',
-                'last check'    => 'mocked last check',
-                'next check'    => 'mocked next check',
+                'last_check'    => 'mocked last check',
+                'next_check'    => 'mocked next check',
                 'check_period'  => 'mocked check period'
             ]);
         $api
@@ -79,7 +79,7 @@ class HostTest extends TestCase
                 'name'   => 'mocked name',
                 'fqdn'   => 'mocked fqdn',
                 'in_downtime'   => true,
-                'dowtimes'      => []
+                'downtimes'      => []
             ]);
         $api
             ->method('getServicesListForOneHost')
@@ -96,10 +96,7 @@ class HostTest extends TestCase
         //     ->setConstructorArgs([$api])
         //     ->getMock();
 
-        var_dump($api->connectionRequest());
-
         $new_host = new Host($api);
-
         $result = $new_host->oneHost($id);
 
         $this->assertIsArray($result);
