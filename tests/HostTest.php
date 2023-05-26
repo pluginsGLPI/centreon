@@ -96,12 +96,18 @@ class HostTest extends TestCase
         //     ->setConstructorArgs([$api])
         //     ->getMock();
 
+<<<<<<< HEAD
         var_dump($api->connectionRequest());
 
         $new_host = new Host($api);
 
         $result = $new_host->oneHost($id);
 
+=======
+        $new_host = new Host($api);
+        $result = $new_host->oneHost($id);
+
+>>>>>>> 11be5eb47026e47ea8c55c86a45f3fbf3150df57
         $this->assertIsArray($result);
     }
 
