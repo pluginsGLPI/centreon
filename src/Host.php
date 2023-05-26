@@ -49,6 +49,8 @@ class Host extends CommonDBTM
     {
         if ($api_client == null) {
             $this->api_client = new ApiClient();
+        } else {
+            $this->api_client = $api_client;
         }
     }
 
@@ -110,21 +112,16 @@ class Host extends CommonDBTM
         }
     }
 
-    public function oneHost($id, ApiClient $api_client = null)
+    public function oneHost($id)
     {
-        if ($api_client == null) {
-            $this->api_client = new ApiClient();
-        }
-
-        $api = new ApiClient();
-        $res = $api->connectionRequest();
+        $res = $this->api_client->connectionRequest();
         if ($res["security"]["token"] != null) {
             $this->username = $res['contact']['alias'];
             $this->uid      = $res['contact']['id'];
-            $gethost        = $api->getOneHost($id);
-            $gethost_r      = $api->getOneHostResources($id);
-            $getservices    = $api->getServicesListForOneHost($id);
-            $getdowntimes   = $api->listDowntimes($id);
+            $gethost        = $this->api_client->getOneHost($id);
+            $gethost_r      = $this->api_client->getOneHostResources($id);
+            $getservices    = $this->api_client->getServicesListForOneHost($id);
+            $getdowntimes   = $this->api_client->listDowntimes($id);
             if ($gethost != null) {
                 $i_host = [];
                 $i_host = [

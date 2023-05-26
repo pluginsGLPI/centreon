@@ -53,7 +53,7 @@ class HostTest extends TestCase
             ->method('connectionRequest')
             ->willReturn([
                 'security' => [
-                    'token => mocked token',
+                    'token' => 'mocked token',
                 ],
                 'contact' => [
                     'id' => 123,
@@ -96,13 +96,10 @@ class HostTest extends TestCase
         //     ->setConstructorArgs([$api])
         //     ->getMock();
 
-    var_dump($api->connectionRequest());
+        $new_host = new Host($api);
+        $result = $new_host->oneHost($id);
 
-    $new_host = new Host($api);
-
-    $result = $new_host->oneHost($id);
-
-    $this->assertIsArray($result);
+        $this->assertIsArray($result);
     }
 
     public function testDiffDateInSeconds()

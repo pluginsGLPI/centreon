@@ -5,4 +5,4 @@ vendor/
 composer.lock
 *.min.*
 test.php
-tests/files/*.log
+tests/files/_logs/*.log
