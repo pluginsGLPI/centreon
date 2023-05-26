@@ -33,11 +33,19 @@ namespace GlpiPlugin\Centreon\tests;
 use GlpiPlugin\Centreon\ApiClient;
 use PHPUnit\Framework\TestCase;
 use GlpiPlugin\Centreon\Host;
+use Computer;
 
 class HostTest extends TestCase
 {
     public function testGetComputerList()
     {
+        $computer = new Computer();
+        $computer->add([
+            'id'    => 123,
+            'name'  => "computer1",
+            'is_deleted'    => 0
+        ]);
+
         $host = new Host();
         $computerList = $host->getComputerList();
         $this->assertIsArray($computerList);

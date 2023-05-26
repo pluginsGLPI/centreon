@@ -61,7 +61,7 @@ class Host extends CommonDBTM
 
     public function getComputerList()
     {
-        $computer       =   new \Computer();
+        $computer       =   new Computer();
         $computer_list  =   $computer->find(['is_deleted' =>  0]);
 
         $array_computer = [];
