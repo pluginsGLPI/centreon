@@ -64,6 +64,7 @@ class Host extends CommonDBTM
         $computer       =   new \Computer();
         $computer_list  =   $computer->find(['is_deleted' =>  0]);
 
+        $array_computer = [];
         if ($computer_list != null) {
             foreach ($computer_list as $computeritem) {
                 $array_computer[] = [
