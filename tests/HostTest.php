@@ -41,9 +41,8 @@ class HostTest extends TestCase
     {
         $computer = new Computer();
         $computer->add([
-            'id'    => 123,
+            'entities_id'   => 0,
             'name'  => "computer1",
-            'is_deleted'    => 0
         ]);
 
         $host = new Host();
