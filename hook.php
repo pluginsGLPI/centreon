@@ -37,6 +37,7 @@ use GlpiPlugin\Centreon\Host;
  */
 function plugin_centreon_install()
 {
+    /** @var DBmysql $DB */
     global $DB;
 
     $default_charset   = DBConnection::getDefaultCharset();
@@ -72,6 +73,7 @@ function plugin_centreon_install()
  */
 function plugin_centreon_uninstall()
 {
+    /** @var DBmysql $DB */
     global $DB;
 
     $tables = [GlpiPlugin\Centreon\Host::getTable(),];
