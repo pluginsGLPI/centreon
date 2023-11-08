@@ -74,6 +74,7 @@ class Config extends Glpi_Config
 
     public static function showForConfig(\Config $config, $withtemplate = 0)
     {
+        /** @var array $CFG_GLPI */
         global $CFG_GLPI;
 
         if (!self::canView()) {
