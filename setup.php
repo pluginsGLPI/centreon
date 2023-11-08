@@ -45,6 +45,7 @@ define('PLUGIN_CENTREON_ROOT', Plugin::getPhpDir('centreon'));
  */
 function plugin_init_centreon()
 {
+    /** @var array $PLUGIN_HOOKS */
     global $PLUGIN_HOOKS;
 
     $PLUGIN_HOOKS['csrf_compliant']['centreon'] = true;

@@ -86,6 +86,7 @@ class Host extends CommonDBTM
         if ($res["security"]["token"] != null) {
             $list = $api->getHostsList();
             if ($list != null) {
+                $items_centreon = [];
                 foreach ($list["result"] as $item_centreon) {
                     $items_centreon[]   =   [
                         'centreon_id'   =>  $item_centreon["id"],

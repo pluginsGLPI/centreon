@@ -77,6 +77,7 @@ class ApiClient
 
     public function diagnostic()
     {
+        $result = [];
         try {
             $test = $this->connectionRequest(['throw' => true]);
 
