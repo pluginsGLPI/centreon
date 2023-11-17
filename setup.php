@@ -35,8 +35,6 @@ define("PLUGIN_CENTREON_MIN_GLPI_VERSION", "10.0.0");
 // Maximum GLPI version, exclusive
 define("PLUGIN_CENTREON_MAX_GLPI_VERSION", "10.0.99");
 
-define('PLUGIN_CENTREON_ROOT', Plugin::getPhpDir('centreon'));
-
 /**
  * Init hooks of the plugin.
  * REQUIRED
@@ -51,12 +49,6 @@ function plugin_init_centreon()
     $PLUGIN_HOOKS['csrf_compliant']['centreon'] = true;
 
     $PLUGIN_HOOKS['config_page']['centreon'] = "../../front/config.form.php";
-
-    $plugin = new Plugin();
-    if ($plugin->isActivated('centreon')) {
-        // add autoload for vendor
-        include_once(PLUGIN_CENTREON_ROOT . "/vendor/autoload.php");
-    }
 
     Plugin::registerClass(GlpiPlugin\Centreon\Host::class, [
         'addtabon'  => ['Computer']
