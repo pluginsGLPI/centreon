@@ -32,7 +32,10 @@ use GlpiPlugin\Centreon\Host;
 
 include('../../../inc/includes.php');
 
+Session::checkRight('computer', UPDATE);
+
 header("Content-Type: text/html; charset=UTF-8");
+
 
 if (isset($_POST['hostid'])) {
     $host   = new Host();
