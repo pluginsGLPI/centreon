@@ -3,17 +3,21 @@
    <key>centreon</key>
    <!-- stable, beta, development, alpha, ... -->
    <state>stable</state>
-   <logo>https://raw.githubusercontent.com/pluginsGLPI/centreon/master/{LNAME}.png</logo>
+   <logo>https://raw.githubusercontent.com/pluginsGLPI/centreon/main/docs/logo1.png</logo>
    <description>
       <short>
          <!-- Add as many lang tag you want -->
-         <en>centreon GLPI plugin.</en>
-         <fr>Plugin GLPI centreon</fr>
+         <en>Centreon GLPI plugin.</en>
+         <fr>Plugin GLPI Centreon</fr>
       </short>
       <long>
          <!-- Add as many lang tag you want -->
-         <en>A long description for centreon GLPI plugin.</en>
-         <fr>Un description longue pour le plugin GLPI centreon</fr>
+         <en>This plugin allows displaying in the GLPI interface the general information of a machine that is also monitored in Centreon.
+         It is also possible to view the status of its services, its history, and to perform common actions such as checks, downtime, and acknowledgements.
+         </en>
+         <fr>Ce plugin permet d'afficher dans l'interface GLPI les informations générales d'une machine qui est également monitorée dans Centreon.
+         Il est également possible de consulter l'état de ses services, son historique et d'effectuer des actions courantes telles que les check, les downtime et les acknowledgement.
+         </fr>
       </long>
    </description>
    <homepage>https://github.com/pluginsGLPI/centreon</homepage>
@@ -27,11 +31,10 @@
    <versions>
       <!-- Add as many version tag you want -->
       <version>
-         <num>0.0.1</num>
+         <num>1.0.0</num>
          <!-- Add as many compatibility tag you want -->
-         <compatibility>9.4</compatibility>
-         <compatibility>9.3</compatibility>
-         <compatibility>9.2</compatibility>
+         <compatibility>~10.0</compatibility>
+         <download_url></download_url>
       </version>
    </versions>
    <langs>
@@ -40,18 +43,17 @@
       <lang>fr_FR</lang>
    </langs>
    <license>GPL V3+</license>
-   <!--tags>
+   <tags>
       <en>
-         <tag>One tag</tag>
-         <tag>Another tag</tag>
+         <tag>Centreon</tag>
       </en>
       <fr>
-         <tag>Un tag</tag>
-         <tag>Un autre tag</tag>
+         <tag>Centreon</tag>
       </fr>
-   </tags-->
-   <!--screenshots>
-      <screenshot>https://github.com/pluginsGLPI/fields/raw/master/screenshot.png</screenshot>
-      <screenshot>https://github.com/pluginsGLPI/fields/raw/master/screenshot2.png</screenshot>
-   </screenshots-->
+   </tags>
+   <screenshots>
+      <screenshot>https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-accueil.jpg</screenshot>
+      <screenshot>https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-settings.jpg</screenshot>
+      <screenshot>https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-timeline.jpg</screenshot>
+   </screenshots>
 </root>
