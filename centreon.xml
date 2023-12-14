@@ -46,10 +46,9 @@
    <tags>
       <en>
          <tag>Centreon</tag>
+         <tag>Monitoring</tag>
+         <tag>Inventory</tag>
       </en>
-      <fr>
-         <tag>Centreon</tag>
-      </fr>
    </tags>
    <screenshots>
       <screenshot>https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-accueil.jpg</screenshot>
