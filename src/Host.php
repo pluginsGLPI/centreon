@@ -216,7 +216,7 @@ class Host extends CommonDBTM
             try {
                 $res         = $api->sendCheckToAnHost($id);
                 $sentcheckok = __('Check sent', 'centreon');
-                return $sentcheckok;
+                return '$sentcheckok';
             } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
                 return $error_msg;
@@ -241,6 +241,7 @@ class Host extends CommonDBTM
             $params['duration']         = filter_var($params['duration'], FILTER_VALIDATE_INT);
         }
         unset($params['time_select']);
+        unset($params['author_id']);
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
@@ -256,7 +257,8 @@ class Host extends CommonDBTM
 
     public function convertDateToIso8601($date)
     {
-        $new_date = new \DateTime($date);
+        $timezone = new \DateTimeZone('Europe/Paris');
+        $new_date = new \DateTime($date, $timezone);
         $iso_date = $new_date->format(DATE_ATOM);
         return $iso_date;
     }

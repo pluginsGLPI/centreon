@@ -286,9 +286,9 @@
 <script>
     $(document).ready(function(){
         $('#check').click(function(){
-            console.log('toto');
             $('.toggle').toggleClass('d-none');
             $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/sendCheck.php?hostid=" + {{ hostid }}, function(response){
+                console.log(response);
                 reloadTab('');
                 $('#check').addClass('btn-lime');
                 $('.toggle').toggleClass('d-none');
@@ -313,7 +313,6 @@
             $.each(params, function() {
                 flatparams[this.name] = this.value;
             });
-            console.log(params);
             $.ajax({
                 "type": 'POST',
                 "url" : CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/setDowntime.php",
@@ -321,10 +320,9 @@
                     "hostid": {{ hostid }},
                     "params": flatparams
                 },
-                "success": function(data) {
-                    reloadTab('');
+                "success": function(result) {
                     console.log('downtime envoyé');
-                    console.log(data);
+                    reloadTab('');
                 }
             });
         });
