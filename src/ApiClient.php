@@ -170,7 +170,7 @@ class ApiClient
         return $data;
     }
 
-    public function setDowntimeOnAHost(int $host_id, array $params = [])
+    public function setDowntimeOnAHost(int $host_id, array $params)
     {
         $data  = $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params, 'POST');
         return $data;
