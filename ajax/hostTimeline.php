@@ -33,6 +33,8 @@ use GlpiPlugin\Centreon\Host;
 
 include('../../../inc/includes.php');
 
+Session::checkRight('computer', READ);
+
 header("Content-Type: text/html; charset=UTF-8");
 
 if (isset($_GET['period']) && isset($_GET['hostid'])) {
