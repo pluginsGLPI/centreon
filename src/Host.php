@@ -216,7 +216,7 @@ class Host extends CommonDBTM
             try {
                 $res         = $api->sendCheckToAnHost($id);
                 $sentcheckok = __('Check sent', 'centreon');
-                return '$sentcheckok';
+                return $sentcheckok;
             } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
                 return $error_msg;
@@ -225,8 +225,6 @@ class Host extends CommonDBTM
     }
     public function setDowntime(int $id, array $params)
     {
-
-        $params['author_id']        = filter_var($params['author_id'], FILTER_VALIDATE_INT);
         $params['is_fixed']         = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
         $params['with_services']    = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
         $params['start_time']       = $this->convertDateToIso8601($params['start_time']);
@@ -242,11 +240,13 @@ class Host extends CommonDBTM
         }
         unset($params['time_select']);
         unset($params['author_id']);
+        \Toolbox::logDebug($params);
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
             try {
                 $res = $api->setDowntimeOnAHost($id, ['json' => $params]);
+                \Toolbox::logDebug($res);
                 return $res;
             } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
@@ -257,7 +257,7 @@ class Host extends CommonDBTM
 
     public function convertDateToIso8601($date)
     {
-        $timezone = new \DateTimeZone('Europe/Paris');
+        $timezone = new \DateTimeZone($_SESSION['glpi_tz'] ?? date_default_timezone_get());
         $new_date = new \DateTime($date, $timezone);
         $iso_date = $new_date->format(DATE_ATOM);
         return $iso_date;

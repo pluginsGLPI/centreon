@@ -288,7 +288,6 @@
         $('#check').click(function(){
             $('.toggle').toggleClass('d-none');
             $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/sendCheck.php?hostid=" + {{ hostid }}, function(response){
-                console.log(response);
                 reloadTab('');
                 $('#check').addClass('btn-lime');
                 $('.toggle').toggleClass('d-none');
@@ -311,6 +310,10 @@
             var params = $('#setdowntime').serializeArray();
             var flatparams = {};
             $.each(params, function() {
+                if (this.name.includes('time')) {
+                    var date = new Date(this.value);
+                    this.value = date.toISOString();
+                }
                 flatparams[this.name] = this.value;
             });
             $.ajax({
