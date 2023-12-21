@@ -77,7 +77,7 @@ class Config extends Glpi_Config
         /** @var array $CFG_GLPI */
         global $CFG_GLPI;
 
-        if (!self::canView()) {
+        if (!self::canUpdate()) {
             return false;
         }
 
