@@ -240,7 +240,6 @@ class Host extends CommonDBTM
         }
         unset($params['time_select']);
         unset($params['author_id']);
-        \Toolbox::logDebug($params);
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
