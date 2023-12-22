@@ -246,7 +246,6 @@ class Host extends CommonDBTM
         if (isset($res["security"]["token"])) {
             try {
                 $res = $api->setDowntimeOnAHost($id, ['json' => $params]);
-                \Toolbox::logDebug($res);
                 return $res;
             } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
