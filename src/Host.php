@@ -240,13 +240,11 @@ class Host extends CommonDBTM
         }
         unset($params['time_select']);
         unset($params['author_id']);
-        \Toolbox::logDebug($params);
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
             try {
                 $res = $api->setDowntimeOnAHost($id, ['json' => $params]);
-                \Toolbox::logDebug($res);
                 return $res;
             } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
@@ -283,20 +281,48 @@ class Host extends CommonDBTM
         return $new_duration;
     }
 
-    public function cancelActualDownTime(int $downtime_id)
+    public function cancelActualDownTime(int $downtime_id): array
     {
         $api = new ApiClient();
         $res = $api->connectionRequest();
-        if (isset($res['security']['token'])) {
+        $error = [];
+
+        if (isset($res["security"]["token"])) {
             try {
-                $result = $api->cancelDowntime($downtime_id);
-                return $result;
+                $actualDowntime = $api->displayDowntime($downtime_id);
+                $host_id = $actualDowntime['host_id'];
+                $start_time = $actualDowntime['start_time'];
+                $end_time = $actualDowntime['end_time'];
+
+                $servicesDowntimes = $api->servicesDowntimesByHost($host_id);
+                foreach ($servicesDowntimes['result'] as $serviceDowntime) {
+                    if (isset($serviceDowntime['start_time']) && isset($serviceDowntime['end_time'])) {
+                        if ($serviceDowntime['start_time'] == $start_time && $serviceDowntime['end_time'] == $end_time) {
+                            $s_downtime_id = $serviceDowntime['id'];
+                            $api->cancelDowntime($s_downtime_id);
+                        }
+                    } else {
+                        $error[] = [
+                            'service_id' => $serviceDowntime['id'],
+                            'message' => 'No downtime found for this service'
+                        ];
+                    }
+                }
+                $api->cancelDowntime($downtime_id);
             } catch (\Exception $e) {
-                $error_msg = $e->getMessage();
-                return $error_msg;
+                $error[] = [
+                    'message' => $e->getMessage()
+                ];
             }
+        } else {
+            $error[] = [
+                'message' => 'Error'
+            ];
         }
+
+        return $error;
     }
+
 
     public function acknowledgement(int $host_id, array $request = [])
     {
