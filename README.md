@@ -6,7 +6,7 @@ This plugin allows you to see in your GLPI interface informations about the host
 
 First, register your url to Centreon, username & password on the Centreon settings page :
 
-![centreon config page](https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-settings.jpg)
+![centreon config page](docs/screenshots/centreon-settings.jpg)
 
 As the connexion works successfully, a green badge appears on the bottom of the page.
 
@@ -14,19 +14,19 @@ As the connexion works successfully, a green badge appears on the bottom of the 
 
 You can now have a glimpse of your host status from the computers list :
 
-![centreon status on computer](https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-settings.jpg)
+![centreon status on computer](docs/screenshots/centreon-settings.jpg)
 
 ## See all information about a host
 
 For seeing more, click on the host and on the Centreon tab : you can access to all general information about the host and its services, without going on your Centreon app !
 
-![centreon host page](https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-accueil.jpg)
+![centreon host page](docs/screenshots/centreon-accueil.jpg)
 
 ## Timeline and actions
 
 Click on the timeline tab to see what happened on your host recently : yesterday, since one week, or since one month :
 
-![centreon host page](https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-timeline.jpg)
+![centreon host page](docs/screenshots/centreon-timeline.jpg)
 
 You can also perform 3 common actions :
     1. Send a check
