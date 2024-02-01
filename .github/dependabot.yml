@@ -16,6 +16,10 @@ updates:
     open-pull-requests-limit: 100
     target-branch: "main"
     versioning-strategy: "increase"
+    groups:
+      dev-dependencies:
+        patterns:
+          - "*"
 
   # Strategy for npm dependencies
   - package-ecosystem: "npm"
@@ -27,3 +31,7 @@ updates:
     open-pull-requests-limit: 100
     target-branch: "main"
     versioning-strategy: "increase"
+    groups:
+      dev-dependencies:
+        patterns:
+          - "*"
