@@ -239,8 +239,6 @@ class Host extends CommonDBTM
             $params['duration']         = filter_var($params['duration'], FILTER_VALIDATE_INT);
         }
         unset($params['time_select']);
-        unset($params['author_id']);
-        \Toolbox::logDebug($params);
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res["security"]["token"])) {
