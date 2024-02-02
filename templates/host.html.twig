@@ -52,7 +52,6 @@
       <div class="modal-body d-flex justify-content-start align-items-center">
                 <div class="me-3">
                 <label class="form-check">
-                    {{ fields.hiddenField('author_id', '') }}
                     <input type="hidden" name="is_fixed" value="false">
                     <input type="checkbox" class="form-check-input" id="is_fixed" name="is_fixed" value="true" checked/>
                     <span class="form-check-label">{{ __('fixed', 'centreon') }}</span>
@@ -301,7 +300,6 @@
                 $('#duration_select').toggle();
         });
         $('#submit').click(function(){
-            $('input[name=author_id]').val( {{ uid }} );
             var textarea = $.trim($('#comment').val());
             if(textarea != "") {
                 $('#comment').val(textarea);
