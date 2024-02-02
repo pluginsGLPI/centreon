@@ -359,7 +359,7 @@
                     "type": 'POST',
                     "url" : CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/cancelDowntime.php",
                     "data": {
-                        "downtimeid": {{ lastdowntimeid ?? 0 }}
+                        "downtimeid": {{ lastdowntimeid ?? 0 }},
                     },
                     "success": function(){
                         reloadTab('');
