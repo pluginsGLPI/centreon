@@ -45,8 +45,9 @@
       </en>
    </tags>
    <screenshots>
-      <screenshot>https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-accueil.jpg</screenshot>
-      <screenshot>https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-settings.jpg</screenshot>
-      <screenshot>https://github.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-timeline.jpg</screenshot>
+      <screenshot>https://raw.githubusercontent.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-accueil.jpg</screenshot>
+      <screenshot>https://raw.githubusercontent.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-settings.jpg</screenshot>
+      <screenshot>https://raw.githubusercontent.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-timeline.jpg</screenshot>
+      <screenshot>https://raw.githubusercontent.com/pluginsGLPI/centreon/main/docs/screenshots/centreon-computers.jpg</screenshot>
    </screenshots>
 </root>
