@@ -225,8 +225,6 @@ class Host extends CommonDBTM
     }
     public function setDowntime(int $id, array $params)
     {
-
-        $params['author_id']        = filter_var($params['author_id'], FILTER_VALIDATE_INT);
         $params['is_fixed']         = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
         $params['with_services']    = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
         $params['start_time']       = $this->convertDateToIso8601($params['start_time']);
@@ -256,7 +254,8 @@ class Host extends CommonDBTM
 
     public function convertDateToIso8601($date)
     {
-        $new_date = new \DateTime($date);
+        $timezone = new \DateTimeZone($_SESSION['glpi_tz'] ?? date_default_timezone_get());
+        $new_date = new \DateTime($date, $timezone);
         $iso_date = $new_date->format(DATE_ATOM);
         return $iso_date;
     }
@@ -281,20 +280,48 @@ class Host extends CommonDBTM
         return $new_duration;
     }
 
-    public function cancelActualDownTime(int $downtime_id)
+    public function cancelActualDownTime(int $downtime_id): array
     {
         $api = new ApiClient();
         $res = $api->connectionRequest();
-        if (isset($res['security']['token'])) {
+        $error = [];
+
+        if (isset($res["security"]["token"])) {
             try {
-                $result = $api->cancelDowntime($downtime_id);
-                return $result;
+                $actualDowntime = $api->displayDowntime($downtime_id);
+                $host_id = $actualDowntime['host_id'];
+                $start_time = $actualDowntime['start_time'];
+                $end_time = $actualDowntime['end_time'];
+
+                $servicesDowntimes = $api->servicesDowntimesByHost($host_id);
+                foreach ($servicesDowntimes['result'] as $serviceDowntime) {
+                    if (isset($serviceDowntime['start_time']) && isset($serviceDowntime['end_time'])) {
+                        if ($serviceDowntime['start_time'] == $start_time && $serviceDowntime['end_time'] == $end_time) {
+                            $s_downtime_id = $serviceDowntime['id'];
+                            $api->cancelDowntime($s_downtime_id);
+                        }
+                    } else {
+                        $error[] = [
+                            'service_id' => $serviceDowntime['id'],
+                            'message' => 'No downtime found for this service'
+                        ];
+                    }
+                }
+                $api->cancelDowntime($downtime_id);
             } catch (\Exception $e) {
-                $error_msg = $e->getMessage();
-                return $error_msg;
+                $error[] = [
+                    'message' => $e->getMessage()
+                ];
             }
+        } else {
+            $error[] = [
+                'message' => 'Error'
+            ];
         }
+
+        return $error;
     }
+
 
     public function acknowledgement(int $host_id, array $request = [])
     {

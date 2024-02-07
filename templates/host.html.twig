@@ -52,7 +52,6 @@
       <div class="modal-body d-flex justify-content-start align-items-center">
                 <div class="me-3">
                 <label class="form-check">
-                    {{ fields.hiddenField('author_id', '') }}
                     <input type="hidden" name="is_fixed" value="false">
                     <input type="checkbox" class="form-check-input" id="is_fixed" name="is_fixed" value="true" checked/>
                     <span class="form-check-label">{{ __('fixed', 'centreon') }}</span>
@@ -286,7 +285,6 @@
 <script>
     $(document).ready(function(){
         $('#check').click(function(){
-            console.log('toto');
             $('.toggle').toggleClass('d-none');
             $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/sendCheck.php?hostid=" + {{ hostid }}, function(response){
                 reloadTab('');
@@ -302,7 +300,6 @@
                 $('#duration_select').toggle();
         });
         $('#submit').click(function(){
-            $('input[name=author_id]').val( {{ uid }} );
             var textarea = $.trim($('#comment').val());
             if(textarea != "") {
                 $('#comment').val(textarea);
@@ -311,9 +308,12 @@
             var params = $('#setdowntime').serializeArray();
             var flatparams = {};
             $.each(params, function() {
+                if (this.name.includes('time')) {
+                    var date = new Date(this.value);
+                    this.value = date.toISOString();
+                }
                 flatparams[this.name] = this.value;
             });
-            console.log(params);
             $.ajax({
                 "type": 'POST',
                 "url" : CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/setDowntime.php",
@@ -321,10 +321,9 @@
                     "hostid": {{ hostid }},
                     "params": flatparams
                 },
-                "success": function(data) {
-                    reloadTab('');
+                "success": function(result) {
                     console.log('downtime envoyé');
-                    console.log(data);
+                    reloadTab('');
                 }
             });
         });
@@ -360,7 +359,7 @@
                     "type": 'POST',
                     "url" : CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/cancelDowntime.php",
                     "data": {
-                        "downtimeid": {{ lastdowntimeid ?? 0 }}
+                        "downtimeid": {{ lastdowntimeid ?? 0 }},
                     },
                     "success": function(){
                         reloadTab('');

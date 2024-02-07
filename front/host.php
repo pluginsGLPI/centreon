@@ -33,6 +33,8 @@ use GlpiPlugin\Centreon\Host;
 
 include('../../../inc/includes.php');
 
+Session::checkRight('computer', READ);
+
 Html::header(
     Host::getTypeName(),
     $_SERVER['PHP_SELF'],
