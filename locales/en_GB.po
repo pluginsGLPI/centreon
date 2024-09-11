@@ -1,0 +1,158 @@
+# English translations for PACKAGE package.
+# Copyright (C) 2024 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-11 09:36+0000\n"
+"PO-Revision-Date: 2024-09-11 09:36+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: en_GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/checkField.html.twig
+msgid "A field is missing !"
+msgstr "A field is missing !"
+
+#: templates/host.html.twig
+msgid "ACK"
+msgstr "ACK"
+
+#: templates/ackModal.html.twig
+msgid "Acknowledge"
+msgstr "Acknowledge"
+
+#: templates/ackModal.html.twig
+msgid "Acknowledge services attached to host"
+msgstr "Acknowledge services attached to host"
+
+#: templates/ackModal.html.twig
+msgid "Acknowledged by "
+msgstr "Acknowledged by "
+
+#: templates/host.html.twig
+msgid "Author name : "
+msgstr "Author name : "
+
+#: templates/host.html.twig
+msgid "Cancel"
+msgstr "Cancel"
+
+#: hook.php:103
+msgid "Centreon Host Status"
+msgstr "Centreon Host Status"
+
+#: src/Config.php:44
+msgid "Centreon settings"
+msgstr "Centreon settings"
+
+#: templates/host.html.twig
+msgid "Check"
+msgstr "Check"
+
+#: src/Host.php:218
+msgid "Check sent"
+msgstr "Check sent"
+
+#: templates/ackModal.html.twig templates/host.html.twig
+msgid "Comment"
+msgstr "Comment"
+
+#: templates/host.html.twig
+msgid "Comment : "
+msgstr "Comment : "
+
+#: templates/host.html.twig
+msgid "DOWN"
+msgstr "DOWN"
+
+#: templates/host.html.twig
+msgid "Downtime"
+msgstr "Downtime"
+
+#: templates/host.html.twig
+msgid "Downtime set by "
+msgstr "Downtime set by "
+
+#: templates/host.html.twig
+msgid "Duration"
+msgstr "Duration"
+
+#: templates/host.html.twig
+msgid "From : "
+msgstr "From : "
+
+#: templates/host.html.twig
+msgid "Host in downtime"
+msgstr "Host in downtime"
+
+#: templates/ackModal.html.twig
+msgid ""
+"If checked, a notification is sent to the contacts linked to the object to "
+"warn that the incident on the resource has been acknowledged"
+msgstr ""
+"If checked, a notification is sent to the contacts linked to the object to "
+"warn that the incident on the resource has been acknowledged"
+
+#: templates/timeline.html.twig
+msgid "No event to show"
+msgstr "No event to show"
+
+#: templates/ackModal.html.twig
+msgid "Notify"
+msgstr "Notify"
+
+#: templates/ackModal.html.twig
+msgid "Persistent"
+msgstr "Persistent"
+
+#: templates/checkField.html.twig
+msgid "Please check again"
+msgstr "Please check again"
+
+#: templates/host.html.twig
+msgid "Set downtime"
+msgstr "Set downtime"
+
+#: templates/host.html.twig
+msgid "Set downtime on services attached to host"
+msgstr "Set downtime on services attached to host"
+
+#: templates/ackModal.html.twig
+msgid "Sticky"
+msgstr "Sticky"
+
+#: src/Host.php:76
+msgid "The list is empty"
+msgstr "The list is empty"
+
+#: templates/host.html.twig
+msgid "To : "
+msgstr "To : "
+
+#: templates/host.html.twig
+msgid "fixed"
+msgstr "fixed"
+
+#: templates/host.html.twig
+msgid "hours"
+msgstr "hours"
+
+#: templates/host.html.twig
+msgid "minutes"
+msgstr "minutes"
+
+#: templates/host.html.twig
+msgid "seconds"
+msgstr "seconds"
+
+#: src/Host.php:160 src/Host.php:161
+msgid "unset"
+msgstr "unset"
