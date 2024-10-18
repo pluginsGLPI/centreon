@@ -76,13 +76,13 @@ function plugin_centreon_uninstall()
     /** @var DBmysql $DB */
     global $DB;
 
-    $tables = [GlpiPlugin\Centreon\Host::getTable(),];
+    $tables = [GlpiPlugin\Centreon\Host::getTable(), ];
 
     foreach ($tables as $table) {
-            $migration = new Migration(PLUGIN_CENTREON_VERSION);
-            $migration->displayMessage("Uninstalling $table");
-            $migration->dropTable($table);
-            $DB->error();
+        $migration = new Migration(PLUGIN_CENTREON_VERSION);
+        $migration->displayMessage("Uninstalling $table");
+        $migration->dropTable($table);
+        $DB->error();
     }
 
     return true;
@@ -97,19 +97,20 @@ function plugin_centreon_getAddSearchOptionsNew($itemtype)
 
     if ($itemtype == 'Computer') {
         $sopt[] = [
-            'id'        => 2023,
-            'table'     => GlpiPlugin\Centreon\Host::getTable(),
-            'field'     => 'id',
-            'name'      => __('Centreon Host Status', 'centreon'),
-            'additionalfields'  => ['centreon_id'],
-            'datatype'  => 'specific',
-            'nosearch'  => true,
-            'nosort'    => true,
-            'massiveaction' => false,
-            'joinparams' => [
-                'jointype' => 'itemtype_item'
-            ]
+            'id'               => 2023,
+            'table'            => GlpiPlugin\Centreon\Host::getTable(),
+            'field'            => 'id',
+            'name'             => __('Centreon Host Status', 'centreon'),
+            'additionalfields' => ['centreon_id'],
+            'datatype'         => 'specific',
+            'nosearch'         => true,
+            'nosort'           => true,
+            'massiveaction'    => false,
+            'joinparams'       => [
+                'jointype' => 'itemtype_item',
+            ],
         ];
     }
+
     return $sopt;
 }

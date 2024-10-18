@@ -34,11 +34,11 @@ include('../../../inc/includes.php');
 
 Session::checkRight('computer', UPDATE);
 
-header("Content-Type: text/html; charset=UTF-8");
+header('Content-Type: text/html; charset=UTF-8');
 
 if (isset($_POST['params'])) {
-    $params = $_POST['params'];
-    $hostid = (int) $_POST['hostid'];
-    $host = new Host();
+    $params      = $_POST['params'];
+    $hostid      = (int) $_POST['hostid'];
+    $host        = new Host();
     $resdowntime = $host->setDowntime($hostid, $params);
 }

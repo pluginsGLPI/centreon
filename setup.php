@@ -31,9 +31,9 @@
 define('PLUGIN_CENTREON_VERSION', '1.0.0');
 
 // Minimal GLPI version, inclusive
-define("PLUGIN_CENTREON_MIN_GLPI_VERSION", "10.0.0");
+define('PLUGIN_CENTREON_MIN_GLPI_VERSION', '10.0.0');
 // Maximum GLPI version, exclusive
-define("PLUGIN_CENTREON_MAX_GLPI_VERSION", "10.0.99");
+define('PLUGIN_CENTREON_MAX_GLPI_VERSION', '10.0.99');
 
 /**
  * Init hooks of the plugin.
@@ -48,14 +48,14 @@ function plugin_init_centreon()
 
     $PLUGIN_HOOKS['csrf_compliant']['centreon'] = true;
 
-    $PLUGIN_HOOKS['config_page']['centreon'] = "../../front/config.form.php";
+    $PLUGIN_HOOKS['config_page']['centreon'] = '../../front/config.form.php';
 
     Plugin::registerClass(GlpiPlugin\Centreon\Host::class, [
-        'addtabon'  => ['Computer']
+        'addtabon' => ['Computer'],
     ]);
 
     Plugin::registerClass(GlpiPlugin\Centreon\Config::class, [
-        'addtabon' => ['Config']
+        'addtabon' => ['Config'],
     ]);
 }
 
@@ -69,16 +69,16 @@ function plugin_init_centreon()
 function plugin_version_centreon()
 {
     return [
-        'name'           => 'centreon',
-        'version'        => PLUGIN_CENTREON_VERSION,
-        'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
-        'license'        => 'GPLv3',
-        'homepage'       => '',
-        'requirements'   => [
+        'name'         => 'centreon',
+        'version'      => PLUGIN_CENTREON_VERSION,
+        'author'       => '<a href="http://www.teclib.com">Teclib\'</a>',
+        'license'      => 'GPLv3',
+        'homepage'     => '',
+        'requirements' => [
             'glpi' => [
                 'min' => PLUGIN_CENTREON_MIN_GLPI_VERSION,
                 'max' => PLUGIN_CENTREON_MAX_GLPI_VERSION,
-            ]
-        ]
+            ],
+        ],
     ];
 }
