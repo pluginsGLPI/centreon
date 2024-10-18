@@ -35,11 +35,11 @@ include('../../../inc/includes.php');
 
 Session::checkRight('computer', READ);
 
-header("Content-Type: text/html; charset=UTF-8");
+header('Content-Type: text/html; charset=UTF-8');
 
 if (isset($_GET['period']) && isset($_GET['hostid'])) {
     $param_period = $_GET['period'];
     $param_hostid = $_GET['hostid'];
-    $host = new Host();
-    $res  = $host->hostTimeline($param_hostid, $_GET['period']);
+    $host         = new Host();
+    $res          = $host->hostTimeline($param_hostid, $_GET['period']);
 }

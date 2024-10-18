@@ -38,9 +38,9 @@ Session::checkRight('computer', READ);
 Html::header(
     Host::getTypeName(),
     $_SERVER['PHP_SELF'],
-    "plugins",
+    'plugins',
     Host::class,
-    "Host"
+    'Host',
 );
 \Search::show(Host::class);
 \Html::footer();

@@ -38,7 +38,7 @@ class ApiClientTest extends TestCase
     public $expectedParams = ['json' => [
         'security' => [
             'credentials' => [
-                'login' => 'mock_username',
+                'login'    => 'mock_username',
                 'password' => 'mock_password',
             ],
         ],
@@ -55,25 +55,26 @@ class ApiClientTest extends TestCase
 
     public function testClientRequest()
     {
-            $apiClientMock = $this->getMockBuilder(ApiClient::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-            $apiClientMock
-                ->expects($this->once())
-                ->method('clientRequest')
-                ->with(
-                    $this->equalTo('login'),
-                    $this->callback(function ($params) {
-                        $this->expectedParams;
-                        $this->assertEquals($this->expectedParams, $params);
-                        return true;
-                    }),
-                    $this->equalTo('POST')
-                )
-                ->willReturn($this->returndata);
+        $apiClientMock = $this->getMockBuilder(ApiClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $apiClientMock
+            ->expects($this->once())
+            ->method('clientRequest')
+            ->with(
+                $this->equalTo('login'),
+                $this->callback(function ($params) {
+                    $this->expectedParams;
+                    $this->assertEquals($this->expectedParams, $params);
 
-                $result = $apiClientMock->clientRequest('login', $this->expectedParams, 'POST');
+                    return true;
+                }),
+                $this->equalTo('POST'),
+            )
+            ->willReturn($this->returndata);
 
-                $this->assertEquals($this->returndata, $result);
+        $result = $apiClientMock->clientRequest('login', $this->expectedParams, 'POST');
+
+        $this->assertEquals($this->returndata, $result);
     }
 }

@@ -41,11 +41,11 @@ class HostTest extends TestCase
     {
         $computer = new Computer();
         $computer->add([
-            'entities_id'   => 0,
-            'name'  => "computer1",
+            'entities_id' => 0,
+            'name'        => 'computer1',
         ]);
 
-        $host = new Host();
+        $host         = new Host();
         $computerList = $host->getComputerList();
         $this->assertIsArray($computerList);
         $this->assertNotEmpty($computerList);
@@ -63,36 +63,36 @@ class HostTest extends TestCase
                     'token' => 'mocked token',
                 ],
                 'contact' => [
-                    'id' => 123,
-                    'alias' => 'mocked alias'
-                ]
+                    'id'    => 123,
+                    'alias' => 'mocked alias',
+                ],
             ]);
         $api
             ->method('getOneHost')
             ->with($id)
             ->willReturn([
-                'alias'         => 'mocked alias',
-                'last_check'    => 'mocked last check',
-                'next_check'    => 'mocked next check',
-                'check_period'  => 'mocked check period'
+                'alias'        => 'mocked alias',
+                'last_check'   => 'mocked last check',
+                'next_check'   => 'mocked next check',
+                'check_period' => 'mocked check period',
             ]);
         $api
             ->method('getOneHostResources')
             ->with($id)
             ->willReturn([
                 'status' => [
-                    'name'     => 'mocked status name',
+                    'name' => 'mocked status name',
                 ],
-                'name'   => 'mocked name',
-                'fqdn'   => 'mocked fqdn',
-                'in_downtime'   => true,
-                'downtimes'      => []
+                'name'        => 'mocked name',
+                'fqdn'        => 'mocked fqdn',
+                'in_downtime' => true,
+                'downtimes'   => [],
             ]);
         $api
             ->method('getServicesListForOneHost')
             ->with($id)
             ->willReturn([
-                'result' => []
+                'result' => [],
             ]);
         $api
             ->method('listDowntimes')
@@ -104,7 +104,7 @@ class HostTest extends TestCase
         //     ->getMock();
 
         $new_host = new Host($api);
-        $result = $new_host->oneHost($id);
+        $result   = $new_host->oneHost($id);
 
         $this->assertIsArray($result);
     }
@@ -113,22 +113,22 @@ class HostTest extends TestCase
     {
         $host = new Host();
 
-        $startDate = '2023-05-24 15:30:00';
-        $endDate = '2023-05-24 15:31:00';
+        $startDate      = '2023-05-24 15:30:00';
+        $endDate        = '2023-05-24 15:31:00';
         $expectedResult = 60;
-        $result = $host->diffDateInSeconds($startDate, $endDate);
+        $result         = $host->diffDateInSeconds($startDate, $endDate);
         $this->assertEquals($expectedResult, $result);
     }
 
     public function testConvertToSeconds()
     {
-        $optionMinute = 2;
-        $optionHour = 3;
-        $duration = 1;
+        $optionMinute      = 2;
+        $optionHour        = 3;
+        $duration          = 1;
         $expectedForMinute = 60;
-        $expectedForHour = 3600;
+        $expectedForHour   = 3600;
 
-        $host = new Host();
+        $host            = new Host();
         $resultForMinute = $host->convertToSeconds($optionMinute, $duration);
         $this->assertEquals($expectedForMinute, $resultForMinute);
 

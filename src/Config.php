@@ -49,13 +49,13 @@ class Config extends Glpi_Config
         return \Config::getConfigurationValues('plugin:centreon');
     }
 
-
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
         switch ($item->getType()) {
             case \Config::class:
                 return self::createTabEntry(self::getTypeName());
         }
+
         return '';
     }
 
@@ -87,7 +87,7 @@ class Config extends Glpi_Config
         TemplateRenderer::getInstance()->display('@centreon/config.html.twig', [
             'item'           => $config,
             'current_config' => $current_config,
-            'can_edit'       => $canedit
+            'can_edit'       => $canedit,
         ]);
 
         $conf_ok = true;
@@ -103,7 +103,7 @@ class Config extends Glpi_Config
             $diag = $api->diagnostic();
 
             TemplateRenderer::getInstance()->display('@centreon/diagnostic.html.twig', [
-                'diag' => $diag
+                'diag' => $diag,
             ]);
         } else {
             TemplateRenderer::getInstance()->display('@centreon/checkField.html.twig');
