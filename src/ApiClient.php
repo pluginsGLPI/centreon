@@ -31,6 +31,7 @@
 namespace GlpiPlugin\Centreon;
 
 use GuzzleHttp\Client;
+use GLPIKey;
 use GlpiPlugin\Centreon\Config;
 
 class ApiClient
@@ -54,7 +55,7 @@ class ApiClient
                 'security' => [
                     'credentials' => [
                         'login'    => $this->api_config['centreon-username'],
-                        'password' => $this->api_config['centreon-password'],
+                        'password' => (new GLPIKey())->decrypt($this->api_config['centreon-password']),
                     ],
                 ],
             ],

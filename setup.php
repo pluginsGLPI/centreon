@@ -35,6 +35,8 @@ define('PLUGIN_CENTREON_MIN_GLPI_VERSION', '10.0.0');
 // Maximum GLPI version, exclusive
 define('PLUGIN_CENTREON_MAX_GLPI_VERSION', '10.0.99');
 
+use Glpi\Plugin\Hooks;
+
 /**
  * Init hooks of the plugin.
  * REQUIRED
@@ -49,6 +51,8 @@ function plugin_init_centreon()
     $PLUGIN_HOOKS['csrf_compliant']['centreon'] = true;
 
     $PLUGIN_HOOKS['config_page']['centreon'] = '../../front/config.form.php';
+
+    $PLUGIN_HOOKS[Hooks::SECURED_CONFIGS]['centreon'] = ['centreon-password'];
 
     Plugin::registerClass(GlpiPlugin\Centreon\Host::class, [
         'addtabon' => ['Computer'],
