@@ -431,11 +431,13 @@ class Host extends CommonDBTM
         if ($self->searchForItem($item_id) == true || $self->searchItemMatch($item_id) == true) {
             $host_id = $self->fields['centreon_id'];
             $self->oneHost($host_id);
+            $logoPath = $self->getLogoPath();
             TemplateRenderer::getInstance()->display('@centreon/host.html.twig', [
                 'one_host' => $self->one_host,
                 'hostid'   => $host_id,
                 'uid'      => $self->uid,
                 'username' => $self->username,
+                'logo'     => $logoPath,
             ]);
         } else {
             TemplateRenderer::getInstance()->display('@centreon/nohost.html.twig');
@@ -456,5 +458,19 @@ class Host extends CommonDBTM
         }
 
         return parent::getSpecificValueToDisplay($field, $values, $options);
+    }
+
+    /**
+     * Get the relative path for logo
+     *
+     * @return string
+     */
+    public function getLogoPath(): string
+    {
+        $plugin_dir = str_replace(GLPI_ROOT, '', CENTREON_DIR_PATH);
+
+        $logo_path = $plugin_dir . '/files/logo-centreon.png';
+
+        return $logo_path;
     }
 }
