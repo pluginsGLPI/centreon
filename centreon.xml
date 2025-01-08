@@ -27,9 +27,9 @@
    </authors>
    <versions>
       <version>
-         <num>1.0.1</num>
+         <num>1.0.2</num>
          <compatibility>~10.0.0</compatibility>
-         <download_url>https://github.com/pluginsGLPI/centreon/releases/download/1.0.1/glpi-centreon-1.0.1.tar.bz2</download_url>
+         <download_url>https://github.com/pluginsGLPI/centreon/releases/download/1.0.2/glpi-centreon-1.0.2.tar.bz2</download_url>
       </version>
    </versions>
    <langs>
