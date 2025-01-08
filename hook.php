@@ -29,21 +29,20 @@
  */
 
 use GlpiPlugin\Centreon\Host;
+use GLPIKey;
 
 /**
  * Plugin install process
  *
  * @return boolean
  */
-function plugin_centreon_install()
+function plugin_centreon_install($version)
 {
     /** @var DBmysql $DB */
     global $DB;
 
     $default_charset   = DBConnection::getDefaultCharset();
     $default_collation = DBConnection::getDefaultCollation();
-
-    $migration = new \Migration(PLUGIN_CENTREON_VERSION);
 
     $table = GlpiPlugin\Centreon\Host::getTable();
     if (!$DB->tableExists($table)) {
@@ -60,9 +59,16 @@ function plugin_centreon_install()
                  COLLATE={$default_collation}";
         $DB->queryOrDie($query, $DB->error());
     }
-    Toolbox::logDebug($table);
-    $migration->executeMigration();
-
+    $centreon_password = Config::getConfigurationValue('plugin:centreon', 'centreon-password');
+    /**Migration to 1.0.1 */
+    if ($centreon_password !== null) {
+        $decrypted_pwd = @(new GLPIKey())->decrypt($centreon_password);
+        if ($decrypted_pwd == '') {
+            Config::setConfigurationValues('plugin:centreon', [
+                'centreon-password' => (new GLPIKey())->encrypt($centreon_password)
+            ]);
+        }
+    }
     return true;
 }
 
@@ -85,10 +91,10 @@ function plugin_centreon_uninstall()
         $DB->error();
     }
 
-    return true;
-
     $config = new \Config();
     $config->deleteByCriteria(['context' => 'plugin:centreon']);
+
+    return true;
 }
 
 function plugin_centreon_getAddSearchOptionsNew($itemtype)
