@@ -101,7 +101,12 @@ class ApiClient
 
     public function clientRequest(string $endpoint = '', array $params = [], string $method = 'GET')
     {
-        $api_client        = new Client(['base_uri' => $this->api_config['centreon-url'], 'verify' => false]);
+        $api_client = new Client([
+            'base_uri' => $this->api_config['centreon-url'],
+            'verify' => false,
+            'connect_timeout' => 3,
+            'timeout' => 10,
+        ]);
         $params['headers'] = ['Content-Type' => 'application/json'];
 
         if ($this->auth_token != null) {
