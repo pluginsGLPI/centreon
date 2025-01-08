@@ -62,6 +62,7 @@ function plugin_centreon_install($version)
     $centreon_password = Config::getConfigurationValue('plugin:centreon', 'centreon-password');
     /**Migration to 1.0.1 */
     if ($centreon_password !== null) {
+        /** Check if pwd is already encrypted, if not, it returns empty string */
         $decrypted_pwd = @(new GLPIKey())->decrypt($centreon_password);
         if ($decrypted_pwd == '') {
             Config::setConfigurationValues('plugin:centreon', [
