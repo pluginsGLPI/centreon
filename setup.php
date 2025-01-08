@@ -28,7 +28,7 @@
  * -------------------------------------------------------------------------
  */
 
-define('PLUGIN_CENTREON_VERSION', '1.0.1');
+define('PLUGIN_CENTREON_VERSION', '1.0.2');
 
 // Minimal GLPI version, inclusive
 define('PLUGIN_CENTREON_MIN_GLPI_VERSION', '10.0.0');
