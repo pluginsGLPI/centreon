@@ -97,7 +97,6 @@ class Config extends Glpi_Config
                 $conf_ok = false;
             }
         }
-        Toolbox::logDebug($conf_ok);
         if ($conf_ok == true) {
             $api  = new ApiClient();
             $diag = $api->diagnostic();
