@@ -108,4 +108,14 @@ class Config extends Glpi_Config
             TemplateRenderer::getInstance()->display('@centreon/checkField.html.twig');
         }
     }
+
+    public static function prepareConfigUpdate(\CommonDBTM $item)
+    {
+        if (
+            isset($item->input['centreon-password'])
+            && ($item->input['centreon-password'] == '')
+        ) {
+            unset($item->input['centreon-password']);
+        }
+    }
 }

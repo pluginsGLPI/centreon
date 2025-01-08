@@ -56,6 +56,14 @@ function plugin_init_centreon()
 
     $PLUGIN_HOOKS[Hooks::SECURED_CONFIGS]['centreon'] = ['centreon-password'];
 
+    $PLUGIN_HOOKS[Hooks::PRE_ITEM_UPDATE]['centreon'] = [
+        \Config::class => [
+            GlpiPlugin\Centreon\Config::class,
+            'prepareConfigUpdate'
+        ]
+    ];
+
+
     Plugin::registerClass(GlpiPlugin\Centreon\Host::class, [
         'addtabon' => ['Computer'],
     ]);
