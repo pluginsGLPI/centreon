@@ -50,9 +50,9 @@ function plugin_init_centreon()
     /** @var array $PLUGIN_HOOKS */
     global $PLUGIN_HOOKS;
 
-    $PLUGIN_HOOKS['csrf_compliant']['centreon'] = true;
+    $PLUGIN_HOOKS[Hooks::CSRF_COMPLIANT]['centreon'] = true;
 
-    $PLUGIN_HOOKS['config_page']['centreon'] = '../../front/config.form.php';
+    $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['centreon'] = '../../front/config.form.php';
 
     $PLUGIN_HOOKS[Hooks::SECURED_CONFIGS]['centreon'] = ['centreon-password'];
 
