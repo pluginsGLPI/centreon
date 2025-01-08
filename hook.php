@@ -66,7 +66,7 @@ function plugin_centreon_install($version)
         $decrypted_pwd = @(new GLPIKey())->decrypt($centreon_password);
         if ($decrypted_pwd == '') {
             Config::setConfigurationValues('plugin:centreon', [
-                'centreon-password' => (new GLPIKey())->encrypt($centreon_password)
+                'centreon-password' => (new GLPIKey())->encrypt($centreon_password),
             ]);
         }
     }

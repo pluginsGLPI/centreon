@@ -59,8 +59,8 @@ function plugin_init_centreon()
     $PLUGIN_HOOKS[Hooks::PRE_ITEM_UPDATE]['centreon'] = [
         \Config::class => [
             GlpiPlugin\Centreon\Config::class,
-            'prepareConfigUpdate'
-        ]
+            'prepareConfigUpdate',
+        ],
     ];
 
 
