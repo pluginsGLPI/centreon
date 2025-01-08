@@ -459,5 +459,4 @@ class Host extends CommonDBTM
 
         return parent::getSpecificValueToDisplay($field, $values, $options);
     }
-
 }
