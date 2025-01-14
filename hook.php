@@ -57,7 +57,7 @@ function plugin_centreon_install($version)
                  ) ENGINE=InnoDB
                  DEFAULT CHARSET={$default_charset}
                  COLLATE={$default_collation}";
-        $DB->queryOrDie($query, $DB->error());
+        $DB->doQuery($query);
     }
     $centreon_password = Config::getConfigurationValue('plugin:centreon', 'centreon-password');
     /**Migration to 1.0.1 */
