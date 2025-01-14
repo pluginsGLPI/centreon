@@ -64,9 +64,8 @@ class Config extends Glpi_Config
         $tabnum = 1,
         $withtemplate = 0
     ) {
-        switch ($item->getType()) {
-            case \Config::class:
-                return self::showForConfig($item, $withtemplate);
+        if ($item instanceof \Config) {
+            return self::showForConfig($item, $withtemplate);
         }
 
         return true;
