@@ -29,7 +29,6 @@
  */
 
 use GlpiPlugin\Centreon\Host;
-use GLPIKey;
 
 /**
  * Plugin install process
