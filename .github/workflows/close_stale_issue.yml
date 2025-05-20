@@ -5,7 +5,7 @@ on:
 
 jobs:
   stale:
-    if: github.repository == 'glpi-plugin/centreon'
+    if: github.repository == 'pluginsGLPI/centreon'
     permissions:
       issues: write  # for actions/stale to close stale issues
     runs-on: ubuntu-latest
