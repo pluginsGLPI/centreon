@@ -29,7 +29,7 @@
 
 {% import "components/form/fields_macros.html.twig" as fields %}
 <div class="d-flex flew-row align-items-center py-3 ps-2">
-    <h1 class="pe-3 m-0">Host Information</h1>
+    <h1 class="pe-3 m-0">{{ __('Host Information', 'centreon') }}</h1>
         <img class="h-4 d-inline-block" src={{ logo }} alt="lien_centreon">
             <button type="button" class="btn ms-4 me-1 toggle" id="check" >
                 <i class="ti ti-refresh"></i>
@@ -286,7 +286,7 @@
     $(document).ready(function(){
         $('#check').click(function(){
             $('.toggle').toggleClass('d-none');
-            $.post(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/sendCheck.php?hostid=" + {{ hostid }}, function(response){
+            $.post(CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/sendCheck.php?hostid=" + {{ hostid }}, function(response){
                 reloadTab('');
                 $('#check').addClass('btn-lime');
                 $('.toggle').toggleClass('d-none');
@@ -316,7 +316,7 @@
             });
             $.ajax({
                 "type": 'POST',
-                "url" : CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/setDowntime.php",
+                "url" : CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/setDowntime.php",
                 "data": {
                     "hostid": {{ hostid }},
                     "params": flatparams
@@ -339,7 +339,7 @@
             console.log(params);
             $.ajax({
                 "type": 'POST',
-                "url" : CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/ack.php",
+                "url" : CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/ack.php",
                 "data": {
                     "hostid": {{ hostid }},
                     "params": flatparams
@@ -357,7 +357,7 @@
                 console.log({{ one_host.in_downtime }});
                 $.ajax({
                     "type": 'POST',
-                    "url" : CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/cancelDowntime.php",
+                    "url" : CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/cancelDowntime.php",
                     "data": {
                         "downtimeid": {{ lastdowntimeid ?? 0 }},
                     },

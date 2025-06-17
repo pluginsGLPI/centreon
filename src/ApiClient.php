@@ -190,6 +190,7 @@ class ApiClient
      */
     public function getOneHost(int $host_id, array $params = []): array
     {
+
         $data = $this->clientRequest('monitoring/hosts/' . $host_id, $params);
 
         return $data;
