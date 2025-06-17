@@ -40,14 +40,24 @@ class ApiClient
     public $user_id    = null;
     public $api_config = [];
 
-    public function centreonConfig()
+    public function centreonConfig(): bool
     {
         $api_i            = new Config();
         $this->api_config = $api_i->getConfig();
+
+        if (!isset($this->api_config['centreon-url']) || strlen(trim($this->api_config['centreon-url'])) === 0) {
+            return false;
+        }
+
+        return true;
     }
 
     public function connectionRequest(array $params = [])
     {
+        if (!$this->centreonConfig()) {
+            throw new \Exception('Centreon configuration is not set.');
+        }
+
         self::centreonConfig();
 
         $defaults = [
