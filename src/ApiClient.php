@@ -36,10 +36,15 @@ use GlpiPlugin\Centreon\Config;
 
 class ApiClient
 {
-    public $auth_token = null;
-    public $user_id    = null;
-    public $api_config = [];
+    public ?string $auth_token = null;
+    public ?int $user_id = null;
+    public array $api_config = [];
 
+    /**
+     * Load and check Centreon configuration.
+     *
+     * @return bool True if configuration is valid, false otherwise.
+     */
     public function centreonConfig(): bool
     {
         $api_i            = new Config();
@@ -52,13 +57,18 @@ class ApiClient
         return true;
     }
 
-    public function connectionRequest(array $params = [])
+    /**
+     * Authenticate and retrieve auth token from Centreon API.
+     *
+     * @param array $params Additional request parameters.
+     * @return array The response array or error .
+     * @throws \Exception If the configuration is missing or request fails.
+     */
+    public function connectionRequest(array $params = []): array
     {
         if (!$this->centreonConfig()) {
             throw new \Exception('Centreon configuration is not set.');
         }
-
-        self::centreonConfig();
 
         $defaults = [
             'json' => [
@@ -79,7 +89,7 @@ class ApiClient
                 throw $e;
             }
 
-            return $e->getMessage();
+            return ['error' => $e->getMessage()];
         }
         $this->auth_token = $data['security']['token'];
         $this->user_id    = $data['contact']['id'];
@@ -87,7 +97,12 @@ class ApiClient
         return $data;
     }
 
-    public function diagnostic()
+    /**
+     * Test the connection with Centreon API.
+     *
+     * @return array Diagnostic result with status and message.
+     */
+    public function diagnostic(): array
     {
         $result = [];
         try {
@@ -109,7 +124,15 @@ class ApiClient
         return $result;
     }
 
-    public function clientRequest(string $endpoint = '', array $params = [], string $method = 'GET')
+    /**
+     * Generic method to perform HTTP requests to Centreon API.
+     *
+     * @param string $endpoint API endpoint.
+     * @param array $params Request parameters.
+     * @param string $method HTTP method (GET, POST, etc.).
+     * @return array The response array or error.
+     */
+    public function clientRequest(string $endpoint = '', array $params = [], string $method = 'GET'): array
     {
         $api_client = new Client([
             'base_uri' => $this->api_config['centreon-url'] ?? '',
@@ -120,7 +143,8 @@ class ApiClient
         $params['headers'] = ['Content-Type' => 'application/json'];
 
         if ($this->auth_token != null) {
-            $params['headers'] = ['Content-Type' => 'application/json', 'X-AUTH-TOKEN' => $this->auth_token];
+                $params['headers']['X-AUTH-TOKEN'] = $this->auth_token;
+
         }
 
         try {
@@ -131,7 +155,7 @@ class ApiClient
             }
             $err_msg = $e->getMessage();
 
-            return $err_msg;
+            return ['error' => $err_msg];
         }
         $data_body = $data->getBody();
         $data      = json_decode($data_body, true);
@@ -139,7 +163,13 @@ class ApiClient
         return $data;
     }
 
-    public function getHostsList(array $params = [])
+    /**
+     * Get a list of hosts.
+     *
+     * @param array $params Query parameters.
+     * @return array
+     */
+    public function getHostsList(array $params = []): array
     {
         $defaults = [
             'query' => [
@@ -152,6 +182,13 @@ class ApiClient
         return $data;
     }
 
+    /**
+     * Get details of a specific host.
+     *
+     * @param int $host_id Host ID.
+     * @param array $params Optional parameters.
+     * @return array
+     */
     public function getOneHost(int $host_id, array $params = []): array
     {
         $data = $this->clientRequest('monitoring/hosts/' . $host_id, $params);
@@ -159,6 +196,13 @@ class ApiClient
         return $data;
     }
 
+    /**
+     * Get resource details for a specific host.
+     *
+     * @param int $host_id Host ID.
+     * @param array $params Optional parameters.
+     * @return array
+     */
     public function getOneHostResources(int $host_id, array $params = []): array
     {
         $data = $this->clientRequest('monitoring/resources/hosts/' . $host_id, $params);
@@ -166,6 +210,13 @@ class ApiClient
         return $data;
     }
 
+    /**
+     * Get the timeline of a specific host.
+     *
+     * @param int $host_id Host ID.
+     * @param array $params Optional parameters.
+     * @return array
+     */
     public function getOneHostTimeline(int $host_id, array $params = []): array
     {
         $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/timeline', $params);
@@ -173,6 +224,12 @@ class ApiClient
         return $data;
     }
 
+    /**
+     * Get a list of all services.
+     *
+     * @param array $params Optional parameters.
+     * @return array
+     */
     public function getServicesList(array $params = []): array
     {
         $data = $this->clientRequest('monitoring/services', $params);
@@ -180,7 +237,14 @@ class ApiClient
         return $data;
     }
 
-    public function getServicesListForOneHost(int $host_id, array $params = [])
+    /**
+     * Get the list of services for a specific host.
+     *
+     * @param int $host_id Host ID.
+     * @param array $params Optional parameters.
+     * @return array
+     */
+    public function getServicesListForOneHost(int $host_id, array $params = []): array
     {
         $params['query'] = ['limit' => 30];
         $data            = $this->clientRequest('monitoring/hosts/' . $host_id . '/services', $params);
@@ -188,7 +252,14 @@ class ApiClient
         return $data;
     }
 
-    public function sendCheckToAnHost(int $host_id, array $params = [])
+    /**
+     * Trigger a check for a specific host.
+     *
+     * @param int $host_id Host ID.
+     * @param array $params Optional parameters.
+     * @return array
+     */
+    public function sendCheckToAnHost(int $host_id, array $params = []): array
     {
         $params['json']['is_forced'] = true;
         $data                        = $this->clientRequest('monitoring/hosts/' . $host_id . '/check', $params['json'], 'POST');
@@ -196,20 +267,40 @@ class ApiClient
         return $data;
     }
 
-    public function setDowntimeOnAHost(int $host_id, array $params)
+    /**
+     * Schedule a downtime for a specific host.
+     *
+     * @param int $host_id Host ID.
+     * @param array $params Downtime parameters.
+     * @return array
+     */
+    public function setDowntimeOnAHost(int $host_id, array $params): array
     {
         $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params, 'POST');
 
         return $data;
     }
 
-    public function listDowntimes(int $host_id, array $params = [])
+    /**
+     * List all downtimes of a host.
+     *
+     * @param int $host_id Host ID.
+     * @param array $params Optional parameters.
+     * @return array
+     */
+    public function listDowntimes(int $host_id, array $params = []): array
     {
         $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params);
 
         return $data;
     }
 
+    /**
+     * Get a specific downtime details.
+     *
+     * @param int $downtime_id Downtime ID.
+     * @return array
+     */
     public function displayDowntime(int $downtime_id): array
     {
         $data = $this->clientRequest('monitoring/downtimes/' . $downtime_id);
@@ -217,7 +308,14 @@ class ApiClient
         return $data;
     }
 
-    public function servicesDowntimesByHost(int $host_id, array $params = [])
+    /**
+     * Get all service downtimes for a specific host.
+     *
+     * @param int $host_id Host ID.
+     * @param array $params Optional parameters.
+     * @return array
+     */
+    public function servicesDowntimesByHost(int $host_id, array $params = []): array
     {
         $defaultParams = [
             'query' => [
@@ -236,16 +334,31 @@ class ApiClient
         return $data;
     }
 
-    public function cancelDowntime(int $downtime_id, array $params = [])
+    /**
+     * Cancel a specific downtime.
+     *
+     * @param int $downtime_id Downtime ID.
+     * @param array $params Optional parameters.
+     * @return array
+     */
+    public function cancelDowntime(int $downtime_id, array $params = []): array
     {
         $data = $this->clientRequest('monitoring/downtimes/' . $downtime_id, $params, 'DELETE');
 
         return $data;
     }
 
-    public function acknowledgement(int $host_id, array $request = [])
+
+    /**
+     * Send an acknowledgement for a specific host.
+     *
+     * @param int $host_id Host ID.
+     * @param array $request Request payload.
+     * @return array
+     */
+    public function acknowledgement(int $host_id, array $request = []): array
     {
-        $data = $this->clientRequest('monitoring/hosts/' . $host_id . 'acknowledgements', $request, 'POST');
+        $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/acknowledgements', $request, 'POST');
 
         return $data;
     }
