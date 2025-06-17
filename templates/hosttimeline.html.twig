@@ -27,7 +27,7 @@
  #}
 
 <div class="d-flex">
-            <h2 class="pe-3 my-2">{{ __("Timeline") }}</h2>
+            <h2 class="pe-3 my-2">{{ __('Timeline', 'centreon') }}</h2>
                 <div class="btn-group" role="group" aria-label="Basic outlined example">
                     <button type="button" class="btn btn-outline-secondary" id="t-day">{{ __("1 Day") }}</button>
                     <button type="button" class="btn btn-outline-secondary" id="t-week">{{ __("1 Week") }}</button>
@@ -40,14 +40,14 @@
 <script>
     $(document).ready(function(){
         $('#t-day').click(function(){
-            $('#p-test').load(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=day&hostid=" + {{ hostid }})
+            $('#p-test').load(CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/hostTimeline.php?period=day&hostid=" + {{ hostid }})
             });
             });
         $('#t-week').click(function(){
-            $('#p-test').load(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=week&hostid=" + {{ hostid }});
+            $('#p-test').load(CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/hostTimeline.php?period=week&hostid=" + {{ hostid }});
         });
         $('#t-month').click(function(){
-            $('#p-test').load(CFG_GLPI['root_doc'] + "/" + GLPI_PLUGINS_PATH.centreon + "/ajax/hostTimeline.php?period=month&hostid=" + {{ hostid }});
+            $('#p-test').load(CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/hostTimeline.php?period=month&hostid=" + {{ hostid }});
 
         });
 </script>
