@@ -144,7 +144,6 @@ class ApiClient
 
         if ($this->auth_token != null) {
             $params['headers']['X-AUTH-TOKEN'] = $this->auth_token;
-
         }
 
         try {
