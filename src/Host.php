@@ -427,6 +427,9 @@ class Host extends CommonDBTM
 
     public static function showForItem(CommonDBTM $item, $withtemplate = 0)
     {
+        /** @var array $CFG_GLPI */
+        global $CFG_GLPI;
+
         $self    = new self();
         $item_id = $item->getID();
         if ($self->searchForItem($item_id) == true || $self->searchItemMatch($item_id) == true) {
@@ -437,7 +440,7 @@ class Host extends CommonDBTM
                 'hostid'   => $host_id,
                 'uid'      => $self->uid,
                 'username' => $self->username,
-                'logo'     => Plugin::getWebDir('centreon') . '/files/logo-centreon.png',
+                'logo'     => $CFG_GLPI['root_doc'] . '/plugins/centreon/files/logo-centreon.png',
             ]);
         } else {
             TemplateRenderer::getInstance()->display('@centreon/nohost.html.twig');
