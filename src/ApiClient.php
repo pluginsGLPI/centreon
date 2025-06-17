@@ -143,7 +143,7 @@ class ApiClient
         $params['headers'] = ['Content-Type' => 'application/json'];
 
         if ($this->auth_token != null) {
-                $params['headers']['X-AUTH-TOKEN'] = $this->auth_token;
+            $params['headers']['X-AUTH-TOKEN'] = $this->auth_token;
 
         }
 
