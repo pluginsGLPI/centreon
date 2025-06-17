@@ -216,18 +216,15 @@ class Host extends CommonDBTM
 
     public function sendCheck(int $id)
     {
-        $api = new ApiClient();
-        $res = $api->connectionRequest();
+        $res = $this->api_client->connectionRequest();
         if (isset($res['security']['token'])) {
             try {
-                $res         = $api->sendCheckToAnHost($id);
-                $sentcheckok = __('Check sent', 'centreon');
+                $res         = $this->api_client->sendCheckToAnHost($id);
+                $message = __('Check sent', 'centreon');
 
-                return $sentcheckok;
+                return $message;
             } catch (\Exception $e) {
-                $error_msg = $e->getMessage();
-
-                return $error_msg;
+                return $e->getMessage();
             }
         }
     }
