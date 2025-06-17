@@ -33,6 +33,7 @@ use GlpiPlugin\Centreon\Host;
 
 include('../../../inc/includes.php');
 
+Session::checkLoginUser();
 Session::checkRight('computer', READ);
 
 Html::header(
