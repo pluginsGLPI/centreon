@@ -46,13 +46,13 @@ class Config extends Glpi_Config
 
     public static function getConfig()
     {
-        return \Config::getConfigurationValues('plugin:centreon');
+        return Glpi_config::getConfigurationValues('plugin:centreon');
     }
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
         switch ($item->getType()) {
-            case \Config::class:
+            case Glpi_Config::class:
                 return self::createTabEntry(self::getTypeName());
         }
 
@@ -64,14 +64,14 @@ class Config extends Glpi_Config
         $tabnum = 1,
         $withtemplate = 0
     ) {
-        if ($item instanceof \Config) {
+        if ($item instanceof Glpi_Config) {
             return self::showForConfig($item, $withtemplate);
         }
 
         return true;
     }
 
-    public static function showForConfig(\Config $config, $withtemplate = 0)
+    public static function showForConfig(Glpi_Config $config, $withtemplate = 0)
     {
         /** @var array $CFG_GLPI */
         global $CFG_GLPI;
