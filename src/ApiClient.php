@@ -159,9 +159,17 @@ class ApiClient
         $data_body = $data->getBody();
         $data      = json_decode($data_body, true);
 
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+            \Toolbox::logDebug('Erreur JSON Centreon', [
+                'raw_body' => $data_body,
+                'endpoint' => $endpoint,
+                'json_error' => json_last_error_msg(),
+            ]);
+            $data = [];
+        }
+
         return $data;
     }
-
     /**
      * Get a list of hosts.
      *
@@ -344,10 +352,17 @@ class ApiClient
     public function cancelDowntime(int $downtime_id, array $params = []): array
     {
         $data = $this->clientRequest('monitoring/downtimes/' . $downtime_id, $params, 'DELETE');
+        \Toolbox::logDebug(
+            'Downtime cancelled',
+            [
+                'downtime_id' => $downtime_id,
+                'params'      => $params,
+                'response'    => $data,
+            ]
+        );
 
         return $data;
     }
-
 
     /**
      * Send an acknowledgement for a specific host.
