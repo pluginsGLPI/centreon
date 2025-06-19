@@ -28,7 +28,7 @@
  #}
 
 {% import "components/form/fields_macros.html.twig" as fields %}
-<div class="d-flex flew-row align-items-center py-3 ps-2">
+<div class="d-flex flex-row align-items-center py-3 ps-2">
     <h1 class="pe-3 m-0">{{ __('Host Information', 'centreon') }}</h1>
         <img class="h-4 d-inline-block" src={{ logo }} alt="lien_centreon">
             <button type="button" class="btn ms-4 me-1 toggle" id="check" >
@@ -95,11 +95,11 @@
     </div>
       <div class="modal-footer">
         <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
-          Cancel
+          {{ __('Cancel', 'centreon') }}
         </a>
         <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal" id="submit">
           <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-          Set downtime
+          {{ __('Set downtime', 'centreon') }}
         </a>
       </div>
     </div>
@@ -107,10 +107,14 @@
 </div>
 </form>
     <div class="d-flex flex-column">
-        <h2 class="p-2 m-0">General</h2>
+        <h2 class="p-2 m-0">{{ __('General', 'centreon') }}</h2>
             {% if one_host.in_downtime == true %}
                 {% set indowntime = "true" %}
-                {% set lastdowntimeid = one_host.downtimes.0.id %}
+                {% if one_host.downtimes is defined and one_host.downtimes|length > 0 %}
+                    {% set lastdowntimeid = one_host.downtimes[0].id %}
+                {% else %}
+                    {% set lastdowntimeid = null %}
+                {% endif %}
                 <div class="alert alert-warning" role="alert">
                     <h4 class="alert-title mb-1">{{ __('Host in downtime', 'centreon') }}</h4>
                         <div class="d-flex flex-row fst-italic my-2">
@@ -322,8 +326,10 @@
                     "params": flatparams
                 },
                 "success": function(result) {
-                    console.log('downtime envoyé');
-                    reloadTab('');
+                    $('#dialog').modal('hide');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
                 }
             });
         });
@@ -346,8 +352,6 @@
                 },
                 "success": function(data) {
                     reloadTab('');
-                    console.log('acknowledge ok');
-                    console.log(data);
                 }
             });
         })
@@ -362,8 +366,9 @@
                         "downtimeid": {{ lastdowntimeid ?? 0 }},
                     },
                     "success": function(){
-                        reloadTab('');
-                        console.log('downtime annulé');
+                            setTimeout(function() {
+                            location.reload();
+                        }, 2000);
                     }
                 });
             });
