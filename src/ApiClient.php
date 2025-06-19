@@ -358,7 +358,7 @@ class ApiClient
                 'downtime_id' => $downtime_id,
                 'params'      => $params,
                 'response'    => $data,
-            ]
+            ],
         );
 
         return $data;
