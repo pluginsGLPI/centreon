@@ -129,9 +129,9 @@ class Host extends CommonDBTM
      * Get detailed information about a Centreon host.
      *
      * @param int $id
-     * @return array|null
+     * @return array
      */
-    public function oneHost($id): array|null
+    public function oneHost($id): array
     {
         $res = $this->api_client->connectionRequest();
         if ($res['security']['token'] != null) {
@@ -163,6 +163,8 @@ class Host extends CommonDBTM
                 return $i_host;
             }
         }
+
+        return [];
     }
 
     /**
@@ -170,9 +172,9 @@ class Host extends CommonDBTM
      *
      * @param int $id
      * @param string $period 'day', 'week', or 'month'
-     * @return void
+     * @return string
      */
-    public function hostTimeline(int $id, string $period): void
+    public function hostTimeline(int $id, string $period): string
     {
         $api      = new ApiClient();
         $session  = $api->connectionRequest();
@@ -255,6 +257,7 @@ class Host extends CommonDBTM
                 return $e->getMessage();
             }
         }
+        return __('Error: unable to send check (unauthenticated)', 'centreon');
     }
 
     /**
@@ -378,7 +381,7 @@ class Host extends CommonDBTM
      * Acknowledge a Centreon host alert.
      *
      * @param int $host_id
-     * @param array $params
+     * @param array $request
      * @return array|string
      */
     public function acknowledgement(int $host_id, array $request = [])
@@ -396,6 +399,7 @@ class Host extends CommonDBTM
                 return $error_msg;
             }
         }
+        return __('Error: unauthenticated or unable to acknowledge', 'centreon');
     }
 
     /**
