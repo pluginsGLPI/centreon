@@ -109,31 +109,35 @@
     <div class="d-flex flex-column">
         <h2 class="p-2 m-0">{{ __('General', 'centreon') }}</h2>
             {% if one_host.in_downtime == true %}
-                {% set indowntime = "true" %}
-                {% if one_host.downtimes is defined and one_host.downtimes|length > 0 %}
-                    {% set lastdowntimeid = one_host.downtimes[0].id %}
+                {% set indowntime = true %}
+                        <div class="alert alert-warning align-items-center" role="alert" >
+                                <i class="ti ti-alert-triangle"></i>
+                            <h4 class="alert-title mb-1">{{ __('Host in downtime', 'centreon') }}</h4>
+                            {% if one_host.downtimes is defined and one_host.downtimes|length > 0 %}
+                            {% set lastdowntimeid = one_host.downtimes[0].id %}
+                                <div class="d-flex flex-row fst-italic my-2">
+                                    <div class="me-2">{{ __('From : ', 'centreon') }}{{ one_host.downtimes.0.start_time }}</div>
+                                    <div>{{ __('To : ', 'centreon') }}{{ one_host.downtimes.0.end_time }}</div>
+                                </div>
+                                    <div>{{ __('Author name : ', 'centreon') }}{{ one_host.downtimes.0.author_name }}</div>
+                                    <div>{{ __('Comment : ', 'centreon') }}{{ one_host.downtimes.0.comment }}</div>
+                                    <a href="#" class="btn mt-2" id="cancel_d">{{ __('Cancel', 'centreon') }}</a>
+                        </div>
                 {% else %}
                     {% set lastdowntimeid = null %}
                 {% endif %}
-                <div class="alert alert-warning" role="alert">
-                    <h4 class="alert-title mb-1">{{ __('Host in downtime', 'centreon') }}</h4>
-                        <div class="d-flex flex-row fst-italic my-2">
-                            <div class="me-2">{{ __('From : ', 'centreon') }}{{ one_host.downtimes.0.start_time }}</div>
-                            <div>{{ __('To : ', 'centreon') }}{{ one_host.downtimes.0.end_time }}</div>
-                        </div>
-                            <div>{{ __('Author name : ', 'centreon') }}{{ one_host.downtimes.0.author_name }}</div>
-                            <div>{{ __('Comment : ', 'centreon') }}{{ one_host.downtimes.0.comment }}</div>
-                            <a href="#" class="btn mt-2" id="cancel_d">{{ __('Cancel', 'centreon') }}</a>
-                </div>
+
             {% endif %}
     </div>
 
     {% include '@centreon/ackModal.html.twig' %}
 
 {% if one_host.in_downtime == false %}
-{% set indowntime = "false" %}
+{% set indowntime = false %}
 <div class="datagrid container text-center my-2">
-{% elseif one_host.in_downtime == true %}
+{% endif %}
+
+{% if indowntime %}
 <div class="datagrid container text-center my-2 bg-blue-lt rounded-3">
 {% endif %}
     <div class="row">
@@ -288,6 +292,39 @@
 
 <script>
     $(document).ready(function(){
+        function waitForDowntime(hostId, interval = 2000, timeout = 15000) {
+            const start = Date.now();
+
+            const intervalId = setInterval(function () {
+            $.ajax({
+                url: CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/checkDowntime.php",
+                method: 'GET',
+                data: { host_id: {{ hostid }} },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.in_downtime === true || data === 'true') {
+                        clearInterval(intervalId);
+                        window.location.reload();
+                    } else if (data?.error) {
+                        console.error('API error :', data.error);
+                        clearInterval(intervalId);
+                    } else {
+                        console.log('Downtime undetected, waiting...');
+                    }
+                },
+            error: function (xhr, status, error) {
+                console.error('AJAX error :', status, error);
+                clearInterval(intervalId);
+            }
+        });
+
+        if (Date.now() - start > timeout) {
+            clearInterval(intervalId);
+            console.warn('Timeout reached : downtime undetected');
+        }
+        }, interval);
+        }
+
         $('#check').click(function(){
             $('.toggle').toggleClass('d-none');
             $.post(CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/sendCheck.php?hostid=" + {{ hostid }}, function(response){
@@ -327,9 +364,7 @@
                 },
                 "success": function(result) {
                     $('#dialog').modal('hide');
-                    setTimeout(function() {
-                        location.reload();
-                    }, 2000);
+                    waitForDowntime({{ hostid }});
                 }
             });
         });
@@ -354,25 +389,23 @@
                     reloadTab('');
                 }
             });
-        })
+        });
 
-        if({{ indowntime }} == true) {
-            $('#cancel_d').click(function(){
-                console.log({{ one_host.in_downtime }});
-                $.ajax({
-                    "type": 'POST',
-                    "url" : CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/cancelDowntime.php",
-                    "data": {
-                        "downtimeid": {{ lastdowntimeid ?? 0 }},
-                    },
-                    "success": function(){
-                            setTimeout(function() {
-                            location.reload();
-                        }, 2000);
-                    }
-                });
+        $('#cancel_d').click(function(){
+            console.log({{ one_host.in_downtime }});
+            $.ajax({
+                "type": 'POST',
+                "url" : CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/cancelDowntime.php",
+                "data": {
+                    "downtimeid": {{ lastdowntimeid ?? 0 }},
+                },
+                "success": function(){
+                        setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                }
             });
-        }
+        });
         $(document).on('submit','#setdowntime',function(event){
             event.preventDefault();
         });
