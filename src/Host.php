@@ -220,6 +220,7 @@ class Host extends CommonDBTM
                 'timeline' => $filtered_timeline,
             ]);
         }
+        return __('Error: unable to display timeline', 'centreon');
     }
 
     public function transformDate($date)
@@ -265,9 +266,9 @@ class Host extends CommonDBTM
      *
      * @param int $id
      * @param array $params
-     * @return array|string
+     * @return array
      */
-    public function setDowntime(int $id, array $params): array|string
+    public function setDowntime(int $id, array $params): array
     {
         $params['is_fixed']      = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
         $params['with_services'] = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
@@ -296,6 +297,9 @@ class Host extends CommonDBTM
                 return $error_msg;
             }
         }
+        return [
+            'error' => __('Error: unauthenticated or unable to set downtime', 'centreon'),
+        ];
     }
 
     public function convertDateToIso8601($date)
