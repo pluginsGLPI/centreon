@@ -50,8 +50,3 @@ $res = $host->oneHost($host_id);
 
 echo json_encode(['in_downtime' => $res['in_downtime'] ?? null]);
 exit;
-
-
-
-
-
