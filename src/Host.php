@@ -294,7 +294,7 @@ class Host extends CommonDBTM
             } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
 
-                return $error_msg;
+                return ['error' => $e->getMessage()];
             }
         }
         return [
