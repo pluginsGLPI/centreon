@@ -48,11 +48,7 @@ class Host extends CommonDBTM
 
     public function __construct(?ApiClient $api_client = null)
     {
-        if ($api_client == null) {
-            $this->api_client = new ApiClient();
-        } else {
-            $this->api_client = $api_client;
-        }
+        $this->api_client = $api_client ?? new ApiClient();
     }
 
     public static function getTypeName($nb = 0)
@@ -60,7 +56,12 @@ class Host extends CommonDBTM
         return _n('Centreon', 'Centreon', $nb);
     }
 
-    public function getComputerList()
+    /**
+     * Get the list of computers from GLPI
+     *
+     * @return array
+     */
+    public function getComputerList(): array
     {
         $computer      = new Computer();
         $computer_list = $computer->find(['is_deleted' => 0]);
@@ -80,13 +81,16 @@ class Host extends CommonDBTM
 
         return $array_computer;
     }
-
-    public function hostList()
+    /**
+     * Get the list of hosts from Centreon
+     *
+     * @return void
+     */
+    public function hostList(): void
     {
-        $api = new ApiClient();
-        $res = $api->connectionRequest();
+        $res = $this->api_client->connectionRequest();
         if ($res['security']['token'] != null) {
-            $list = $api->getHostsList();
+            $list = $this->api_client->getHostsList();
             if ($list != null) {
                 $items_centreon = [];
                 foreach ($list['result'] as $item_centreon) {
@@ -100,7 +104,12 @@ class Host extends CommonDBTM
         }
     }
 
-    public function matchItems()
+    /**
+     * Match Centreon hosts with GLPI computers based on their names.
+     *
+     * @return void
+     */
+    public function matchItems(): void
     {
         foreach ($this->glpi_items as $o1) {
             foreach ($this->centreon_items as $o2) {
@@ -116,7 +125,13 @@ class Host extends CommonDBTM
         }
     }
 
-    public function oneHost($id)
+    /**
+     * Get detailed information about a Centreon host.
+     *
+     * @param int $id
+     * @return array|null
+     */
+    public function oneHost($id): array|null
     {
         $res = $this->api_client->connectionRequest();
         if ($res['security']['token'] != null) {
@@ -150,7 +165,14 @@ class Host extends CommonDBTM
         }
     }
 
-    public function hostTimeline(int $id, string $period)
+    /**
+     * Display the timeline of events for a given host.
+     *
+     * @param int $id
+     * @param string $period 'day', 'week', or 'month'
+     * @return void
+     */
+    public function hostTimeline(int $id, string $period): void
     {
         $api      = new ApiClient();
         $session  = $api->connectionRequest();
@@ -214,7 +236,13 @@ class Host extends CommonDBTM
         return $newdate;
     }
 
-    public function sendCheck(int $id)
+    /**
+     * Send a check command to a host.
+     *
+     * @param int $id
+     * @return string
+     */
+    public function sendCheck(int $id): string
     {
         $res = $this->api_client->connectionRequest();
         if (isset($res['security']['token'])) {
@@ -229,7 +257,14 @@ class Host extends CommonDBTM
         }
     }
 
-    public function setDowntime(int $id, array $params)
+    /**
+     * Schedule a downtime on a host.
+     *
+     * @param int $id
+     * @param array $params
+     * @return array|string
+     */
+    public function setDowntime(int $id, array $params): array|string
     {
         $params['is_fixed']      = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
         $params['with_services'] = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
@@ -291,6 +326,12 @@ class Host extends CommonDBTM
         return $new_duration;
     }
 
+    /**
+     * Cancel the current host downtime and its related service downtimes.
+     *
+     * @param int $downtime_id
+     * @return array
+     */
     public function cancelActualDownTime(int $downtime_id): array
     {
         $api   = new ApiClient();
@@ -333,6 +374,13 @@ class Host extends CommonDBTM
         return $error;
     }
 
+    /**
+     * Acknowledge a Centreon host alert.
+     *
+     * @param int $host_id
+     * @param array $params
+     * @return array|string
+     */
     public function acknowledgement(int $host_id, array $request = [])
     {
         $api = new ApiClient();
@@ -350,7 +398,13 @@ class Host extends CommonDBTM
         }
     }
 
-    public function searchItemMatch(int $id)
+    /**
+     * Search for a matching host in Centreon based on the local Computer name.
+     *
+     * @param int $id The ID of the Computer item to search for.
+     * @return bool True if a match was found and added; false otherwise.
+     */
+    public function searchItemMatch(int $id): bool
     {
         $item          = new Computer();
         $computer      = $item->getFromDB($id);
@@ -387,7 +441,17 @@ class Host extends CommonDBTM
         }
     }
 
-    public function searchForItem($id)
+    /**
+     * Check if an item with the given ID exists in the database.
+     *
+     * Performs a search in the database using the provided item ID
+     * and returns true if a matching entry is found.
+     *
+     * @param int $id The ID of the item to search for.
+     *
+     * @return bool True if the item exists; false otherwise.
+     */
+    public function searchForItem($id): bool
     {
         if ($this->getFromDBByCrit(['items_id' => $id])) {
             return true;
