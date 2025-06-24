@@ -30,9 +30,6 @@
 
 use GlpiPlugin\Centreon\Host;
 
-include('../../../inc/includes.php');
-
-Session::checkLoginUser();
 Session::checkRight('computer', UPDATE);
 
 header('Content-Type: application/json');

@@ -2,18 +2,18 @@ parameters:
     parallel:
         maximumNumberOfProcesses: 2
     level: 5
-    bootstrapFiles:
-        - ../../inc/based_config.php
     paths:
-        - src
-        - front
         - ajax
+        - front
+        - src
+        - tests
         - hook.php
         - setup.php
     scanDirectories:
         - ../../inc
         - ../../src
-    stubFiles:
+    bootstrapFiles:
         - ../../stubs/glpi_constants.php
+        - ../../vendor/autoload.php
 rules:
     - GlpiProject\Tools\PHPStan\Rules\GlobalVarTypeRule
