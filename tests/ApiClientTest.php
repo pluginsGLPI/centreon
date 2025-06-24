@@ -64,7 +64,6 @@ class ApiClientTest extends TestCase
             ->with(
                 $this->equalTo('login'),
                 $this->callback(function ($params) {
-                    $this->expectedParams;
                     $this->assertEquals($this->expectedParams, $params);
 
                     return true;
