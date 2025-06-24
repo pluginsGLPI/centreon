@@ -57,7 +57,7 @@ class HostTest extends TestCase
         $api = $this->getMockBuilder(ApiClient::class)
             ->disableOriginalConstructor()
             ->getMock();
-            
+
         $api
             ->method('connectionRequest')
             ->willReturn([
@@ -104,7 +104,7 @@ class HostTest extends TestCase
         $new_host = new Host($api);
         $result   = $new_host->oneHost($id);
 
-        $this->assertIsNotempty($result);
+        $this->assertNotempty($result);
     }
 
     public function testDiffDateInSeconds()
