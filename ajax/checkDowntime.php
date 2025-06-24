@@ -36,12 +36,9 @@ header('Content-Type: application/json');
 
 if (!isset($_GET['host_id'])) {
     echo json_encode(['error' => 'Missing host_id']);
+} else {
+    $host_id = $_GET['host_id'];
+    $host = new Host();
+    $res = $host->oneHost($host_id);
+    echo json_encode(['in_downtime' => $res['in_downtime'] ?? null]);
 }
-
-$host_id = $_GET['host_id'];
-
-$host = new Host();
-
-$res = $host->oneHost($host_id);
-
-echo json_encode(['in_downtime' => $res['in_downtime'] ?? null]);
