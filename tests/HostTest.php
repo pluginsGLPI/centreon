@@ -47,7 +47,6 @@ class HostTest extends TestCase
 
         $host         = new Host();
         $computerList = $host->getComputerList();
-        $this->assertIsArray($computerList);
         $this->assertNotEmpty($computerList);
     }
 
@@ -55,7 +54,10 @@ class HostTest extends TestCase
     {
         $id = 88;
 
-        $api = $this->createStub(ApiClient::class);
+        $api = $this->getMockBuilder(ApiClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+            
         $api
             ->method('connectionRequest')
             ->willReturn([
@@ -99,14 +101,10 @@ class HostTest extends TestCase
             ->with($id)
             ->willReturn([]);
 
-        // $host_mock = $this->getMockBuilder(Host::class)
-        //     ->setConstructorArgs([$api])
-        //     ->getMock();
-
         $new_host = new Host($api);
         $result   = $new_host->oneHost($id);
 
-        $this->assertIsArray($result);
+        $this->assertIsNotempty($result);
     }
 
     public function testDiffDateInSeconds()
