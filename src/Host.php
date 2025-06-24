@@ -390,20 +390,47 @@ class Host extends CommonDBTM
      */
     public function acknowledgement(int $host_id, array $request = [])
     {
-        $api = new ApiClient();
-        $res = $api->connectionRequest();
+        $res = $this->api_client->connectionRequest();
         if (isset($res['security']['token'])) {
             try {
-                $result[] = $api->acknowledgement($host_id, $request);
+
+                $request = $this->sanitizeAcknowledgementPayload($request);
+
+                $result[] = $this->api_client->acknowledgement($host_id, ['json' => $request]);
 
                 return $result;
             } catch (\Exception $e) {
-                $error_msg = $e->getMessage();
-
-                return $error_msg;
+                return $e->getMessage();
             }
         }
         return __('Error: unauthenticated or unable to acknowledge', 'centreon');
+    }
+
+    /**
+     * Sanitize the acknowledgement request payload.
+     *
+     * This ensures the expected types are correctly set before sending to Centreon API.
+     *
+     * @param array $request
+     * @return array
+     */
+    private function sanitizeAcknowledgementPayload(array $request): array
+    {
+        $boolean_fields = [
+            'is_notify_contacts',
+            'is_sticky',
+            'is_persistent_comment',
+            'with_services',
+        ];
+
+        foreach ($boolean_fields as $field) {
+            if (isset($request[$field])) {
+
+                $request[$field] = filter_var($request[$field], FILTER_VALIDATE_BOOLEAN);
+            }
+        }
+
+        return $request;
     }
 
     /**
