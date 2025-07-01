@@ -506,7 +506,7 @@ class Host extends CommonDBTM
                 ],
             );
 
-            return self::createTabEntry(self::getTypeName($nb), $nb);
+            return self::createTabEntry(self::getTypeName(), 0, $item::getType(), Config::getIcon());
         }
 
         return '';
