@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9eb85aa340b2ae33557f8a007b210265",
+    "content-hash": "3d1faf7d626c6e610b94cf588946a6aa",
     "packages": [],
     "packages-dev": [
         {
@@ -561,17 +561,66 @@
             "time": "2024-11-27T21:59:24+00:00"
         },
         {
-            "name": "glpi-project/tools",
-            "version": "0.8.0",
+            "name": "glpi-project/phpstan-glpi",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/glpi-project/tools.git",
-                "reference": "7c2dcec105ed3427183bdfd382d785363aade436"
+                "url": "https://github.com/glpi-project/phpstan-glpi.git",
+                "reference": "e98ef833abc1389a0cc69743db5b1f3a7dc8ccfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/glpi-project/tools/zipball/7c2dcec105ed3427183bdfd382d785363aade436",
-                "reference": "7c2dcec105ed3427183bdfd382d785363aade436",
+                "url": "https://api.github.com/repos/glpi-project/phpstan-glpi/zipball/e98ef833abc1389a0cc69743db5b1f3a7dc8ccfe",
+                "reference": "e98ef833abc1389a0cc69743db5b1f3a7dc8ccfe",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4",
+                "phpstan/phpstan": "^2.1",
+                "symfony/polyfill-php80": "^1.32"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.85",
+                "php-parallel-lint/php-parallel-lint": "^1.4",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpunit": "^9.6"
+            },
+            "type": "phpstan-extension",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "extension.neon"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PHPStanGlpi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPStan rules for GLPI.",
+            "support": {
+                "issues": "https://github.com/glpi-project/phpstan-glpi/issues",
+                "source": "https://github.com/glpi-project/phpstan-glpi/tree/1.1.1"
+            },
+            "time": "2025-08-11T13:48:13+00:00"
+        },
+        {
+            "name": "glpi-project/tools",
+            "version": "0.7.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/glpi-project/tools.git",
+                "reference": "bd78ad2ab0d30510729530c077f84d52b8f02866"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/glpi-project/tools/zipball/bd78ad2ab0d30510729530c077f84d52b8f02866",
+                "reference": "bd78ad2ab0d30510729530c077f84d52b8f02866",
                 "shasum": ""
             },
             "require": {
@@ -614,7 +663,7 @@
                 "issues": "https://github.com/glpi-project/tools/issues",
                 "source": "https://github.com/glpi-project/tools"
             },
-            "time": "2025-08-26T10:18:38+00:00"
+            "time": "2025-08-20T09:58:56+00:00"
         },
         {
             "name": "php-parallel-lint/php-parallel-lint",

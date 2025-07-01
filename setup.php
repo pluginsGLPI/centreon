@@ -50,7 +50,7 @@ function plugin_init_centreon()
     /** @var array $PLUGIN_HOOKS */
     global $PLUGIN_HOOKS;
 
-    $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['centreon'] = '../../front/config.form.php';
+    $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['centreon'] = '../../front/config.form.php?forcetab=GlpiPlugin\Centreon\Config$1';
 
     $PLUGIN_HOOKS[Hooks::SECURED_CONFIGS]['centreon'] = ['centreon-password'];
 
