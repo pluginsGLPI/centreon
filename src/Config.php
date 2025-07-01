@@ -53,7 +53,7 @@ class Config extends Glpi_Config
     {
         switch ($item->getType()) {
             case Glpi_Config::class:
-                return self::createTabEntry(self::getTypeName());
+                return self::createTabEntry(self::getTypeName(), 0, $item::getType(), self::getIcon());
         }
 
         return '';
@@ -116,5 +116,10 @@ class Config extends Glpi_Config
         ) {
             unset($item->input['centreon-password']);
         }
+    }
+
+    public static function getIcon()
+    {
+        return "ti ti-square-rounded-letter-c";
     }
 }
