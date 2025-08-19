@@ -41,7 +41,7 @@ class Config extends Glpi_Config
 {
     public static function getTypeName($nb = 0)
     {
-        return __('Centreon settings', 'Centreon');
+        return __s('Centreon settings', 'Centreon');
     }
 
     public static function getConfig()
