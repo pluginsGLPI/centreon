@@ -114,7 +114,7 @@ function plugin_centreon_getAddSearchOptionsNew($itemtype)
             'id'               => 2023,
             'table'            => GlpiPlugin\Centreon\Host::getTable(),
             'field'            => 'id',
-            'name'             => __('Centreon Host Status', 'centreon'),
+            'name'             => __s('Centreon Host Status', 'centreon'),
             'additionalfields' => ['centreon_id'],
             'datatype'         => 'specific',
             'nosearch'         => true,

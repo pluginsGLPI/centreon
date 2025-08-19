@@ -53,7 +53,7 @@ class Host extends CommonDBTM
 
     public static function getTypeName($nb = 0)
     {
-        return _n('Centreon', 'Centreon', $nb);
+        return _sn('Centreon', 'Centreon', $nb);
     }
 
     /**
@@ -75,7 +75,7 @@ class Host extends CommonDBTM
                 ];
             }
         } else {
-            echo __('The list is empty', 'centreon');
+            echo __s('The list is empty', 'centreon');
         }
         $this->glpi_items = $array_computer;
 
@@ -184,8 +184,8 @@ class Host extends CommonDBTM
             $timeline_r  = $gettimeline['result'];
             foreach ($timeline_r as $event) {
                 if ($event['type'] == 'downtime') {
-                    $event['status']['name'] = __('unset', 'centreon');
-                    $event['tries']          = __('unset', 'centreon');
+                    $event['status']['name'] = __s('unset', 'centreon');
+                    $event['tries']          = __s('unset', 'centreon');
                 }
                 $timeline[] = [
                     'id'      => $event['id'],
@@ -220,7 +220,7 @@ class Host extends CommonDBTM
                 'timeline' => $filtered_timeline,
             ]);
         }
-        return __('Error: unable to display timeline', 'centreon');
+        return __s('Error: unable to display timeline', 'centreon');
     }
 
     public function transformDate($date)
@@ -251,14 +251,14 @@ class Host extends CommonDBTM
         if (isset($res['security']['token'])) {
             try {
                 $res         = $this->api_client->sendCheckToAnHost($id);
-                $message = __('Check sent', 'centreon');
+                $message = __s('Check sent', 'centreon');
 
                 return $message;
             } catch (\Exception $e) {
                 return $e->getMessage();
             }
         }
-        return __('Error: unable to send check (unauthenticated)', 'centreon');
+        return __s('Error: unable to send check (unauthenticated)', 'centreon');
     }
 
     /**
@@ -298,7 +298,7 @@ class Host extends CommonDBTM
             }
         }
         return [
-            'error' => __('Error: unauthenticated or unable to set downtime', 'centreon'),
+            'error' => __s('Error: unauthenticated or unable to set downtime', 'centreon'),
         ];
     }
 
@@ -403,7 +403,7 @@ class Host extends CommonDBTM
                 return $e->getMessage();
             }
         }
-        return __('Error: unauthenticated or unable to acknowledge', 'centreon');
+        return __s('Error: unauthenticated or unable to acknowledge', 'centreon');
     }
 
     /**
