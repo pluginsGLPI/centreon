@@ -9,4 +9,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Prevent warnings for uninitialized fields during plugin first-time setup
 - Fix installation warning about `signed integers is discouraged`
