@@ -54,8 +54,8 @@ class ApiClient
             'json' => [
                 'security' => [
                     'credentials' => [
-                        'login'    => $this->api_config['centreon-username'],
-                        'password' => (new GLPIKey())->decrypt($this->api_config['centreon-password']),
+                        'login'    => $this->api_config['centreon-username'] ?? '',
+                        'password' => (new GLPIKey())->decrypt($this->api_config['centreon-password'] ?? ''),
                     ],
                 ],
             ],
@@ -102,7 +102,7 @@ class ApiClient
     public function clientRequest(string $endpoint = '', array $params = [], string $method = 'GET')
     {
         $api_client = new Client([
-            'base_uri' => $this->api_config['centreon-url'],
+            'base_uri' => $this->api_config['centreon-url'] ?? '',
             'verify' => false,
             'connect_timeout' => 3,
             'timeout' => 10,
