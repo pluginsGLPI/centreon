@@ -43,13 +43,15 @@ function plugin_centreon_install($version)
     $default_charset   = DBConnection::getDefaultCharset();
     $default_collation = DBConnection::getDefaultCollation();
 
+    $migration = new Migration(PLUGIN_CENTREON_VERSION);
+
     $table = GlpiPlugin\Centreon\Host::getTable();
     if (!$DB->tableExists($table)) {
         $query = "CREATE TABLE `$table` (
                   `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
                   `itemtype`      VARCHAR(100) NOT NULL,
-                  `items_id`      INT(10) UNSIGNED NOT NULL DEFAULT '0',
-                  `centreon_id`   INT(10) NOT NULL,
+                  `items_id`      INT UNSIGNED NOT NULL DEFAULT '0',
+                  `centreon_id`   INT UNSIGNED NOT NULL,
                   `centreon_type` VARCHAR(100) DEFAULT 'host',
                   PRIMARY KEY  (`id`),
                   KEY `items_id` (`items_id`)
@@ -57,6 +59,9 @@ function plugin_centreon_install($version)
                  DEFAULT CHARSET={$default_charset}
                  COLLATE={$default_collation}";
         $DB->doQuery($query);
+    } else {
+        $migration->changeField($table, 'items_id', 'items_id', "int unsigned NOT NULL DEFAULT '0'");
+        $migration->changeField($table, 'centreon_id', 'centreon_id', "int unsigned NOT NULL");
     }
     $centreon_password = Config::getConfigurationValue('plugin:centreon', 'centreon-password');
     /**Migration to 1.0.1 */
