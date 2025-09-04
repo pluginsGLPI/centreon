@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [UNRELEASED]
 
+## [1.0.3] - 2025-09-04
+
 ### Fixed
 
 - Prevent warnings for uninitialized fields during plugin first-time setup
