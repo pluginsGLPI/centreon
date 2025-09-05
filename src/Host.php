@@ -46,21 +46,22 @@ class Host extends CommonDBTM
     public $uid            = '';
     public $username       = '';
 
-    public function __construct(ApiClient $api_client = null)
+    public function __construct(?ApiClient $api_client = null)
     {
-        if ($api_client == null) {
-            $this->api_client = new ApiClient();
-        } else {
-            $this->api_client = $api_client;
-        }
+        $this->api_client = $api_client ?? new ApiClient();
     }
 
     public static function getTypeName($nb = 0)
     {
-        return _n('Centreon', 'Centreon', $nb);
+        return _sn('Centreon', 'Centreon', $nb);
     }
 
-    public function getComputerList()
+    /**
+     * Get the list of computers from GLPI
+     *
+     * @return array
+     */
+    public function getComputerList(): array
     {
         $computer      = new Computer();
         $computer_list = $computer->find(['is_deleted' => 0]);
@@ -74,19 +75,22 @@ class Host extends CommonDBTM
                 ];
             }
         } else {
-            echo __('The list is empty', 'centreon');
+            echo __s('The list is empty', 'centreon');
         }
         $this->glpi_items = $array_computer;
 
         return $array_computer;
     }
-
-    public function hostList()
+    /**
+     * Get the list of hosts from Centreon
+     *
+     * @return void
+     */
+    public function hostList(): void
     {
-        $api = new ApiClient();
-        $res = $api->connectionRequest();
+        $res = $this->api_client->connectionRequest();
         if ($res['security']['token'] != null) {
-            $list = $api->getHostsList();
+            $list = $this->api_client->getHostsList();
             if ($list != null) {
                 $items_centreon = [];
                 foreach ($list['result'] as $item_centreon) {
@@ -100,7 +104,12 @@ class Host extends CommonDBTM
         }
     }
 
-    public function matchItems()
+    /**
+     * Match Centreon hosts with GLPI computers based on their names.
+     *
+     * @return void
+     */
+    public function matchItems(): void
     {
         foreach ($this->glpi_items as $o1) {
             foreach ($this->centreon_items as $o2) {
@@ -116,7 +125,13 @@ class Host extends CommonDBTM
         }
     }
 
-    public function oneHost($id)
+    /**
+     * Get detailed information about a Centreon host.
+     *
+     * @param int $id
+     * @return array
+     */
+    public function oneHost($id): array
     {
         $res = $this->api_client->connectionRequest();
         if ($res['security']['token'] != null) {
@@ -148,9 +163,18 @@ class Host extends CommonDBTM
                 return $i_host;
             }
         }
+
+        return [];
     }
 
-    public function hostTimeline(int $id, string $period)
+    /**
+     * Display the timeline of events for a given host.
+     *
+     * @param int $id
+     * @param string $period 'day', 'week', or 'month'
+     * @return string
+     */
+    public function hostTimeline(int $id, string $period): string
     {
         $api      = new ApiClient();
         $session  = $api->connectionRequest();
@@ -160,8 +184,8 @@ class Host extends CommonDBTM
             $timeline_r  = $gettimeline['result'];
             foreach ($timeline_r as $event) {
                 if ($event['type'] == 'downtime') {
-                    $event['status']['name'] = __('unset', 'centreon');
-                    $event['tries']          = __('unset', 'centreon');
+                    $event['status']['name'] = __s('unset', 'centreon');
+                    $event['tries']          = __s('unset', 'centreon');
                 }
                 $timeline[] = [
                     'id'      => $event['id'],
@@ -196,6 +220,7 @@ class Host extends CommonDBTM
                 'timeline' => $filtered_timeline,
             ]);
         }
+        return __s('Error: unable to display timeline', 'centreon');
     }
 
     public function transformDate($date)
@@ -214,25 +239,36 @@ class Host extends CommonDBTM
         return $newdate;
     }
 
-    public function sendCheck(int $id)
+    /**
+     * Send a check command to a host.
+     *
+     * @param int $id
+     * @return string
+     */
+    public function sendCheck(int $id): string
     {
-        $api = new ApiClient();
-        $res = $api->connectionRequest();
+        $res = $this->api_client->connectionRequest();
         if (isset($res['security']['token'])) {
             try {
-                $res         = $api->sendCheckToAnHost($id);
-                $sentcheckok = __('Check sent', 'centreon');
+                $res         = $this->api_client->sendCheckToAnHost($id);
+                $message = __s('Check sent', 'centreon');
 
-                return $sentcheckok;
+                return $message;
             } catch (\Exception $e) {
-                $error_msg = $e->getMessage();
-
-                return $error_msg;
+                return $e->getMessage();
             }
         }
+        return __s('Error: unable to send check (unauthenticated)', 'centreon');
     }
 
-    public function setDowntime(int $id, array $params)
+    /**
+     * Schedule a downtime on a host.
+     *
+     * @param int $id
+     * @param array $params
+     * @return array
+     */
+    public function setDowntime(int $id, array $params): array
     {
         $params['is_fixed']      = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
         $params['with_services'] = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
@@ -258,9 +294,12 @@ class Host extends CommonDBTM
             } catch (\Exception $e) {
                 $error_msg = $e->getMessage();
 
-                return $error_msg;
+                return ['error' => $e->getMessage()];
             }
         }
+        return [
+            'error' => __s('Error: unauthenticated or unable to set downtime', 'centreon'),
+        ];
     }
 
     public function convertDateToIso8601($date)
@@ -294,6 +333,12 @@ class Host extends CommonDBTM
         return $new_duration;
     }
 
+    /**
+     * Cancel the current host downtime and its related service downtimes.
+     *
+     * @param int $downtime_id
+     * @return array
+     */
     public function cancelActualDownTime(int $downtime_id): array
     {
         $api   = new ApiClient();
@@ -336,24 +381,65 @@ class Host extends CommonDBTM
         return $error;
     }
 
+    /**
+     * Acknowledge a Centreon host alert.
+     *
+     * @param int $host_id
+     * @param array $request
+     * @return array|string
+     */
     public function acknowledgement(int $host_id, array $request = [])
     {
-        $api = new ApiClient();
-        $res = $api->connectionRequest();
+        $res = $this->api_client->connectionRequest();
         if (isset($res['security']['token'])) {
             try {
-                $result[] = $api->acknowledgement($host_id, $request);
+
+                $request = $this->sanitizeAcknowledgementPayload($request);
+
+                $result[] = $this->api_client->acknowledgement($host_id, ['json' => $request]);
 
                 return $result;
             } catch (\Exception $e) {
-                $error_msg = $e->getMessage();
-
-                return $error_msg;
+                return $e->getMessage();
             }
         }
+        return __s('Error: unauthenticated or unable to acknowledge', 'centreon');
     }
 
-    public function searchItemMatch(int $id)
+    /**
+     * Sanitize the acknowledgement request payload.
+     *
+     * This ensures the expected types are correctly set before sending to Centreon API.
+     *
+     * @param array $request
+     * @return array
+     */
+    private function sanitizeAcknowledgementPayload(array $request): array
+    {
+        $boolean_fields = [
+            'is_notify_contacts',
+            'is_sticky',
+            'is_persistent_comment',
+            'with_services',
+        ];
+
+        foreach ($boolean_fields as $field) {
+            if (isset($request[$field])) {
+
+                $request[$field] = filter_var($request[$field], FILTER_VALIDATE_BOOLEAN);
+            }
+        }
+
+        return $request;
+    }
+
+    /**
+     * Search for a matching host in Centreon based on the local Computer name.
+     *
+     * @param int $id The ID of the Computer item to search for.
+     * @return bool True if a match was found and added; false otherwise.
+     */
+    public function searchItemMatch(int $id): bool
     {
         $item          = new Computer();
         $computer      = $item->getFromDB($id);
@@ -390,7 +476,17 @@ class Host extends CommonDBTM
         }
     }
 
-    public function searchForItem($id)
+    /**
+     * Check if an item with the given ID exists in the database.
+     *
+     * Performs a search in the database using the provided item ID
+     * and returns true if a matching entry is found.
+     *
+     * @param int $id The ID of the item to search for.
+     *
+     * @return bool True if the item exists; false otherwise.
+     */
+    public function searchForItem($id): bool
     {
         if ($this->getFromDBByCrit(['items_id' => $id])) {
             return true;
@@ -410,7 +506,7 @@ class Host extends CommonDBTM
                 ],
             );
 
-            return self::createTabEntry(self::getTypeName($nb), $nb);
+            return self::createTabEntry(self::getTypeName(), 0, $item::getType(), Config::getIcon());
         }
 
         return '';
@@ -427,6 +523,9 @@ class Host extends CommonDBTM
 
     public static function showForItem(CommonDBTM $item, $withtemplate = 0)
     {
+        /** @var array $CFG_GLPI */
+        global $CFG_GLPI;
+
         $self    = new self();
         $item_id = $item->getID();
         if ($self->searchForItem($item_id) == true || $self->searchItemMatch($item_id) == true) {
@@ -437,7 +536,7 @@ class Host extends CommonDBTM
                 'hostid'   => $host_id,
                 'uid'      => $self->uid,
                 'username' => $self->username,
-                'logo'     => Plugin::getWebDir('centreon') . '/files/logo-centreon.png',
+                'logo'     => $CFG_GLPI['root_doc'] . '/plugins/centreon/files/logo-centreon.png',
             ]);
         } else {
             TemplateRenderer::getInstance()->display('@centreon/nohost.html.twig');

@@ -41,19 +41,19 @@ class Config extends Glpi_Config
 {
     public static function getTypeName($nb = 0)
     {
-        return __('Centreon settings', 'Centreon');
+        return __s('Centreon settings', 'Centreon');
     }
 
     public static function getConfig()
     {
-        return \Config::getConfigurationValues('plugin:centreon');
+        return Glpi_config::getConfigurationValues('plugin:centreon');
     }
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
         switch ($item->getType()) {
-            case \Config::class:
-                return self::createTabEntry(self::getTypeName());
+            case Glpi_Config::class:
+                return self::createTabEntry(self::getTypeName(), 0, $item::getType(), self::getIcon());
         }
 
         return '';
@@ -64,14 +64,14 @@ class Config extends Glpi_Config
         $tabnum = 1,
         $withtemplate = 0
     ) {
-        if ($item instanceof \Config) {
+        if ($item instanceof Glpi_Config) {
             return self::showForConfig($item, $withtemplate);
         }
 
         return true;
     }
 
-    public static function showForConfig(\Config $config, $withtemplate = 0)
+    public static function showForConfig(Glpi_Config $config, $withtemplate = 0)
     {
         /** @var array $CFG_GLPI */
         global $CFG_GLPI;
@@ -116,5 +116,10 @@ class Config extends Glpi_Config
         ) {
             unset($item->input['centreon-password']);
         }
+    }
+
+    public static function getIcon()
+    {
+        return "ti ti-square-rounded-letter-c";
     }
 }
