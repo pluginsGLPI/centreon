@@ -46,7 +46,7 @@ class Host extends CommonDBTM
     public $uid            = '';
     public $username       = '';
 
-    public function __construct(ApiClient $api_client = null)
+    public function __construct(?ApiClient $api_client = null)
     {
         if ($api_client == null) {
             $this->api_client = new ApiClient();
