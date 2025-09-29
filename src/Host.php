@@ -310,7 +310,7 @@ class Host extends CommonDBTM
     public function convertDateToIso8601($date)
     {
         $timezone = new DateTimeZone($_SESSION['glpi_tz'] ?? date_default_timezone_get());
-        $new_date = new \DateTime($date, $timezone);
+        $new_date = new DateTime($date, $timezone);
         $iso_date = $new_date->format(DATE_ATOM);
 
         return $iso_date;
