@@ -27,17 +27,19 @@
  * @link      https://github.com/pluginsGLPI/centreon
  * -------------------------------------------------------------------------
  */
+use Glpi\Plugin\Hooks;
+use GlpiPlugin\Centreon\Host;
 
-define('PLUGIN_CENTREON_VERSION', '1.0.3');
+use function Safe\define;
+
+define('PLUGIN_CENTREON_VERSION', '1.1.0');
 
 // Minimal GLPI version, inclusive
-define('PLUGIN_CENTREON_MIN_GLPI_VERSION', '10.0.0');
+define('PLUGIN_CENTREON_MIN_GLPI_VERSION', '11.0.0');
 // Maximum GLPI version, exclusive
-define('PLUGIN_CENTREON_MAX_GLPI_VERSION', '10.0.99');
+define('PLUGIN_CENTREON_MAX_GLPI_VERSION', '11.0.99');
 // Define the plugin directory
 define('CENTREON_DIR_PATH', __DIR__);
-
-use Glpi\Plugin\Hooks;
 
 /**
  * Init hooks of the plugin.
@@ -50,21 +52,19 @@ function plugin_init_centreon()
     /** @var array $PLUGIN_HOOKS */
     global $PLUGIN_HOOKS;
 
-    $PLUGIN_HOOKS[Hooks::CSRF_COMPLIANT]['centreon'] = true;
-
-    $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['centreon'] = '../../front/config.form.php';
+    $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['centreon'] = '../../front/config.form.php?forcetab=GlpiPlugin\Centreon\Config$1';
 
     $PLUGIN_HOOKS[Hooks::SECURED_CONFIGS]['centreon'] = ['centreon-password'];
 
     $PLUGIN_HOOKS[Hooks::PRE_ITEM_UPDATE]['centreon'] = [
-        \Config::class => [
+        Config::class => [
             GlpiPlugin\Centreon\Config::class,
             'prepareConfigUpdate',
         ],
     ];
 
 
-    Plugin::registerClass(GlpiPlugin\Centreon\Host::class, [
+    Plugin::registerClass(Host::class, [
         'addtabon' => ['Computer'],
     ]);
 

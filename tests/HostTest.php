@@ -30,10 +30,10 @@
 
 namespace GlpiPlugin\Centreon\tests;
 
-use GlpiPlugin\Centreon\ApiClient;
-use PHPUnit\Framework\TestCase;
-use GlpiPlugin\Centreon\Host;
 use Computer;
+use GlpiPlugin\Centreon\ApiClient;
+use GlpiPlugin\Centreon\Host;
+use PHPUnit\Framework\TestCase;
 
 class HostTest extends TestCase
 {
@@ -47,7 +47,6 @@ class HostTest extends TestCase
 
         $host         = new Host();
         $computerList = $host->getComputerList();
-        $this->assertIsArray($computerList);
         $this->assertNotEmpty($computerList);
     }
 
@@ -55,7 +54,10 @@ class HostTest extends TestCase
     {
         $id = 88;
 
-        $api = $this->createStub(ApiClient::class);
+        $api = $this->getMockBuilder(ApiClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $api
             ->method('connectionRequest')
             ->willReturn([
@@ -99,14 +101,10 @@ class HostTest extends TestCase
             ->with($id)
             ->willReturn([]);
 
-        // $host_mock = $this->getMockBuilder(Host::class)
-        //     ->setConstructorArgs([$api])
-        //     ->getMock();
-
         $new_host = new Host($api);
         $result   = $new_host->oneHost($id);
 
-        $this->assertIsArray($result);
+        $this->assertNotempty($result);
     }
 
     public function testDiffDateInSeconds()

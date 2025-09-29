@@ -30,8 +30,8 @@
 
 namespace GlpiPlugin\Centreon\tests;
 
-use PHPUnit\Framework\TestCase;
 use GlpiPlugin\Centreon\ApiClient;
+use PHPUnit\Framework\TestCase;
 
 class ApiClientTest extends TestCase
 {
@@ -64,7 +64,6 @@ class ApiClientTest extends TestCase
             ->with(
                 $this->equalTo('login'),
                 $this->callback(function ($params) {
-                    $this->expectedParams;
                     $this->assertEquals($this->expectedParams, $params);
 
                     return true;
