@@ -30,9 +30,13 @@
 
 namespace GlpiPlugin\Centreon;
 
-use GuzzleHttp\Client;
+use Exception;
 use GLPIKey;
 use GlpiPlugin\Centreon\Config;
+use GuzzleHttp\Client;
+
+use function Safe\json_decode;
+use function Safe\json_encode;
 
 class ApiClient
 {
@@ -49,12 +53,7 @@ class ApiClient
     {
         $api_i            = new Config();
         $this->api_config = $api_i->getConfig();
-
-        if (!isset($this->api_config['centreon-url']) || strlen(trim($this->api_config['centreon-url'])) === 0) {
-            return false;
-        }
-
-        return true;
+        return !(!isset($this->api_config['centreon-url']) || trim($this->api_config['centreon-url']) === '');
     }
 
     /**
@@ -62,12 +61,12 @@ class ApiClient
      *
      * @param array $params Additional request parameters.
      * @return array The response array or error .
-     * @throws \Exception If the configuration is missing or request fails.
+     * @throws Exception If the configuration is missing or request fails.
      */
     public function connectionRequest(array $params = []): array
     {
         if (!$this->centreonConfig()) {
-            throw new \Exception('Centreon configuration is not set.');
+            throw new Exception('Centreon configuration is not set.');
         }
 
         $defaults = [
@@ -84,7 +83,7 @@ class ApiClient
 
         try {
             $data = $this->clientRequest('login', $params, 'POST');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if (isset($params['throw'])) {
                 throw $e;
             }
@@ -114,7 +113,7 @@ class ApiClient
                     'message' => 'You are connected to Centreon API !',
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $result = [
                 'result'  => false,
                 'message' => $e->getMessage(),
@@ -148,7 +147,7 @@ class ApiClient
 
         try {
             $data = $api_client->request($method, $endpoint, $params);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if (isset($params['throw'])) {
                 throw $e;
             }

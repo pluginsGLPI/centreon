@@ -30,8 +30,8 @@
 
 namespace GlpiPlugin\Centreon\tests;
 
-use PHPUnit\Framework\TestCase;
 use GlpiPlugin\Centreon\ApiClient;
+use PHPUnit\Framework\TestCase;
 
 class ApiClientTest extends TestCase
 {

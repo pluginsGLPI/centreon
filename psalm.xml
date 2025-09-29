@@ -7,6 +7,8 @@
         <directory name="front" />
         <directory name="src" />
         <directory name="tests" />
+        <file name="hook.php" />
+        <file name="setup.php" />
     </projectFiles>
 
     <issueHandlers>

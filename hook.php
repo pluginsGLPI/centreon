@@ -45,7 +45,7 @@ function plugin_centreon_install($version)
 
     $migration = new Migration(PLUGIN_CENTREON_VERSION);
 
-    $table = GlpiPlugin\Centreon\Host::getTable();
+    $table = Host::getTable();
     if (!$DB->tableExists($table)) {
         $query = "CREATE TABLE `$table` (
                   `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -90,7 +90,7 @@ function plugin_centreon_uninstall()
     /** @var DBmysql $DB */
     global $DB;
 
-    $tables = [GlpiPlugin\Centreon\Host::getTable(), ];
+    $tables = [Host::getTable(), ];
 
     foreach ($tables as $table) {
         $migration = new Migration(PLUGIN_CENTREON_VERSION);
@@ -99,7 +99,7 @@ function plugin_centreon_uninstall()
         $DB->error();
     }
 
-    $config = new \Config();
+    $config = new Config();
     $config->deleteByCriteria(['context' => 'plugin:centreon']);
 
     return true;
@@ -112,7 +112,7 @@ function plugin_centreon_getAddSearchOptionsNew($itemtype)
     if ($itemtype == 'Computer') {
         $sopt[] = [
             'id'               => 2023,
-            'table'            => GlpiPlugin\Centreon\Host::getTable(),
+            'table'            => Host::getTable(),
             'field'            => 'id',
             'name'             => __s('Centreon Host Status', 'centreon'),
             'additionalfields' => ['centreon_id'],

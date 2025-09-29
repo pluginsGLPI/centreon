@@ -30,12 +30,12 @@
 
 namespace GlpiPlugin\Centreon;
 
+use CommonDBTM;
 use CommonGLPI;
-use Glpi\Application\View\TemplateRenderer;
-use Session;
-use GlpiPlugin\Centreon\ApiClient;
-use Toolbox;
 use Config as Glpi_Config;
+use Glpi\Application\View\TemplateRenderer;
+use GlpiPlugin\Centreon\ApiClient;
+use Session;
 
 class Config extends Glpi_Config
 {
@@ -108,7 +108,7 @@ class Config extends Glpi_Config
         }
     }
 
-    public static function prepareConfigUpdate(\CommonDBTM $item)
+    public static function prepareConfigUpdate(CommonDBTM $item)
     {
         if (
             isset($item->input['centreon-password'])

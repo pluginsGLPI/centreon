@@ -30,10 +30,10 @@
 
 namespace GlpiPlugin\Centreon\tests;
 
-use GlpiPlugin\Centreon\ApiClient;
-use PHPUnit\Framework\TestCase;
-use GlpiPlugin\Centreon\Host;
 use Computer;
+use GlpiPlugin\Centreon\ApiClient;
+use GlpiPlugin\Centreon\Host;
+use PHPUnit\Framework\TestCase;
 
 class HostTest extends TestCase
 {

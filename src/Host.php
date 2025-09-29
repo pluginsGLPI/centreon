@@ -30,12 +30,17 @@
 
 namespace GlpiPlugin\Centreon;
 
-use Computer;
 use CommonDBTM;
 use CommonGLPI;
-use Plugin;
-use GlpiPlugin\Centreon\ApiClient;
+use Computer;
+use DateTimeZone;
+use Exception;
 use Glpi\Application\View\TemplateRenderer;
+use GlpiPlugin\Centreon\ApiClient;
+use Safe\DateTime;
+
+use function Safe\json_encode;
+use function Safe\strtotime;
 
 class Host extends CommonDBTM
 {
@@ -254,7 +259,7 @@ class Host extends CommonDBTM
                 $message = __s('Check sent', 'centreon');
 
                 return $message;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $e->getMessage();
             }
         }
@@ -291,7 +296,7 @@ class Host extends CommonDBTM
                 $res = $api->setDowntimeOnAHost($id, ['json' => $params]);
 
                 return $res;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $error_msg = $e->getMessage();
 
                 return ['error' => $e->getMessage()];
@@ -304,7 +309,7 @@ class Host extends CommonDBTM
 
     public function convertDateToIso8601($date)
     {
-        $timezone = new \DateTimeZone($_SESSION['glpi_tz'] ?? date_default_timezone_get());
+        $timezone = new DateTimeZone($_SESSION['glpi_tz'] ?? date_default_timezone_get());
         $new_date = new \DateTime($date, $timezone);
         $iso_date = $new_date->format(DATE_ATOM);
 
@@ -367,7 +372,7 @@ class Host extends CommonDBTM
                     }
                 }
                 $api->cancelDowntime($downtime_id);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $error[] = [
                     'message' => $e->getMessage(),
                 ];
@@ -399,7 +404,7 @@ class Host extends CommonDBTM
                 $result[] = $this->api_client->acknowledgement($host_id, ['json' => $request]);
 
                 return $result;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $e->getMessage();
             }
         }
@@ -442,7 +447,7 @@ class Host extends CommonDBTM
     public function searchItemMatch(int $id): bool
     {
         $item          = new Computer();
-        $computer      = $item->getFromDB($id);
+        $item->getFromDB($id);
         $computer_name = $item->fields['name'];
 
         $api = new ApiClient();
