@@ -457,7 +457,7 @@ class Host extends CommonDBTM
                 'query' => [
                     'search' => json_encode([
                         'host.name' => [
-                            '$lk' => '%' . $computer_name . '%'
+                            '$lk' => '%' . $computer_name . '%',
                         ],
                     ]),
                 ],
@@ -476,7 +476,7 @@ class Host extends CommonDBTM
                     ]);
                     $this->getFromDB($new_id);
                 }
-             }
+            }
 
             return true;
 
