@@ -457,26 +457,31 @@ class Host extends CommonDBTM
                 'query' => [
                     'search' => json_encode([
                         'host.name' => [
-                            '$eq' => $computer_name,
+                            '$lk' => '%' . $computer_name . '%',
                         ],
                     ]),
                 ],
             ];
             $match = $api->getHostsList($params);
-        }
 
-        if (isset($match['result']['0']['name']) && $match['result']['0']['name'] == $computer_name) {
-            $centreon_id = $match['result']['0']['id'];
-            $new_id      = $this->add([
-                'itemtype'      => 'Computer',
-                'items_id'      => $id,
-                'centreon_id'   => $centreon_id,
-                'centreon_type' => 'host',
-            ]);
-            $this->getFromDB($new_id);
+            //compare results case-insensitively
+            foreach ($match['result'] as $host) {
+                if (strcasecmp($host['name'], $computer_name) === 0) {
+                    $centreon_id = $host['id'];
+                    $new_id = $this->add([
+                        'itemtype'      => 'Computer',
+                        'items_id'      => $id,
+                        'centreon_id'   => $centreon_id,
+                        'centreon_type' => 'host',
+                    ]);
+                    $this->getFromDB($new_id);
+                }
+            }
 
             return true;
+
         } else {
+
             return false;
         }
     }
