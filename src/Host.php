@@ -475,10 +475,11 @@ class Host extends CommonDBTM
                         'centreon_type' => 'host',
                     ]);
                     $this->getFromDB($new_id);
+                    return true;
                 }
             }
 
-            return true;
+            return false;
 
         } else {
 
