@@ -21,7 +21,7 @@
    <homepage>https://github.com/pluginsGLPI/centreon</homepage>
    <download>https://github.com/pluginsGLPI/centreon/releases</download>
    <issues>https://github.com/pluginsGLPI/centreon/issues</issues>
-   <readme>https://github.com/pluginsGLPI/centreon/blob/main/README.md</readme>
+   <readme>https://help.glpi-project.org/doc-plugins/centreon</readme>
    <authors>
       <author>Teclib'</author>
    </authors>
