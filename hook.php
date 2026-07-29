@@ -47,7 +47,7 @@ function plugin_centreon_install($version)
 
     $table = Host::getTable();
     if (!$DB->tableExists($table)) {
-        $query = "CREATE TABLE `$table` (
+        $query = "CREATE TABLE `{$table}` (
                   `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
                   `itemtype`      VARCHAR(100) NOT NULL,
                   `items_id`      INT UNSIGNED NOT NULL DEFAULT '0',
@@ -63,6 +63,7 @@ function plugin_centreon_install($version)
         $migration->changeField($table, 'items_id', 'items_id', "int unsigned NOT NULL DEFAULT '0'");
         $migration->changeField($table, 'centreon_id', 'centreon_id', "int unsigned NOT NULL");
     }
+
     $centreon_password = Config::getConfigurationValue('plugin:centreon', 'centreon-password');
     /**Migration to 1.0.1 */
     if ($centreon_password !== null) {
@@ -77,6 +78,7 @@ function plugin_centreon_install($version)
             ]);
         }
     }
+
     return true;
 }
 
@@ -94,7 +96,7 @@ function plugin_centreon_uninstall()
 
     foreach ($tables as $table) {
         $migration = new Migration(PLUGIN_CENTREON_VERSION);
-        $migration->displayMessage("Uninstalling $table");
+        $migration->displayMessage('Uninstalling ' . $table);
         $migration->dropTable($table);
         $DB->error();
     }

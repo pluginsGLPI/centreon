@@ -51,12 +51,10 @@ class Config extends Glpi_Config
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
-        switch ($item->getType()) {
-            case Glpi_Config::class:
-                return self::createTabEntry(self::getTypeName(), 0, $item::getType(), self::getIcon());
-        }
-
-        return '';
+        return match ($item->getType()) {
+            Glpi_Config::class => self::createTabEntry(self::getTypeName(), 0, $item::getType(), self::getIcon()),
+            default => '',
+        };
     }
 
     public static function displayTabContentForItem(
@@ -92,11 +90,12 @@ class Config extends Glpi_Config
         $conf_ok = true;
 
         foreach ($current_config as $v) {
-            if (strlen($v) == 0) {
+            if ((string) $v === '') {
                 $conf_ok = false;
             }
         }
-        if ($conf_ok == true) {
+
+        if ($conf_ok) {
             $api  = new ApiClient();
             $diag = $api->diagnostic();
 
@@ -106,6 +105,8 @@ class Config extends Glpi_Config
         } else {
             TemplateRenderer::getInstance()->display('@centreon/checkField.html.twig');
         }
+
+        return null;
     }
 
     public static function prepareConfigUpdate(CommonDBTM $item)

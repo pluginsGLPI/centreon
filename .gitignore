@@ -4,3 +4,4 @@ tests/files/_logs/*.log
 vendor/
 .gh_token
 .phpunit.result.cache
+var/

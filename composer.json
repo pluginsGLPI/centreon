@@ -5,6 +5,9 @@
     "require-dev": {
         "glpi-project/tools": "^0.8"
     },
+    "provide": {
+        "guzzlehttp/guzzle": "*"
+    },
     "config": {
         "optimize-autoloader": true,
         "platform": {
