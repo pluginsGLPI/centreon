@@ -44,6 +44,7 @@ class ApiClientTest extends TestCase
         ],
     ],
     ];
+
     public $returndata = [
         'security' => [
             'token' => 'auth-token',

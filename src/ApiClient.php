@@ -41,7 +41,9 @@ use function Safe\json_encode;
 class ApiClient
 {
     public ?string $auth_token = null;
+
     public ?int $user_id = null;
+
     public array $api_config = [];
 
     /**
@@ -53,7 +55,7 @@ class ApiClient
     {
         $api_i            = new Config();
         $this->api_config = $api_i->getConfig();
-        return !(!isset($this->api_config['centreon-url']) || trim($this->api_config['centreon-url']) === '');
+        return isset($this->api_config['centreon-url']) && trim($this->api_config['centreon-url']) !== '';
     }
 
     /**
@@ -83,13 +85,14 @@ class ApiClient
 
         try {
             $data = $this->clientRequest('login', $params, 'POST');
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             if (isset($params['throw'])) {
-                throw $e;
+                throw $exception;
             }
 
-            return ['error' => $e->getMessage()];
+            return ['error' => $exception->getMessage()];
         }
+
         $this->auth_token = $data['security']['token'];
         $this->user_id    = $data['contact']['id'];
 
@@ -113,10 +116,10 @@ class ApiClient
                     'message' => 'You are connected to Centreon API !',
                 ];
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $result = [
                 'result'  => false,
-                'message' => $e->getMessage(),
+                'message' => $exception->getMessage(),
             ];
         }
 
@@ -135,7 +138,6 @@ class ApiClient
     {
         $api_client = new Client([
             'base_uri' => $this->api_config['centreon-url'] ?? '',
-            'verify' => false,
             'connect_timeout' => 3,
             'timeout' => 10,
         ]);
@@ -147,14 +149,16 @@ class ApiClient
 
         try {
             $data = $api_client->request($method, $endpoint, $params);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             if (isset($params['throw'])) {
-                throw $e;
+                throw $exception;
             }
-            $err_msg = $e->getMessage();
+
+            $err_msg = $exception->getMessage();
 
             return ['error' => $err_msg];
         }
+
         $data_body = $data->getBody();
         $data      = json_decode($data_body, true);
 
@@ -165,11 +169,11 @@ class ApiClient
 
         return $data;
     }
+
     /**
      * Get a list of hosts.
      *
      * @param array $params Query parameters.
-     * @return array
      */
     public function getHostsList(array $params = []): array
     {
@@ -179,9 +183,8 @@ class ApiClient
             ],
         ];
         $params = array_replace_recursive($defaults, $params);
-        $data   = $this->clientRequest('monitoring/hosts', $params);
 
-        return $data;
+        return $this->clientRequest('monitoring/hosts', $params);
     }
 
     /**
@@ -189,14 +192,11 @@ class ApiClient
      *
      * @param int $host_id Host ID.
      * @param array $params Optional parameters.
-     * @return array
      */
     public function getOneHost(int $host_id, array $params = []): array
     {
 
-        $data = $this->clientRequest('monitoring/hosts/' . $host_id, $params);
-
-        return $data;
+        return $this->clientRequest('monitoring/hosts/' . $host_id, $params);
     }
 
     /**
@@ -204,13 +204,10 @@ class ApiClient
      *
      * @param int $host_id Host ID.
      * @param array $params Optional parameters.
-     * @return array
      */
     public function getOneHostResources(int $host_id, array $params = []): array
     {
-        $data = $this->clientRequest('monitoring/resources/hosts/' . $host_id, $params);
-
-        return $data;
+        return $this->clientRequest('monitoring/resources/hosts/' . $host_id, $params);
     }
 
     /**
@@ -218,26 +215,20 @@ class ApiClient
      *
      * @param int $host_id Host ID.
      * @param array $params Optional parameters.
-     * @return array
      */
     public function getOneHostTimeline(int $host_id, array $params = []): array
     {
-        $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/timeline', $params);
-
-        return $data;
+        return $this->clientRequest('monitoring/hosts/' . $host_id . '/timeline', $params);
     }
 
     /**
      * Get a list of all services.
      *
      * @param array $params Optional parameters.
-     * @return array
      */
     public function getServicesList(array $params = []): array
     {
-        $data = $this->clientRequest('monitoring/services', $params);
-
-        return $data;
+        return $this->clientRequest('monitoring/services', $params);
     }
 
     /**
@@ -245,14 +236,12 @@ class ApiClient
      *
      * @param int $host_id Host ID.
      * @param array $params Optional parameters.
-     * @return array
      */
     public function getServicesListForOneHost(int $host_id, array $params = []): array
     {
         $params['query'] = ['limit' => 30];
-        $data            = $this->clientRequest('monitoring/hosts/' . $host_id . '/services', $params);
 
-        return $data;
+        return $this->clientRequest('monitoring/hosts/' . $host_id . '/services', $params);
     }
 
     /**
@@ -260,14 +249,12 @@ class ApiClient
      *
      * @param int $host_id Host ID.
      * @param array $params Optional parameters.
-     * @return array
      */
     public function sendCheckToAnHost(int $host_id, array $params = []): array
     {
         $params['json']['is_forced'] = true;
-        $data                        = $this->clientRequest('monitoring/hosts/' . $host_id . '/check', $params['json'], 'POST');
 
-        return $data;
+        return $this->clientRequest('monitoring/hosts/' . $host_id . '/check', $params['json'], 'POST');
     }
 
     /**
@@ -275,13 +262,10 @@ class ApiClient
      *
      * @param int $host_id Host ID.
      * @param array $params Downtime parameters.
-     * @return array
      */
     public function setDowntimeOnAHost(int $host_id, array $params): array
     {
-        $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params, 'POST');
-
-        return $data;
+        return $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params, 'POST');
     }
 
     /**
@@ -289,26 +273,20 @@ class ApiClient
      *
      * @param int $host_id Host ID.
      * @param array $params Optional parameters.
-     * @return array
      */
     public function listDowntimes(int $host_id, array $params = []): array
     {
-        $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params);
-
-        return $data;
+        return $this->clientRequest('monitoring/hosts/' . $host_id . '/downtimes', $params);
     }
 
     /**
      * Get a specific downtime details.
      *
      * @param int $downtime_id Downtime ID.
-     * @return array
      */
     public function displayDowntime(int $downtime_id): array
     {
-        $data = $this->clientRequest('monitoring/downtimes/' . $downtime_id);
-
-        return $data;
+        return $this->clientRequest('monitoring/downtimes/' . $downtime_id);
     }
 
     /**
@@ -316,7 +294,6 @@ class ApiClient
      *
      * @param int $host_id Host ID.
      * @param array $params Optional parameters.
-     * @return array
      */
     public function servicesDowntimesByHost(int $host_id, array $params = []): array
     {
@@ -332,9 +309,7 @@ class ApiClient
 
         $queryParams = array_merge($defaultParams, $params);
 
-        $data = $this->clientRequest('monitoring/services/downtimes', $queryParams);
-
-        return $data;
+        return $this->clientRequest('monitoring/services/downtimes', $queryParams);
     }
 
     /**
@@ -342,13 +317,10 @@ class ApiClient
      *
      * @param int $downtime_id Downtime ID.
      * @param array $params Optional parameters.
-     * @return array
      */
     public function cancelDowntime(int $downtime_id, array $params = []): array
     {
-        $data = $this->clientRequest('monitoring/downtimes/' . $downtime_id, $params, 'DELETE');
-
-        return $data;
+        return $this->clientRequest('monitoring/downtimes/' . $downtime_id, $params, 'DELETE');
     }
 
     /**
@@ -356,12 +328,9 @@ class ApiClient
      *
      * @param int $host_id Host ID.
      * @param array $request Request payload.
-     * @return array
      */
     public function acknowledgement(int $host_id, array $request = []): array
     {
-        $data = $this->clientRequest('monitoring/hosts/' . $host_id . '/acknowledgements', $request, 'POST');
-
-        return $data;
+        return $this->clientRequest('monitoring/hosts/' . $host_id . '/acknowledgements', $request, 'POST');
     }
 }

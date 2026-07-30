@@ -45,10 +45,15 @@ use function Safe\strtotime;
 class Host extends CommonDBTM
 {
     private $api_client;
+
     public $glpi_items     = [];
+
     public $centreon_items = [];
+
     public $one_host       = [];
+
     public $uid            = '';
+
     public $username       = '';
 
     public function __construct(?ApiClient $api_client = null)
@@ -63,8 +68,6 @@ class Host extends CommonDBTM
 
     /**
      * Get the list of computers from GLPI
-     *
-     * @return array
      */
     public function getComputerList(): array
     {
@@ -82,14 +85,14 @@ class Host extends CommonDBTM
         } else {
             echo __s('The list is empty', 'centreon');
         }
+
         $this->glpi_items = $array_computer;
 
         return $array_computer;
     }
+
     /**
      * Get the list of hosts from Centreon
-     *
-     * @return void
      */
     public function hostList(): void
     {
@@ -104,6 +107,7 @@ class Host extends CommonDBTM
                         'centreon_name' => $item_centreon['name'],
                     ];
                 }
+
                 $this->centreon_items = $items_centreon;
             }
         }
@@ -111,8 +115,6 @@ class Host extends CommonDBTM
 
     /**
      * Match Centreon hosts with GLPI computers based on their names.
-     *
-     * @return void
      */
     public function matchItems(): void
     {
@@ -131,13 +133,39 @@ class Host extends CommonDBTM
     }
 
     /**
+     * Check that the current user has access to the GLPI item mapped to the given Centreon host.
+     */
+    private function canAccessCentreonHost(int $centreon_id): bool
+    {
+        $mapping = new self();
+        if (!$mapping->getFromDBByCrit(['centreon_id' => $centreon_id])) {
+            return false;
+        }
+
+        $itemtype = $mapping->fields['itemtype'];
+        $items_id = $mapping->fields['items_id'];
+
+        if (!is_a($itemtype, CommonDBTM::class, true)) {
+            return false;
+        }
+
+        $item = new $itemtype();
+
+        return $item->can($items_id, READ);
+    }
+
+    /**
      * Get detailed information about a Centreon host.
      *
      * @param int $id
-     * @return array
      */
     public function oneHost($id): array
     {
+        $id = (int) $id;
+        if (!$this->canAccessCentreonHost($id)) {
+            return [];
+        }
+
         $res = $this->api_client->connectionRequest();
         if ($res['security']['token'] != null) {
             $this->username = $res['contact']['alias'];
@@ -147,7 +175,6 @@ class Host extends CommonDBTM
             $getservices    = $this->api_client->getServicesListForOneHost($id);
             $getdowntimes   = $this->api_client->listDowntimes($id);
             if ($gethost != null) {
-                $i_host = [];
                 $i_host = [
                     'status'       => $gethost_r['status']['name'],
                     'name'         => $gethost_r['name'],
@@ -161,6 +188,7 @@ class Host extends CommonDBTM
                 if ($gethost_r['in_downtime'] == true) {
                     $i_host['downtimes'] = $gethost_r['downtimes'];
                 }
+
                 $i_host['services']    = $getservices['result'];
                 $i_host['nb_services'] = count($i_host['services']);
                 $this->one_host        = $i_host;
@@ -175,12 +203,14 @@ class Host extends CommonDBTM
     /**
      * Display the timeline of events for a given host.
      *
-     * @param int $id
      * @param string $period 'day', 'week', or 'month'
-     * @return string
      */
     public function hostTimeline(int $id, string $period): string
     {
+        if (!$this->canAccessCentreonHost($id)) {
+            return __s('Error: unauthorized', 'centreon');
+        }
+
         $api      = new ApiClient();
         $session  = $api->connectionRequest();
         $timeline = [];
@@ -192,6 +222,7 @@ class Host extends CommonDBTM
                     $event['status']['name'] = __s('unset', 'centreon');
                     $event['tries']          = __s('unset', 'centreon');
                 }
+
                 $timeline[] = [
                     'id'      => $event['id'],
                     'date'    => $this->transformDate($event['date']),
@@ -213,6 +244,7 @@ class Host extends CommonDBTM
                     $period_string = '-1 month';
                     break;
             }
+
             $date_end          = date('Y-m-d', strtotime(date('Y-m-d') . $period_string));
             $filtered_timeline = [];
             foreach ($timeline as $event => $info) {
@@ -221,60 +253,61 @@ class Host extends CommonDBTM
                     $filtered_timeline[$event] = $info;
                 }
             }
+
             TemplateRenderer::getInstance()->display('@centreon/timeline.html.twig', [
                 'timeline' => $filtered_timeline,
             ]);
         }
+
         return __s('Error: unable to display timeline', 'centreon');
     }
 
     public function transformDate($date)
     {
         $timestamp = strtotime($date);
-        $newdate   = date('l,F d,Y G:i:s', $timestamp);
 
-        return $newdate;
+        return date('l,F d,Y G:i:s', $timestamp);
     }
 
     public function transformDateForCompare($date)
     {
         $timestamp = strtotime($date);
-        $newdate   = date('Y-m-d', $timestamp);
 
-        return $newdate;
+        return date('Y-m-d', $timestamp);
     }
 
     /**
      * Send a check command to a host.
-     *
-     * @param int $id
-     * @return string
      */
     public function sendCheck(int $id): string
     {
+        if (!$this->canAccessCentreonHost($id)) {
+            return __s('Error: unauthorized', 'centreon');
+        }
+
         $res = $this->api_client->connectionRequest();
         if (isset($res['security']['token'])) {
             try {
                 $res         = $this->api_client->sendCheckToAnHost($id);
-                $message = __s('Check sent', 'centreon');
 
-                return $message;
+                return __s('Check sent', 'centreon');
             } catch (Exception $e) {
                 return $e->getMessage();
             }
         }
+
         return __s('Error: unable to send check (unauthenticated)', 'centreon');
     }
 
     /**
      * Schedule a downtime on a host.
-     *
-     * @param int $id
-     * @param array $params
-     * @return array
      */
     public function setDowntime(int $id, array $params): array
     {
+        if (!$this->canAccessCentreonHost($id)) {
+            return ['error' => __s('Error: unauthorized', 'centreon')];
+        }
+
         $params['is_fixed']      = filter_var($params['is_fixed'], FILTER_VALIDATE_BOOLEAN);
         $params['with_services'] = filter_var($params['with_services'], FILTER_VALIDATE_BOOLEAN);
         $params['start_time']    = $this->convertDateToIso8601($params['start_time']);
@@ -283,25 +316,26 @@ class Host extends CommonDBTM
         if ($params['is_fixed'] == true) {
             $params['duration'] = $this->diffDateInSeconds($params['end_time'], $params['start_time']);
         }
+
         if ($params['is_fixed'] == false) {
             $option             = $params['time_select'];
             $params['duration'] = $this->convertToSeconds($option, $params['duration']);
             $params['duration'] = filter_var($params['duration'], FILTER_VALIDATE_INT);
         }
+
         unset($params['time_select']);
         $api = new ApiClient();
         $res = $api->connectionRequest();
         if (isset($res['security']['token'])) {
             try {
-                $res = $api->setDowntimeOnAHost($id, ['json' => $params]);
-
-                return $res;
+                return $api->setDowntimeOnAHost($id, ['json' => $params]);
             } catch (Exception $e) {
                 $error_msg = $e->getMessage();
 
                 return ['error' => $e->getMessage()];
             }
         }
+
         return [
             'error' => __s('Error: unauthenticated or unable to set downtime', 'centreon'),
         ];
@@ -311,18 +345,16 @@ class Host extends CommonDBTM
     {
         $timezone = new DateTimeZone($_SESSION['glpi_tz'] ?? date_default_timezone_get());
         $new_date = new DateTime($date, $timezone);
-        $iso_date = $new_date->format(DATE_ATOM);
 
-        return $iso_date;
+        return $new_date->format(DATE_ATOM);
     }
 
     public function diffDateInSeconds($date1, $date2)
     {
         $ts1  = strtotime($date1);
         $ts2  = strtotime($date2);
-        $diff = abs($ts2 - $ts1);
 
-        return $diff;
+        return abs($ts2 - $ts1);
     }
 
     public function convertToSeconds($option, $duration)
@@ -340,9 +372,6 @@ class Host extends CommonDBTM
 
     /**
      * Cancel the current host downtime and its related service downtimes.
-     *
-     * @param int $downtime_id
-     * @return array
      */
     public function cancelActualDownTime(int $downtime_id): array
     {
@@ -354,6 +383,13 @@ class Host extends CommonDBTM
             try {
                 $actualDowntime = $api->displayDowntime($downtime_id);
                 $host_id        = $actualDowntime['host_id'];
+
+                if (!$this->canAccessCentreonHost((int) $host_id)) {
+                    return [[
+                        'message' => __s('Error: unauthorized', 'centreon'),
+                    ]];
+                }
+
                 $start_time     = $actualDowntime['start_time'];
                 $end_time       = $actualDowntime['end_time'];
 
@@ -371,6 +407,7 @@ class Host extends CommonDBTM
                         ];
                     }
                 }
+
                 $api->cancelDowntime($downtime_id);
             } catch (Exception $e) {
                 $error[] = [
@@ -389,12 +426,14 @@ class Host extends CommonDBTM
     /**
      * Acknowledge a Centreon host alert.
      *
-     * @param int $host_id
-     * @param array $request
      * @return array|string
      */
     public function acknowledgement(int $host_id, array $request = [])
     {
+        if (!$this->canAccessCentreonHost($host_id)) {
+            return __s('Error: unauthorized', 'centreon');
+        }
+
         $res = $this->api_client->connectionRequest();
         if (isset($res['security']['token'])) {
             try {
@@ -408,6 +447,7 @@ class Host extends CommonDBTM
                 return $e->getMessage();
             }
         }
+
         return __s('Error: unauthenticated or unable to acknowledge', 'centreon');
     }
 
@@ -415,9 +455,6 @@ class Host extends CommonDBTM
      * Sanitize the acknowledgement request payload.
      *
      * This ensures the expected types are correctly set before sending to Centreon API.
-     *
-     * @param array $request
-     * @return array
      */
     private function sanitizeAcknowledgementPayload(array $request): array
     {
@@ -448,6 +485,7 @@ class Host extends CommonDBTM
     {
         $item          = new Computer();
         $item->getFromDB($id);
+
         $computer_name = $item->fields['name'];
 
         $api = new ApiClient();
@@ -466,7 +504,7 @@ class Host extends CommonDBTM
 
             //compare results case-insensitively
             foreach ($match['result'] as $host) {
-                if (strcasecmp($host['name'], $computer_name) === 0) {
+                if (strcasecmp($host['name'], (string) $computer_name) === 0) {
                     $centreon_id = $host['id'];
                     $new_id = $this->add([
                         'itemtype'      => 'Computer',
@@ -539,7 +577,7 @@ class Host extends CommonDBTM
 
         $self    = new self();
         $item_id = $item->getID();
-        if ($self->searchForItem($item_id) == true || $self->searchItemMatch($item_id) == true) {
+        if ($self->searchForItem($item_id) || $self->searchItemMatch($item_id)) {
             $host_id = $self->fields['centreon_id'];
             $self->oneHost($host_id);
             TemplateRenderer::getInstance()->display('@centreon/host.html.twig', [
@@ -556,15 +594,13 @@ class Host extends CommonDBTM
 
     public static function getSpecificValueToDisplay($field, $values, array $options = [])
     {
-        switch ($field) {
-            case 'id':
-                if (intval($values['centreon_id']) > 0) {
-                    $self = new self();
-                    $res  = $self->oneHost($values['centreon_id']);
+        if ($field === 'id') {
+            if (intval($values['centreon_id']) > 0) {
+                $self = new self();
+                $res  = $self->oneHost($values['centreon_id']);
 
-                    return $res['status'] ?? '';
-                }
-                break;
+                return $res['status'] ?? '';
+            }
         }
 
         return parent::getSpecificValueToDisplay($field, $values, $options);
