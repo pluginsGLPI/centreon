@@ -551,11 +551,11 @@ class Host extends CommonDBTM
                 self::getTable(),
                 [
                     'items_id' => $item->getID(),
-                    'itemtype' => $item->getType(),
+                    'itemtype' => $item::class,
                 ],
             );
 
-            return self::createTabEntry(self::getTypeName(), 0, $item::getType(), Config::getIcon());
+            return self::createTabEntry(self::getTypeName(), 0, $item::class, Config::getIcon());
         }
 
         return '';

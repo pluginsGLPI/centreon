@@ -32,7 +32,7 @@ use GlpiPlugin\Centreon\Host;
 
 use function Safe\json_encode;
 
-Session::checkRight('computer', UPDATE);
+Session::checkRight(Computer::$rightname, UPDATE);
 
 header('Content-Type: application/json');
 

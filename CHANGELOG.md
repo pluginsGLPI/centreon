@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - CI: fix Psalm cache directory, drop the stray `glpi-project/tools` composer dependency, declare a unique composer autoloader suffix
 
+### Added
+
+- GLPI 12 compatibility
+
 ## [1.1.3] - 2026-08-03
 
 ### Fixed

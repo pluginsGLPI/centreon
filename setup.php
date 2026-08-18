@@ -35,9 +35,9 @@ use function Safe\define;
 define('PLUGIN_CENTREON_VERSION', '1.1.3');
 
 // Minimal GLPI version, inclusive
-define('PLUGIN_CENTREON_MIN_GLPI_VERSION', '11.0.0');
+define('PLUGIN_CENTREON_MIN_GLPI_VERSION', '12.0.0');
 // Maximum GLPI version, exclusive
-define('PLUGIN_CENTREON_MAX_GLPI_VERSION', '11.0.99');
+define('PLUGIN_CENTREON_MAX_GLPI_VERSION', '12.0.99');
 // Define the plugin directory
 define('CENTREON_DIR_PATH', __DIR__);
 

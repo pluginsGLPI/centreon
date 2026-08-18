@@ -51,8 +51,8 @@ class Config extends Glpi_Config
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
-        return match ($item->getType()) {
-            Glpi_Config::class => self::createTabEntry(self::getTypeName(), 0, $item::getType(), self::getIcon()),
+        return match ($item::class) {
+            Glpi_Config::class => self::createTabEntry(self::getTypeName(), 0, $item::class, self::getIcon()),
             default => '',
         };
     }
