@@ -31,7 +31,7 @@
 
 use GlpiPlugin\Centreon\Host;
 
-Session::checkRight('computer', READ);
+Session::checkRight(Computer::$rightname, READ);
 
 header('Content-Type: text/html; charset=UTF-8');
 

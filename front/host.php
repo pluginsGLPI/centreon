@@ -31,7 +31,7 @@
 
 use GlpiPlugin\Centreon\Host;
 
-Session::checkRight('computer', READ);
+Session::checkRight(Computer::$rightname, READ);
 
 Html::header(
     Host::getTypeName(),
