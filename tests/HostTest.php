@@ -30,12 +30,15 @@
 
 namespace GlpiPlugin\Centreon\tests;
 
+use Auth;
 use Computer;
+use Glpi\Tests\DbTestCase;
 use GlpiPlugin\Centreon\ApiClient;
 use GlpiPlugin\Centreon\Host;
-use PHPUnit\Framework\TestCase;
+use Session;
+use User;
 
-class HostTest extends TestCase
+class HostTest extends DbTestCase
 {
     public function testGetComputerList()
     {
@@ -52,7 +55,23 @@ class HostTest extends TestCase
 
     public function testOneHost()
     {
+        $auth                = new Auth();
+        $auth->user          = getItemByTypeName(User::class, 'glpi');
+        $auth->auth_succeded = true;
+        Session::init($auth);
+
+        $computer     = $this->createItem(Computer::class, [
+            'entities_id' => 0,
+            'name'        => 'centreon host computer',
+        ]);
+        $computers_id = $computer->getID();
+
         $id = 88;
+        $this->createItem(Host::class, [
+            'itemtype'    => 'Computer',
+            'items_id'    => $computers_id,
+            'centreon_id' => $id,
+        ]);
 
         $api = $this->getMockBuilder(ApiClient::class)
             ->disableOriginalConstructor()
