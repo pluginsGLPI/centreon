@@ -30,13 +30,10 @@
 
 namespace GlpiPlugin\Centreon\tests;
 
-use Auth;
 use Computer;
 use Glpi\Tests\DbTestCase;
 use GlpiPlugin\Centreon\ApiClient;
 use GlpiPlugin\Centreon\Host;
-use Session;
-use User;
 
 class HostTest extends DbTestCase
 {
@@ -55,10 +52,7 @@ class HostTest extends DbTestCase
 
     public function testOneHost()
     {
-        $auth                = new Auth();
-        $auth->user          = getItemByTypeName(User::class, 'glpi');
-        $auth->auth_succeded = true;
-        Session::init($auth);
+        $this->login('glpi');
 
         $computer     = $this->createItem(Computer::class, [
             'entities_id' => 0,
