@@ -28,16 +28,25 @@
  * -------------------------------------------------------------------------
  */
 
-use Glpi\Application\Environment;
-use Glpi\Kernel\Kernel;
+$current_plugin_folder = basename(dirname(__DIR__));
 
-use function Safe\define;
+// GLPI core test bootstrap: boots the TESTING kernel, exposes the
+// `Glpi\Tests\*` test case classes and every core class.
+require __DIR__ . '/../../../tests/bootstrap.php';
 
-define('TU_USER', 'glpi');
-define('TU_PASS', 'glpi');
-define('GLPI_LOG_DIR', __DIR__ . '/files/_logs');
+// Plugin runtime dependencies (Guzzle is provided by core, kept for parity).
+require dirname(__DIR__) . '/vendor/autoload.php';
 
-require_once __DIR__ . '/../../../vendor/autoload.php';
+if (!Plugin::isPluginActive($current_plugin_folder)) {
+    throw new RuntimeException(
+        sprintf(
+            'Plugin %s is not active in the test database.'
+            . ' Run `make test-setup` (plugin:install/enable --env=testing) first.',
+            $current_plugin_folder,
+        ),
+    );
+}
 
-$kernel = new Kernel(Environment::TESTING->value);
-$kernel->boot();
+// hook.php only declares the install/uninstall routines; GLPI loads it lazily
+// at (un)install time, so pull it in here for the lifecycle test cases.
+require_once dirname(__DIR__) . '/hook.php';
