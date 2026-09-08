@@ -1,0 +1,12 @@
+{
+    "id": 88,
+    "name": "centreon-demo",
+    "fqdn": "centreon-demo.example.com",
+    "status": {
+        "code": 0,
+        "name": "UP"
+    },
+    "in_downtime": false,
+    "acknowledged": false,
+    "downtimes": []
+}

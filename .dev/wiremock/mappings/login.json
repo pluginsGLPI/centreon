@@ -1,0 +1,23 @@
+{
+    "priority": 1,
+    "request": {
+        "method": "POST",
+        "urlPath": "/centreon/api/latest/login"
+    },
+    "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+            "contact": {
+                "id": 1,
+                "name": "GLPI dev",
+                "alias": "glpi-dev",
+                "email": "glpi-dev@example.com",
+                "is_admin": true
+            },
+            "security": {
+                "token": "dev-fixture-token"
+            }
+        }
+    }
+}

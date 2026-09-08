@@ -1,0 +1,11 @@
+{
+    "id": 88,
+    "name": "centreon-demo",
+    "alias": "centreon demo host",
+    "address": "192.0.2.88",
+    "last_check": "2026-09-08T09:00:00+00:00",
+    "next_check": "2026-09-08T09:05:00+00:00",
+    "check_period": "24x7",
+    "state": 0,
+    "state_type": 1
+}
