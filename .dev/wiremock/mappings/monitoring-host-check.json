@@ -1,0 +1,9 @@
+{
+    "request": {
+        "method": "POST",
+        "urlPathPattern": "/centreon/api/latest/monitoring/hosts/[0-9]+/check"
+    },
+    "response": {
+        "status": 204
+    }
+}

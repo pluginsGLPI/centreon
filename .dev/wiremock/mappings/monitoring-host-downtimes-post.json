@@ -1,0 +1,11 @@
+{
+    "request": {
+        "method": "POST",
+        "urlPathPattern": "/centreon/api/latest/monitoring/hosts/[0-9]+/downtimes"
+    },
+    "response": {
+        "status": 201,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": { "id": 5001, "message": "Downtime scheduled (fixture)" }
+    }
+}

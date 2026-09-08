@@ -1,0 +1,26 @@
+{
+    "result": [
+        {
+            "id": 101,
+            "name": "Ping",
+            "status": { "code": 0, "name": "OK" },
+            "output": "OK - 192.0.2.88 rta 0.10ms lost 0%",
+            "last_check": "2026-09-08T09:00:00+00:00"
+        },
+        {
+            "id": 102,
+            "name": "Disk /",
+            "status": { "code": 1, "name": "WARNING" },
+            "output": "DISK WARNING - free space: / 1200 MB (12% inode=80%)",
+            "last_check": "2026-09-08T09:01:00+00:00"
+        },
+        {
+            "id": 103,
+            "name": "HTTP",
+            "status": { "code": 0, "name": "OK" },
+            "output": "HTTP OK: HTTP/1.1 200 OK - 240 bytes in 0.003 second response time",
+            "last_check": "2026-09-08T09:02:00+00:00"
+        }
+    ],
+    "meta": { "page": 1, "limit": 30, "total": 3 }
+}

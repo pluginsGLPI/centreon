@@ -1,0 +1,11 @@
+{
+    "request": {
+        "method": "POST",
+        "urlPathPattern": "/centreon/api/latest/monitoring/hosts/[0-9]+/acknowledgements"
+    },
+    "response": {
+        "status": 201,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": { "id": 7001, "message": "Acknowledgement added (fixture)" }
+    }
+}
