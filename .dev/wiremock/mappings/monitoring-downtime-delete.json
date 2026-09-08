@@ -1,0 +1,9 @@
+{
+    "request": {
+        "method": "DELETE",
+        "urlPathPattern": "/centreon/api/latest/monitoring/downtimes/[0-9]+"
+    },
+    "response": {
+        "status": 204
+    }
+}

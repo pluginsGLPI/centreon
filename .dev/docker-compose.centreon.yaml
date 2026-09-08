@@ -1,0 +1,47 @@
+# -------------------------------------------------------------------------
+# Centreon plugin for GLPI - local test environment
+# -------------------------------------------------------------------------
+# Adds a WireMock instance that stands in for the Centreon REST API v2 to
+# the running GLPI development stack.
+#
+# This file is *purely additive*: it declares only the `centreon-api`
+# service and its config volume. It deliberately does NOT redefine the
+# `app` service, so layering it on top of core's docker-compose.yaml can
+# never recreate the `app` container - which matters when `app` is a VS
+# Code Dev Container (recreating it there drops the /vscode mount +
+# keep-alive command and breaks the running dev container).
+#
+# A full Centreon stack (web + Engine + Broker + MariaDB) is not
+# reproducible in a dev environment, so the plugin's HTTP calls are served
+# from canned JSON fixtures under .dev/wiremock/ instead.
+#
+# Layer it on core:
+#   cd /var/www/glpi
+#   docker compose -f docker-compose.yaml \
+#                  -f plugins/centreon/.dev/docker-compose.centreon.yaml up -d centreon-api
+#
+# All relative paths below are resolved from the GLPI root (the directory
+# of the first -f file), NOT from this file's directory.
+# -------------------------------------------------------------------------
+
+services:
+  centreon-api:
+    container_name: "glpi-centreon-wiremock-v12"
+    image: "wiremock/wiremock:3.9.2"
+    restart: "unless-stopped"
+    command:
+      - "--global-response-templating"
+      - "--disable-banner"
+    ports:
+      - "12088:8080"
+    volumes:
+      - "./plugins/centreon/.dev/wiremock/mappings:/home/wiremock/mappings:ro"
+      - "./plugins/centreon/.dev/wiremock/__files:/home/wiremock/__files:ro"
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "curl -sf http://localhost:8080/__admin/health || exit 1"
+      interval: "10s"
+      timeout: "5s"
+      retries: 6
+      start_period: "10s"

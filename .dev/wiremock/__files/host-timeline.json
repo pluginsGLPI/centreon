@@ -1,0 +1,29 @@
+{
+    "result": [
+        {
+            "id": 9001,
+            "type": "event",
+            "date": "2026-09-08T08:30:00+00:00",
+            "content": "HOST ALERT: centreon-demo;DOWN;HARD;1;Host unreachable",
+            "status": { "code": 1, "name": "DOWN" },
+            "tries": "1/3"
+        },
+        {
+            "id": 9002,
+            "type": "event",
+            "date": "2026-09-08T08:45:00+00:00",
+            "content": "HOST ALERT: centreon-demo;UP;HARD;1;Host is alive",
+            "status": { "code": 0, "name": "UP" },
+            "tries": "1/3"
+        },
+        {
+            "id": 9003,
+            "type": "downtime",
+            "date": "2026-09-08T09:00:00+00:00",
+            "content": "HOST DOWNTIME: centreon-demo;Scheduled maintenance",
+            "status": { "code": 0, "name": "UP" },
+            "tries": "0/3"
+        }
+    ],
+    "meta": { "page": 1, "limit": 10, "total": 3 }
+}

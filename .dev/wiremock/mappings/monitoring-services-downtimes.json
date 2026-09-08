@@ -1,0 +1,11 @@
+{
+    "request": {
+        "method": "GET",
+        "urlPath": "/centreon/api/latest/monitoring/services/downtimes"
+    },
+    "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": { "result": [], "meta": { "page": 1, "limit": 10, "total": 0 } }
+    }
+}

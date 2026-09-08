@@ -490,39 +490,37 @@ class Host extends CommonDBTM
 
         $api = new ApiClient();
         $res = $api->connectionRequest();
-        if (isset($res['security']['token'])) {
-            $params = [
-                'query' => [
-                    'search' => json_encode([
-                        'host.name' => [
-                            '$lk' => '%' . $computer_name . '%',
-                        ],
-                    ]),
-                ],
-            ];
-            $match = $api->getHostsList($params);
-
-            //compare results case-insensitively
-            foreach ($match['result'] as $host) {
-                if (strcasecmp($host['name'], (string) $computer_name) === 0) {
-                    $centreon_id = $host['id'];
-                    $new_id = $this->add([
-                        'itemtype'      => 'Computer',
-                        'items_id'      => $id,
-                        'centreon_id'   => $centreon_id,
-                        'centreon_type' => 'host',
-                    ]);
-                    $this->getFromDB($new_id);
-                    return true;
-                }
-            }
-
-            return false;
-
-        } else {
-
+        if (!isset($res['security']['token'])) {
             return false;
         }
+
+        $params = [
+            'query' => [
+                'search' => json_encode([
+                    'host.name' => [
+                        '$lk' => '%' . $computer_name . '%',
+                    ],
+                ]),
+            ],
+        ];
+        $match = $api->getHostsList($params);
+
+        //compare results case-insensitively
+        foreach ($match['result'] as $host) {
+            if (strcasecmp($host['name'], (string) $computer_name) === 0) {
+                $centreon_id = $host['id'];
+                $new_id = $this->add([
+                    'itemtype'      => 'Computer',
+                    'items_id'      => $id,
+                    'centreon_id'   => $centreon_id,
+                    'centreon_type' => 'host',
+                ]);
+                $this->getFromDB($new_id);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -537,11 +535,7 @@ class Host extends CommonDBTM
      */
     public function searchForItem($id): bool
     {
-        if ($this->getFromDBByCrit(['items_id' => $id])) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->getFromDBByCrit(['items_id' => $id]);
     }
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
@@ -551,11 +545,11 @@ class Host extends CommonDBTM
                 self::getTable(),
                 [
                     'items_id' => $item->getID(),
-                    'itemtype' => $item->getType(),
+                    'itemtype' => $item::class,
                 ],
             );
 
-            return self::createTabEntry(self::getTypeName(), 0, $item::getType(), Config::getIcon());
+            return self::createTabEntry(self::getTypeName(), 0, $item::class, Config::getIcon());
         }
 
         return '';
