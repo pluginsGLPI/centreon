@@ -5,6 +5,7 @@ use PhpCsFixer\Finder;
 
 $finder = Finder::create()
     ->in(__DIR__)
+    ->exclude(['vendor', 'var'])
     ->name('*.php');
 
 $config = new Config();
