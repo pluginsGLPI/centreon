@@ -2,13 +2,11 @@
     "require": {
         "php": ">=8.2"
     },
-    "require-dev": {
-        "glpi-project/tools": "^0.8"
-    },
     "provide": {
         "guzzlehttp/guzzle": "*"
     },
     "config": {
+        "autoloader-suffix": "PluginCentreon",
         "optimize-autoloader": true,
         "platform": {
             "php": "8.2.99"
