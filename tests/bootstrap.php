@@ -35,7 +35,7 @@ $current_plugin_folder = basename(dirname(__DIR__));
 require __DIR__ . '/../../../tests/bootstrap.php';
 
 // Plugin runtime dependencies (Guzzle is provided by core, kept for parity).
-require dirname(__DIR__) . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 if (!Plugin::isPluginActive($current_plugin_folder)) {
     throw new RuntimeException(
@@ -49,4 +49,4 @@ if (!Plugin::isPluginActive($current_plugin_folder)) {
 
 // hook.php only declares the install/uninstall routines; GLPI loads it lazily
 // at (un)install time, so pull it in here for the lifecycle test cases.
-require_once dirname(__DIR__) . '/hook.php';
+require_once __DIR__ . '/../hook.php';
