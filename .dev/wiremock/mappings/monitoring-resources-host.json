@@ -1,0 +1,11 @@
+{
+    "request": {
+        "method": "GET",
+        "urlPathPattern": "/centreon/api/latest/monitoring/resources/hosts/[0-9]+"
+    },
+    "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "bodyFileName": "resources-host.json"
+    }
+}

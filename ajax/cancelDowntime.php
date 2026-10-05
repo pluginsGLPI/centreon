@@ -31,7 +31,7 @@
 use GlpiPlugin\Centreon\Host;
 
 Session::checkLoginUser();
-Session::checkRight('computer', UPDATE);
+Session::checkRight(Computer::$rightname, UPDATE);
 
 header('Content-Type: text/html; charset=UTF-8');
 

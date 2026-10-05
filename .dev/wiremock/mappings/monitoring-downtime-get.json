@@ -1,0 +1,17 @@
+{
+    "request": {
+        "method": "GET",
+        "urlPathPattern": "/centreon/api/latest/monitoring/downtimes/[0-9]+"
+    },
+    "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+            "id": 5001,
+            "host_id": 88,
+            "start_time": "2026-09-08T09:00:00+00:00",
+            "end_time": "2026-09-08T10:00:00+00:00",
+            "comment": "Scheduled maintenance (fixture)"
+        }
+    }
+}
