@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Add Transifex translations link to README
 - GLPI 12 compatibility
 
 ## [1.1.3] - 2026-08-03
