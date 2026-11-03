@@ -32,7 +32,7 @@ use GlpiPlugin\Centreon\Host;
 
 use function Safe\define;
 
-define('PLUGIN_CENTREON_VERSION', '1.2.0');
+define('PLUGIN_CENTREON_VERSION', '1.2.1');
 
 // Minimal GLPI version, inclusive
 define('PLUGIN_CENTREON_MIN_GLPI_VERSION', '12.0.0');
