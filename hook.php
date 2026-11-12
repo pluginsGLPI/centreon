@@ -54,7 +54,8 @@ function plugin_centreon_install($version)
                   `centreon_id`   INT UNSIGNED NOT NULL,
                   `centreon_type` VARCHAR(100) DEFAULT 'host',
                   PRIMARY KEY  (`id`),
-                  KEY `items_id` (`items_id`)
+                  KEY `items_id` (`items_id`),
+                  KEY `centreon_id` (`centreon_id`)
                  ) ENGINE=InnoDB
                  DEFAULT CHARSET={$default_charset}
                  COLLATE={$default_collation}";
@@ -62,6 +63,8 @@ function plugin_centreon_install($version)
     } else {
         $migration->changeField($table, 'items_id', 'items_id', "int unsigned NOT NULL DEFAULT '0'");
         $migration->changeField($table, 'centreon_id', 'centreon_id', "int unsigned NOT NULL");
+        $migration->addKey($table, 'centreon_id');
+        $migration->executeMigration();
     }
 
     $centreon_password = Config::getConfigurationValue('plugin:centreon', 'centreon-password');

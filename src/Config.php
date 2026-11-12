@@ -111,6 +111,9 @@ class Config extends Glpi_Config
 
     public static function prepareConfigUpdate(CommonDBTM $item)
     {
+        // Values cached for this request may come from the configuration being changed
+        Host::resetCache();
+
         if (
             isset($item->input['centreon-password'])
             && ($item->input['centreon-password'] == '')
