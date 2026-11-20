@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Make the plugin compatible with the Content Security Policy
 
+### Fixed
+
+- Perf: Speed up the Centreon status column and index centreon_id
+
 ## [1.1.4] - 2026-11-03
 
 ### Fixed
