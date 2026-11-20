@@ -47,14 +47,35 @@ class ApiClient
     public array $api_config = [];
 
     /**
+     * Plugin configuration, loaded once per PHP request.
+     */
+    private static ?array $config_cache = null;
+
+    /**
+     * Successful login responses of the current PHP request, keyed by Centreon URL and username.
+     *
+     * @var array<string, array>
+     */
+    private static array $login_cache = [];
+
+    /**
+     * Forget the configuration and the logins cached for the current PHP request.
+     */
+    public static function resetCache(): void
+    {
+        self::$config_cache = null;
+        self::$login_cache  = [];
+    }
+
+    /**
      * Load and check Centreon configuration.
      *
      * @return bool True if configuration is valid, false otherwise.
      */
     public function centreonConfig(): bool
     {
-        $api_i            = new Config();
-        $this->api_config = $api_i->getConfig();
+        self::$config_cache ??= Config::getConfig();
+        $this->api_config   = self::$config_cache;
         return isset($this->api_config['centreon-url']) && trim($this->api_config['centreon-url']) !== '';
     }
 
@@ -69,6 +90,16 @@ class ApiClient
     {
         if (!$this->centreonConfig()) {
             throw new Exception('Centreon configuration is not set.');
+        }
+
+        // Reuse the token of a previous login of this PHP request; calls with custom params (diagnostic) always log in
+        $cache_key = $this->api_config['centreon-url'] . '|' . ($this->api_config['centreon-username'] ?? '');
+        if ($params === [] && isset(self::$login_cache[$cache_key])) {
+            $data             = self::$login_cache[$cache_key];
+            $this->auth_token = $data['security']['token'];
+            $this->user_id    = $data['contact']['id'];
+
+            return $data;
         }
 
         $defaults = [
@@ -95,6 +126,10 @@ class ApiClient
 
         $this->auth_token = $data['security']['token'];
         $this->user_id    = $data['contact']['id'];
+
+        if (isset($data['security']['token'], $data['contact']['id'])) {
+            self::$login_cache[$cache_key] = $data;
+        }
 
         return $data;
     }

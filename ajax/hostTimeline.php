@@ -32,6 +32,8 @@
 use GlpiPlugin\Centreon\Host;
 
 Session::checkRight('computer', READ);
+// Nothing below writes to the session: release its lock before waiting for Centreon
+Session::writeClose();
 
 header('Content-Type: text/html; charset=UTF-8');
 

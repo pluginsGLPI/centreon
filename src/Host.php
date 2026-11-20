@@ -38,6 +38,7 @@ use Exception;
 use Glpi\Application\View\TemplateRenderer;
 use GlpiPlugin\Centreon\ApiClient;
 use Safe\DateTime;
+use Session;
 
 use function Safe\json_encode;
 use function Safe\strtotime;
@@ -55,6 +56,13 @@ class Host extends CommonDBTM
     public $uid            = '';
 
     public $username       = '';
+
+    /**
+     * Host statuses already fetched in the current PHP request, keyed by GLPI user and Centreon host id.
+     *
+     * @var array<string, string>
+     */
+    private static array $status_cache = [];
 
     public function __construct(?ApiClient $api_client = null)
     {
@@ -152,6 +160,42 @@ class Host extends CommonDBTM
         $item = new $itemtype();
 
         return $item->can($items_id, READ);
+    }
+
+    /**
+     * Get the status name of a Centreon host, as displayed in the search results.
+     *
+     * Only the host resources endpoint is called (oneHost() also fetches the host, its services and its downtimes),
+     * and the status is kept for the rest of the PHP request, for the current user only.
+     */
+    public function getHostStatus(int $id): string
+    {
+        $cache_key = (Session::getLoginUserID() ?: 0) . '|' . $id;
+        if (isset(self::$status_cache[$cache_key])) {
+            return self::$status_cache[$cache_key];
+        }
+
+        if (!$this->canAccessCentreonHost($id)) {
+            return '';
+        }
+
+        $status = '';
+        $res    = $this->api_client->connectionRequest();
+        if (isset($res['security']['token'])) {
+            $resources = $this->api_client->getOneHostResources($id);
+            $status    = (string) ($resources['status']['name'] ?? '');
+        }
+
+        return self::$status_cache[$cache_key] = $status;
+    }
+
+    /**
+     * Forget the host statuses and the Centreon configuration and logins cached for the current PHP request.
+     */
+    public static function resetCache(): void
+    {
+        self::$status_cache = [];
+        ApiClient::resetCache();
     }
 
     /**
@@ -547,14 +591,6 @@ class Host extends CommonDBTM
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
         if ($item instanceof CommonDBTM) {
-            $nb = countElementsInTable(
-                self::getTable(),
-                [
-                    'items_id' => $item->getID(),
-                    'itemtype' => $item->getType(),
-                ],
-            );
-
             return self::createTabEntry(self::getTypeName(), 0, $item::getType(), Config::getIcon());
         }
 
@@ -596,10 +632,8 @@ class Host extends CommonDBTM
     {
         if ($field === 'id') {
             if (intval($values['centreon_id']) > 0) {
-                $self = new self();
-                $res  = $self->oneHost($values['centreon_id']);
-
-                return $res['status'] ?? '';
+                // The status comes from the Centreon API and search results are rendered as HTML
+                return htmlescape((new self())->getHostStatus((int) $values['centreon_id']));
             }
         }
 
