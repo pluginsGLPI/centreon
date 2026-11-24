@@ -37,17 +37,5 @@
 <div id="p-test"></div>
 
 
-<script>
-    $(document).ready(function(){
-        $('#t-day').click(function(){
-            $('#p-test').load(CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/hostTimeline.php?period=day&hostid=" + {{ hostid }})
-            });
-            });
-        $('#t-week').click(function(){
-            $('#p-test').load(CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/hostTimeline.php?period=week&hostid=" + {{ hostid }});
-        });
-        $('#t-month').click(function(){
-            $('#p-test').load(CFG_GLPI['root_doc'] + "/plugins/centreon/ajax/hostTimeline.php?period=month&hostid=" + {{ hostid }});
-
-        });
-</script>
+<span hidden data-centreon-timeline-host-id="{{ hostid }}"></span>
+{{ call('Html::script', ['/plugins/centreon/js/hosttimeline.js', {}, false])|raw }}
