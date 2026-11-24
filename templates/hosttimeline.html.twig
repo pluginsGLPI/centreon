@@ -38,4 +38,4 @@
 
 
 <span hidden data-centreon-timeline-host-id="{{ hostid }}"></span>
-{{ call('Html::script', ['/plugins/centreon/js/hosttimeline.js', {}, false])|raw }}
+{{ call('Html::script', ['/plugins/centreon/js/hosttimeline.js', {'version': constant('PLUGIN_CENTREON_VERSION')}, false])|raw }}

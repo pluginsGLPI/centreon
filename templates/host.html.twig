@@ -291,4 +291,4 @@
         </div>
 
 <span hidden data-centreon-host-id="{{ hostid }}" data-centreon-in-downtime="{{ one_host.in_downtime }}" data-centreon-last-downtime-id="{{ lastdowntimeid ?? 0 }}"></span>
-{{ call('Html::script', ['/plugins/centreon/js/host.js', {}, false])|raw }}
+{{ call('Html::script', ['/plugins/centreon/js/host.js', {'version': constant('PLUGIN_CENTREON_VERSION')}, false])|raw }}
