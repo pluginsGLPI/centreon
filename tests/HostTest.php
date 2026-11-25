@@ -37,6 +37,18 @@ use GlpiPlugin\Centreon\Host;
 
 class HostTest extends DbTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        Host::resetCache();
+    }
+
+    public function tearDown(): void
+    {
+        Host::resetCache();
+        parent::tearDown();
+    }
+
     public function testGetComputerList()
     {
         $computer = new Computer();
@@ -118,6 +130,48 @@ class HostTest extends DbTestCase
         $result   = $new_host->oneHost($id);
 
         $this->assertNotempty($result);
+    }
+
+    public function testGetHostStatus()
+    {
+        $this->login('glpi');
+
+        $computer = $this->createItem(Computer::class, [
+            'entities_id' => 0,
+            'name'        => 'centreon status computer',
+        ]);
+
+        $id = 89;
+        $this->createItem(Host::class, [
+            'itemtype'    => 'Computer',
+            'items_id'    => $computer->getID(),
+            'centreon_id' => $id,
+        ]);
+
+        $api = $this->getMockBuilder(ApiClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $api
+            ->method('connectionRequest')
+            ->willReturn([
+                'security' => ['token' => 'mocked token'],
+                'contact'  => ['id' => 123],
+            ]);
+        $api
+            ->expects($this->once())
+            ->method('getOneHostResources')
+            ->with($id)
+            ->willReturn([
+                'status' => ['name' => 'UP'],
+            ]);
+        $api
+            ->expects($this->never())
+            ->method('getOneHost');
+
+        $host = new Host($api);
+        $this->assertEquals('UP', $host->getHostStatus($id));
+        // Second call is served from the request cache
+        $this->assertEquals('UP', $host->getHostStatus($id));
     }
 
     public function testDiffDateInSeconds()

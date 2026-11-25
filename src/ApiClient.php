@@ -52,7 +52,7 @@ class ApiClient
     private static ?array $config_cache = null;
 
     /**
-     * Successful login responses of the current PHP request, keyed by Centreon URL and username.
+     * Login responses of the current PHP request (successes and failures), keyed by Centreon URL and username.
      *
      * @var array<string, array>
      */
@@ -92,12 +92,14 @@ class ApiClient
             throw new Exception('Centreon configuration is not set.');
         }
 
-        // Reuse the token of a previous login of this PHP request; calls with custom params (diagnostic) always log in
+        // Reuse the result of a previous login of this PHP request, failure included, so an unreachable Centreon
+        // is not waited for again on each row; calls with custom params (diagnostic) always log in
         $cache_key = $this->api_config['centreon-url'] . '|' . ($this->api_config['centreon-username'] ?? '');
-        if ($params === [] && isset(self::$login_cache[$cache_key])) {
+        $use_cache = $params === [];
+        if ($use_cache && isset(self::$login_cache[$cache_key])) {
             $data             = self::$login_cache[$cache_key];
-            $this->auth_token = $data['security']['token'];
-            $this->user_id    = $data['contact']['id'];
+            $this->auth_token = $data['security']['token'] ?? null;
+            $this->user_id    = $data['contact']['id'] ?? null;
 
             return $data;
         }
@@ -121,13 +123,13 @@ class ApiClient
                 throw $exception;
             }
 
-            return ['error' => $exception->getMessage()];
+            $data = ['error' => $exception->getMessage()];
         }
 
-        $this->auth_token = $data['security']['token'];
-        $this->user_id    = $data['contact']['id'];
+        $this->auth_token = $data['security']['token'] ?? null;
+        $this->user_id    = $data['contact']['id'] ?? null;
 
-        if (isset($data['security']['token'], $data['contact']['id'])) {
+        if ($use_cache) {
             self::$login_cache[$cache_key] = $data;
         }
 
