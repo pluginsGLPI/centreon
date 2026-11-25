@@ -5,7 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+<<<<<<< HEAD
 ## [1.2.1] - 2026-11-03
+=======
+## [Unreleased]
+
+### Changed
+
+- Make the plugin compatible with the Content Security Policy
+
+### Fixed
+
+- Perf: Speed up the Centreon status column and index centreon_id
+
+## [1.1.4] - 2026-11-03
+>>>>>>> 7e6e729 (Fix: Speed up the Centreon status column and index centreon_id (#91))
 
 ### Fixed
 

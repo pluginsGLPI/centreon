@@ -32,7 +32,13 @@ use GlpiPlugin\Centreon\Host;
 
 use function Safe\json_encode;
 
+<<<<<<< HEAD
 Session::checkRight(Computer::$rightname, UPDATE);
+=======
+Session::checkRight('computer', UPDATE);
+// Nothing below writes to the session: release its lock before waiting for Centreon
+Session::writeClose();
+>>>>>>> 7e6e729 (Fix: Speed up the Centreon status column and index centreon_id (#91))
 
 header('Content-Type: application/json');
 
