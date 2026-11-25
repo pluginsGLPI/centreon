@@ -31,7 +31,13 @@
 
 use GlpiPlugin\Centreon\Host;
 
+<<<<<<< HEAD
 Session::checkRight(Computer::$rightname, READ);
+=======
+Session::checkRight('computer', READ);
+// Nothing below writes to the session: release its lock before waiting for Centreon
+Session::writeClose();
+>>>>>>> 7e6e729 (Fix: Speed up the Centreon status column and index centreon_id (#91))
 
 header('Content-Type: text/html; charset=UTF-8');
 
