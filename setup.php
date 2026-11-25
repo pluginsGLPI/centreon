@@ -80,12 +80,13 @@ function plugin_init_centreon()
 function plugin_version_centreon()
 {
     return [
-        'name'         => 'centreon',
-        'version'      => PLUGIN_CENTREON_VERSION,
-        'author'       => '<a href="http://www.teclib.com">Teclib\'</a>',
-        'license'      => 'GPLv3',
-        'homepage'     => '',
-        'requirements' => [
+        'name'          => 'centreon',
+        'version'       => PLUGIN_CENTREON_VERSION,
+        'author'        => '<a href="http://www.teclib.com">Teclib\'</a>',
+        'license'       => 'GPLv3',
+        'homepage'      => '',
+        'csp_compliant' => true,
+        'requirements'  => [
             'glpi' => [
                 'min' => PLUGIN_CENTREON_MIN_GLPI_VERSION,
                 'max' => PLUGIN_CENTREON_MAX_GLPI_VERSION,
